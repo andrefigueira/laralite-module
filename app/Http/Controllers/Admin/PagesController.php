@@ -10,20 +10,23 @@ class PagesController extends Controller
 {
     public function index()
     {
-        $pages = Page::all();
-
-        return view('admin.pages', [
-            'pages' => $pages,
-        ]);
+        return view('admin.pages');
     }
 
     public function create()
     {
-        return view('admin.pages.create');
+        return view('admin.pages.form', [
+            'type' => 'create',
+        ]);
     }
 
-    public function edit()
+    public function edit($id)
     {
-        return view('admin.pages.create');
+        $page = Page::where('id', '=', $id)->firstOrFail();
+
+        return view('admin.pages.form', [
+            'type' => 'edit',
+            'page' => $page,
+        ]);
     }
 }

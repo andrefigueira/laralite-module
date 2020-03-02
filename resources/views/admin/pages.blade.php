@@ -10,5 +10,5 @@
         </div><!-- End toolbar -->
     </div><!-- End content bar -->
 
-    <pages :items="{{ $pages }}"></pages>
+    <pages></pages>
 @endsection

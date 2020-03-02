@@ -8,6 +8,23 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+
+// Install BootstrapVue
+Vue.use(BootstrapVue);
+
+// Optionally install the BootstrapVue icon components plugin
+Vue.use(IconsPlugin);
+
+import CKEditor from '@ckeditor/ckeditor5-vue';
+
+Vue.use(CKEditor);
+
+import vSelect from 'vue-select'
+
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -21,7 +38,13 @@ window.Vue = require('vue');
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('pages', require('./components/PagesComponent.vue').default);
-Vue.component('pages-create', require('./components/PagesCreateComponent.vue').default);
+Vue.component('pages-form', require('./components/PagesFormComponent.vue').default);
+Vue.component('page-components', require('./components/PageComponents.vue').default);
+Vue.component('admin-content-component', require('./components/AdminPageComponents/ContentComponent.vue').default);
+
+Vue.component('v-select', vSelect);
+
+export const bus = new Vue();
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -31,4 +54,7 @@ Vue.component('pages-create', require('./components/PagesCreateComponent.vue').d
 
 const app = new Vue({
     el: '#app',
+    components: {
+
+    }
 });

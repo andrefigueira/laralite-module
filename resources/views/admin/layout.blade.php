@@ -15,7 +15,7 @@
     <link href="/css/app.css" rel="stylesheet">
 </head>
 
-<body>
+<body v-cloak>
 <div id="app">
     @include('admin.header')
 
