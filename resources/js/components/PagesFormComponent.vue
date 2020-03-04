@@ -9,52 +9,58 @@
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
             </div><!-- End col -->
+        </div>
+        <div class="row">
             <div class="col-md-9">
-                <div class="row">
-                    <div class="col-md-6">
-                        <b-form-group id="page-name-group" label="Page name" label-for="page-name">
-                            <b-form-input
-                                id="page-name-input"
-                                required
-                                v-model="name"
-                                placeholder="Enter page name"
-                                @keyup="generateSlug()"
-                            ></b-form-input>
-                        </b-form-group>
-                    </div><!-- End col -->
-                    <div class="col-md-6">
-                        <b-form-group id="page-slug-group" label="Page slug" label-for="page-slug">
-                            <b-form-input
-                                id="page-slug-input"
-                                required
-                                v-model="slug"
-                                placeholder="e.g. /home"
-                            ></b-form-input>
-                        </b-form-group>
-                    </div><!-- End col -->
+                <div class="page-section p-4 mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b-form-group id="page-name-group" label="Page name" label-for="page-name">
+                                <b-form-input
+                                    id="page-name-input"
+                                    required
+                                    v-model="name"
+                                    placeholder="Enter page name"
+                                    @keyup="generateSlug()"
+                                ></b-form-input>
+                            </b-form-group>
+                        </div><!-- End col -->
+                        <div class="col-md-6">
+                            <b-form-group id="page-slug-group" label="Page slug" label-for="page-slug">
+                                <b-form-input
+                                    id="page-slug-input"
+                                    required
+                                    v-model="slug"
+                                    placeholder="e.g. /home"
+                                ></b-form-input>
+                            </b-form-group>
+                        </div><!-- End col -->
+                    </div><!-- End row -->
                 </div><!-- End row -->
 
                 <div class="row">
                     <div class="col-md-12">
-                        <b-card no-body>
-                            <b-tabs pills card end>
-                                <b-tab title="Components" active>
-                                    <b-card-text>
-                                        <page-components v-model="components"></page-components>
-                                    </b-card-text>
-                                </b-tab>
-                                <b-tab title="Meta">
-                                    <b-card-text>
-                                        Tab contents 2
-                                    </b-card-text>
-                                </b-tab>
-                            </b-tabs>
-                        </b-card>
+                        <div class="page-section p-4">
+                            <b-card no-body>
+                                <b-tabs pills card end>
+                                    <b-tab title="Components" active>
+                                        <b-card-text>
+                                            <page-components v-model="components" :template="template"></page-components>
+                                        </b-card-text>
+                                    </b-tab>
+                                    <b-tab title="Meta">
+                                        <b-card-text>
+                                            Tab contents 2
+                                        </b-card-text>
+                                    </b-tab>
+                                </b-tabs>
+                            </b-card>
+                        </div><!-- End page section -->
                     </div><!-- End col -->
                 </div><!-- End row -->
             </div><!-- End col -->
             <div class="col-md-3">
-                <div class="content-sidebar">
+                <div class="page-section p-4">
                     <label for="primary-option">Page type</label>
                     <v-select class="mb-3" id="primary-option" label="title" v-model="primary" :options="primaryOptions" :clearable="false"></v-select>
 
@@ -62,7 +68,7 @@
                     <v-select class="mb-3" id="parent" label="name" v-model="parent" :options="pages" :clearable="false"></v-select>
 
                     <label for="template">Template</label>
-                    <v-select class="mb-3" id="template" label="title" v-model="template" :options="templates" :clearable="false"></v-select>
+                    <v-select class="mb-3" id="template" label="name" v-model="template" :options="templates" :clearable="false"></v-select>
 
                     <b-button variant="success" :disabled="saving" @click="save()">{{ button }}</b-button>
                 </div><!-- End content sidebar -->
@@ -73,6 +79,7 @@
 
 <script>
     import { bus } from '../app'
+    import helpers from '../helpers'
 
     export default {
         mounted() {
@@ -99,21 +106,21 @@
                 primaryOptions: [
                     {
                         title: 'Primary',
-                        value: true
+                        value: 1
                     },
                     {
                         title: 'Standard',
-                        value: false
+                        value: 0
                     }
                 ],
+                primary: {
+                    title: 'Standard',
+                    value: 0
+                },
                 pages: [],
                 template: {},
                 templates: [],
                 id: '',
-                primary: {
-                    title: 'Standard',
-                    value: false
-                },
                 parent: {},
                 name: '',
                 slug: '',
@@ -148,19 +155,61 @@
             }
         },
         methods: {
-            load() {
+            loadParentOptions(defaultOption) {
                 axios.get('/api/page').then(response => {
                     this.pages = response.data.data;
+                    this.pages.unshift(defaultOption);
+
+                    if (this.page.id !== undefined) {
+                        this.parent = this.pages.filter((parentPage) => {
+                            return parentPage.id === this.page.parent_id;
+                        })[0];
+
+                        this.pages = this.pages.filter((result) => {
+                            return result.id !== this.page.id;
+                        });
+                    }
                 }).catch(error => {
                     // handle error
                 });
-
-                if (this.page) {
+            },
+            loadDefaultFormValues(defaultParentValue) {
+                if (this.page.id === undefined) {
+                    this.parent = defaultParentValue;
+                } else {
                     this.id = this.page.id;
+                    this.primary = this.primaryOptions.filter((option) => {
+                        return option.value === this.page.primary;
+                    })[0];
                     this.name = this.page.name;
                     this.slug = this.page.slug;
                     this.components = this.page.components;
                 }
+            },
+            loadTemplateOptions() {
+                axios.get('/api/template').then(response => {
+                    this.templates = response.data.data;
+
+                    if (this.template.id === undefined) {
+                        this.template = this.templates[0];
+                    } else {
+                        this.template = this.templates.filter((pageTemplate) => {
+                            return pageTemplate.id === this.page.template_id;
+                        })[0];
+                    }
+                }).catch(error => {
+                    // handle error
+                });
+            },
+            load() {
+                let defaultParentValue = {
+                    id: null,
+                    name: 'No parent'
+                };
+
+                this.loadParentOptions(defaultParentValue);
+                this.loadTemplateOptions();
+                this.loadDefaultFormValues(defaultParentValue);
             },
             generateSlug() {
                 this.slug = this.name.toLowerCase()
@@ -174,6 +223,9 @@
                     method: this.formMethod,
                     url: this.formEndpoint,
                     data:  {
+                        primary: this.primary.value,
+                        parent_id: this.parent.id,
+                        template_id: this.template.id,
                         name: this.name,
                         slug: this.slug,
                         components: this.components
@@ -209,12 +261,7 @@
 
                         this.alertShow = true;
                         this.alertType = 'danger';
-                        let errors = '<ul class="errors">';
-                        for (let [key, value] of Object.entries(error.response.data.errors)) {
-                            errors += '<li>' + value + '</li>';
-                        }
-                        errors += '</ul>';
-                        this.alertMessage = errors;
+                        this.alertMessage = helpers.createErrorsList(error.response.data.errors);
 
                         return;
                     }

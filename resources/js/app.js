@@ -20,6 +20,10 @@ import CKEditor from '@ckeditor/ckeditor5-vue';
 
 Vue.use(CKEditor);
 
+import Vuelidate from 'vuelidate';
+
+Vue.use(Vuelidate);
+
 import vSelect from 'vue-select'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -38,8 +42,14 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('pages', require('./components/PagesComponent.vue').default);
+Vue.component('templates', require('./components/TemplatesComponent.vue').default);
+Vue.component('users', require('./components/UsersComponent.vue').default);
 Vue.component('pages-form', require('./components/PagesFormComponent.vue').default);
 Vue.component('page-components', require('./components/PageComponents.vue').default);
+Vue.component('recursive-page-row', require('./components/RecursivePageTableRowNode.vue').default);
+Vue.component('recursive-table-row', require('./components/RecursiveTableRow.vue').default);
+Vue.component('templates-form', require('./components/TemplatesFormComponent.vue').default);
+Vue.component('users-form', require('./components/UsersFormComponent.vue').default);
 Vue.component('admin-content-component', require('./components/AdminPageComponents/ContentComponent.vue').default);
 
 Vue.component('v-select', vSelect);

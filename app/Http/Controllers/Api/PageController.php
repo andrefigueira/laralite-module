@@ -11,15 +11,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PageController extends Controller
 {
-    public function get()
+    public function get(Request $request)
     {
-        return Page::paginate();
+        if ($request->has('with') && $request->get('with') === 'children') {
+            return Page::where('parent_id', '=', null)->with('children')->with('template')->paginate();
+        }
+
+        return Page::orderBy('parent_id', 'ASC')->paginate();
     }
 
     public function getOne($id)
     {
         try {
-            return Page::where('id', '=', $id)->firstOrFail();
+            return Page::where('id', '=', $id)->with('template')->firstOrFail();
         } catch (\Throwable $exception) {
             return new JsonResponse([
                 'success' => false,
@@ -35,6 +39,9 @@ class PageController extends Controller
     {
         try {
             $page = Page::create([
+                'primary' => $request->get('primary'),
+                'parent_id' => $request->get('parent_id'),
+                'template_id' => $request->get('template_id'),
                 'name' => $request->get('name'),
                 'slug' => $request->get('slug'),
                 'components' => $request->get('components'),
@@ -78,6 +85,9 @@ class PageController extends Controller
             $page = Page::where('id', '=', $id)->firstOrFail();
 
             $page->update([
+                'primary' => $request->get('primary'),
+                'parent_id' => $request->get('parent_id'),
+                'template_id' => $request->get('template_id'),
                 'name' => $request->get('name'),
                 'slug' => $request->get('slug'),
                 'components' => $request->get('components'),

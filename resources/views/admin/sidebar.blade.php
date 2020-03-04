@@ -19,6 +19,12 @@
                     Pages
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('admin/templates*') ? 'active' : '' }}" href="/admin/templates">
+                    <i class="fas fa-border-style"></i>
+                    Templates
+                </a>
+            </li>
         </ul>
     </div>
 </nav>

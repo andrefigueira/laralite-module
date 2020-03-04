@@ -1,26 +1,22 @@
 <template>
     <div>
-        <b-alert :show="!loading && !showResults">No pages added yet &middot; <a href="/admin/pages/create">Create one</a></b-alert>
+        <b-alert :show="!loading && !showResults" class="m-3">No pages added yet &middot; <a href="/admin/pages/create">Create one</a></b-alert>
 
         <div v-show="loading" class="text-center">
             <b-spinner label="Spinning"></b-spinner>
         </div>
 
-        <table class="table" v-show="showResults">
-            <tr>
-                <th>Name</th>
-                <th>Slug</th>
-                <th></th>
-            </tr>
-            <tr v-for="page in pages" v-bind:key="page.id">
-                <td><a :href="'/admin/pages/edit/' + page.id">{{ page.name }}</a></td>
-                <td>/{{ page.slug }}</td>
-                <td>
-                    <b-button @click="confirmDelete(page)" variant="danger" size="sm" class="float-right">Delete</b-button>
-                    <a :href="'/admin/pages/edit/' + page.id" class="btn btn-sm btn-primary float-right mr-1">Edit</a>
-                </td>
-            </tr>
-        </table>
+        <div class="table table-top-border-0" v-show="showResults">
+            <div class="row table-header">
+                <div class="col-md-4">Name</div>
+                <div class="col-md-2">Slug</div>
+                <div class="col-md-2">Type</div>
+                <div class="col-md-2">Template</div>
+                <div class="col-md-2"></div>
+            </div><!-- End row -->
+
+            <recursive-table-row :data="pages"></recursive-table-row>
+        </div>
     </div>
 </template>
 
@@ -40,7 +36,7 @@
         },
         methods: {
             load() {
-                axios.get('/api/page').then(response => {
+                axios.get('/api/page?with=children').then(response => {
                     this.pages = response.data.data;
 
                     if (this.pages.length > 0) {
@@ -50,22 +46,6 @@
                     this.loading = false;
                 }).catch(error => {
                     // handle error
-                });
-            },
-            confirmDelete(page) {
-                this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
-                    if (value) {
-                        let index = this.pages.indexOf(page);
-                        let self = this;
-
-                        axios.delete('/api/page/' + page.id).then(response => {
-                            self.pages.splice(index, 1);
-                        }).catch(error => {
-                            // handle error
-                        });
-                    }
-                }).catch(error => {
-                    // An error occurred
                 });
             }
         }

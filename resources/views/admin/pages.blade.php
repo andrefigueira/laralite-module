@@ -10,5 +10,7 @@
         </div><!-- End toolbar -->
     </div><!-- End content bar -->
 
-    <pages></pages>
+    <div class="page-section">
+        <pages></pages>
+    </div><!-- End page section -->
 @endsection
