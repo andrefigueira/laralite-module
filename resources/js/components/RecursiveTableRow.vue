@@ -3,11 +3,11 @@
         <div class="row" v-for="page in data" v-bind:key="page.id">
             <div class="col-md-12 table-row">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <span :class="'ml-' + nodeLevel">&rdsh;</span>
                         <a class="text-dark" :href="'/admin/pages/edit/' + page.id">{{ page.name }}</a>
                     </div>
-                    <div class="col-md-2">{{ generateSlug(parentSlug, page.slug) }}</div>
+                    <div class="col-md-3">{{ page.slug }}</div>
                     <div class="col-md-2"><b-badge :variant="page.primary === 1 ? 'primary' : 'secondary'">{{ page.primary === 1 ? 'Primary' : 'Standard' }}</b-badge></div>
                     <div class="col-md-2"><b-badge variant="primary">{{ page.template.name }}</b-badge></div>
                     <div class="col-md-2">
@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div class="col-md-12" v-show="page.children.length > 0">
-                <recursive-table-row :nodeLevel="nodeLevel + 2" :parentSlug="generateSlug(parentSlug, page.slug)" :data="page.children"></recursive-table-row>
+                <recursive-table-row :nodeLevel="nodeLevel + 2" :parentSlug="page.slug" :data="page.children"></recursive-table-row>
             </div><!-- End col -->
         </div><!-- End col -->
     </div>
@@ -43,13 +43,6 @@
             }
         },
         methods: {
-            generateSlug(parentSlug, pageSlug) {
-                if (parentSlug === '') {
-                    return '/' + pageSlug;
-                }
-
-                return parentSlug + '/' + pageSlug;
-            },
             confirmDelete(page) {
                 if (page.primary === 1) {
                     this.$bvModal.msgBoxOk('Cannot delete primary page').then(value => {

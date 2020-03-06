@@ -38,13 +38,16 @@ class PageController extends Controller
     public function create(Request $request)
     {
         try {
+            $slug = $this->generateSlug($request->get('parent_id'), $request->get('slug'));
+
             $page = Page::create([
                 'primary' => $request->get('primary'),
                 'parent_id' => $request->get('parent_id'),
                 'template_id' => $request->get('template_id'),
                 'name' => $request->get('name'),
-                'slug' => $request->get('slug'),
+                'slug' => $slug,
                 'components' => $request->get('components'),
+                'meta' => $request->get('meta'),
             ]);
 
             Log::info('Created page', [
@@ -84,13 +87,16 @@ class PageController extends Controller
         try {
             $page = Page::where('id', '=', $id)->firstOrFail();
 
+            $slug = $this->generateSlug($request->get('parent_id'), $request->get('slug'));
+
             $page->update([
                 'primary' => $request->get('primary'),
                 'parent_id' => $request->get('parent_id'),
                 'template_id' => $request->get('template_id'),
                 'name' => $request->get('name'),
-                'slug' => $request->get('slug'),
+                'slug' => $slug,
                 'components' => $request->get('components'),
+                'meta' => $request->get('meta'),
             ]);
 
             Log::info('Updated page', [
@@ -131,5 +137,16 @@ class PageController extends Controller
                 ],
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+    }
+
+    private function generateSlug($parentId, $slug)
+    {
+        if ($parentId === null || $parentId === 0) {
+            return '/' . ltrim($slug, '/');
+        }
+
+        $page = Page::where('id', '=', $parentId)->firstOrFail();
+
+        return '/' . ltrim($page->slug, '/') . '/' . ltrim($slug, '/');
     }
 }

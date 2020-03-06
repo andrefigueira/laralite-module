@@ -50,7 +50,40 @@
                                     </b-tab>
                                     <b-tab title="Meta">
                                         <b-card-text>
-                                            Tab contents 2
+                                            <b-form-group id="page-title-group" label="Title" label-for="page-title">
+                                                <b-form-input
+                                                    id="page-title-input"
+                                                    required
+                                                    v-model="meta.title"
+                                                    placeholder="e.g. Homepage"
+                                                ></b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="page-keywords-group" label="Keywords" label-for="page-keywords">
+                                                <b-form-input
+                                                    id="page-keywords-input"
+                                                    required
+                                                    v-model="meta.keywords"
+                                                    placeholder="e.g. trap,music,museum"
+                                                ></b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="page-author-group" label="Author" label-for="page-author">
+                                                <b-form-input
+                                                    id="page-author-input"
+                                                    required
+                                                    v-model="meta.author"
+                                                    placeholder="e.g. Andre Figueira"
+                                                ></b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group id="page-description-group" label="Description" label-for="page-description">
+                                                <b-textarea
+                                                    id="page-description-input"
+                                                    required
+                                                    v-model="meta.description"
+                                                ></b-textarea>
+                                            </b-form-group>
                                         </b-card-text>
                                     </b-tab>
                                 </b-tabs>
@@ -124,7 +157,13 @@
                 parent: {},
                 name: '',
                 slug: '',
-                components: {}
+                components: {},
+                meta: {
+                    title: '',
+                    keywords: '',
+                    author: '',
+                    description: ''
+                }
             }
         },
         computed: {
@@ -152,6 +191,14 @@
                 }
 
                 return method;
+            }
+        },
+        watch: {
+            slug() {
+                if (this.slug !== '') {
+                    let lastPart = this.slug.split("/").pop();
+                    this.slug = '/' + lastPart;
+                }
             }
         },
         methods: {
@@ -184,6 +231,7 @@
                     this.name = this.page.name;
                     this.slug = this.page.slug;
                     this.components = this.page.components;
+                    this.meta = this.page.meta;
                 }
             },
             loadTemplateOptions() {
@@ -212,7 +260,7 @@
                 this.loadDefaultFormValues(defaultParentValue);
             },
             generateSlug() {
-                this.slug = this.name.toLowerCase()
+                this.slug = '/' + this.name.toLowerCase()
                     .replace(/[^\w ]+/g,'')
                     .replace(/ +/g,'-');
             },
@@ -228,7 +276,8 @@
                         template_id: this.template.id,
                         name: this.name,
                         slug: this.slug,
-                        components: this.components
+                        components: this.components,
+                        meta: this.meta
                     }
                 }).then(response => {
                     this.saving = false;

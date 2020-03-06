@@ -14,5 +14,9 @@ export default {
         errors += '</ul>';
 
         return errors;
-    }
+    },
+
+    loadComponent(namespace, component) {
+        Vue.component(component, () => import('./components/' + namespace + component + '.vue'));
+    },
 }

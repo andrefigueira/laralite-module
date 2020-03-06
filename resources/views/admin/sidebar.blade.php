@@ -25,6 +25,12 @@
                     Templates
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('admin/settings*') ? 'active' : '' }}" href="/admin/settings">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </li>
         </ul>
     </div>
 </nav>

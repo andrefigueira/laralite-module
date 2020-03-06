@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/admin', 'Admin\AdminController@home');
     Route::get('/admin/home', 'Admin\AdminController@home');
@@ -34,5 +30,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
-
 Auth::routes();
+
+Route::any('/{any}', 'CmsController@route')->where('any', '.*');

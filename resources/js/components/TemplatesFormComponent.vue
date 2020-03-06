@@ -28,7 +28,7 @@
                             </b-form-group>
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <b-form-group id="section-name-group" label="Section name" label-for="section-name">
                                         <b-form-input
                                             id="section-name-input"
@@ -39,7 +39,7 @@
                                         ></b-form-input>
                                     </b-form-group>
                                 </div><!-- End col -->
-                                <div class="col-md-6">
+                                <div class="col-md-2">
                                     <b-form-group id="section-slug-group" label="Section slug" label-for="section-slug">
                                         <b-form-input
                                             id="section-slug-input"
@@ -49,13 +49,47 @@
                                         ></b-form-input>
                                     </b-form-group>
                                 </div><!-- End col -->
+                                <div class="col-md-2">
+                                    <b-form-group id="section-column-group" label="Section column size" label-for="section-column">
+                                        <b-form-input
+                                            id="section-column-input"
+                                            required
+                                            v-model="sectionColumn"
+                                            placeholder="Enter section column size"
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </div><!-- End col -->
+                                <div class="col-md-2">
+                                    <b-form-group id="section-order-group" label="Section order" label-for="section-order">
+                                        <b-form-input
+                                            id="section-order-input"
+                                            required
+                                            v-model="sectionOrder"
+                                            placeholder="Enter section order"
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </div><!-- End col -->
+                                <div class="col-md-3">
+                                    <b-form-group id="section-wrapper-class-group" label="Section wrapper class" label-for="section-wrapper-class">
+                                        <b-form-input
+                                            id="section-wrapper-class-input"
+                                            required
+                                            v-model="sectionWrapperClass"
+                                            placeholder="Enter section wrapper class"
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </div><!-- End col -->
                             </div><!-- End row -->
 
                             <b-button class="mb-2" variant="success" @click="addSection()">Add section</b-button>
 
                             <b-list-group>
                                 <b-list-group-item v-for="section in sections" v-bind:key="section.slug">
-                                    {{ section.name }} ({{ section.slug }})
+                                    <strong>Name: </strong> {{ section.name }}<br>
+                                    <strong>Slug: </strong> {{ section.slug }}<br>
+                                    <strong>Column: </strong> {{ section.column }}<br>
+                                    <strong>Order: </strong> {{ section.order }}<br>
+                                    <strong>Wrapper class: </strong> {{ section.wrapper }}
                                     <b-button class="btn-sm float-right" variant="danger" @click="removeSection(section)">&times;</b-button>
                                 </b-list-group-item>
                             </b-list-group>
@@ -100,7 +134,10 @@
                 description: '',
                 sections: [],
                 sectionName: '',
-                sectionSlug: ''
+                sectionSlug: '',
+                sectionColumn: 3,
+                sectionOrder: 0,
+                sectionWrapperClass: ''
             }
         },
         computed: {
@@ -222,10 +259,15 @@
                 this.sections.push({
                     name: this.sectionName,
                     slug: this.sectionSlug,
+                    column: this.sectionColumn,
+                    order: this.sectionOrder,
+                    wrapper: this.sectionWrapperClass
                 });
 
                 this.sectionName = '';
                 this.sectionSlug = '';
+                this.sectionColumn = 3;
+                this.sectionOrder = 0;
                 this.alertShow = false;
             },
             removeSection(section) {

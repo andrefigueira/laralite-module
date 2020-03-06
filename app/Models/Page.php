@@ -18,14 +18,14 @@ class Page extends Model
     ];
 
     protected $casts = [
-        'meta' => 'array',
+        'meta' => 'object',
         'content' => 'array',
         'components' => 'array',
     ];
 
     public function children()
     {
-        return $this->hasMany(Page::class, 'parent_id', 'id')->with('children')->with('children');
+        return $this->hasMany(Page::class, 'parent_id', 'id')->with('children')->with('template')->with('children')->with('template');
     }
 
     public function parent()
