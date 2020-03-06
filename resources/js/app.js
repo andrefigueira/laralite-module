@@ -51,6 +51,8 @@ Vue.component('recursive-table-row', require('./components/RecursiveTableRow.vue
 Vue.component('templates-form', require('./components/TemplatesFormComponent.vue').default);
 Vue.component('users-form', require('./components/UsersFormComponent.vue').default);
 Vue.component('admin-content-component', require('./components/AdminPageComponents/ContentComponent.vue').default);
+Vue.component('admin-accordion-component', require('./components/AdminPageComponents/AccordionComponent.vue').default);
+Vue.component('accordion-component', require('./components/FrontEndComponents/AccordionComponent.vue').default);
 
 Vue.component('v-select', vSelect);
 

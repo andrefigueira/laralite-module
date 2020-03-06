@@ -3,9 +3,13 @@
         <div class="side-nav">
             <a href="#" class="side-nav-toggle" @click="toggleNavigation()"><i class="fas fa-bars"></i> <span v-show="showNav">Hide </span> Menu</a>
             <ul class="side-nav-menu" :class="(showNav ? 'show' : '')">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Tickets</a></li>
-                <li><a href="#">Museum</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="http://tickets.trapmusicmuseum.com">Tickets</a></li>
+                <li><a href="/groups">Groups</a></li>
+                <li><a href="/sip-and-trap">Sip &amp; Trap</a></li>
+                <li><a href="/faq">FAQ</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/waivers">Waivers</a></li>
             </ul>
         </div><!-- End side nav -->
     </div>
@@ -37,6 +41,7 @@
     @import "../../../sass/mixins";
 
     $blue-color: #709be7;
+    $yellow-color: gold;
 
     .side-nav {
         padding: 4rem 0 0 4rem;
@@ -53,7 +58,7 @@
         }
         .side-nav-menu {
             position: fixed;
-            background: #FFF;
+            background-color:rgba(0, 0, 0, 0.5);
             top: 0;
             left: -20%;
             width: 20%;
@@ -70,12 +75,14 @@
                 a {
                     display: block;
                     padding: 1rem 2rem;
-                    color: #333;
+                    color: #FFF;
                     text-decoration: none;
                     text-transform: uppercase;
+                    transition: all 0.2s ease-in-out;
+                    font-size: 1.5rem;
                     &:hover {
-                        background: $blue-color;
-                        color: #FFF;
+                        color: $yellow-color;
+                        padding-left: 3rem;
                     }
                 }
             }
