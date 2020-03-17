@@ -11,6 +11,8 @@
 |
 */
 
+Auth::routes();
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/admin', 'Admin\AdminController@home');
     Route::get('/admin/home', 'Admin\AdminController@home');
@@ -28,8 +30,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/admin/users/edit/{id}', 'Admin\UsersController@edit');
 
     Route::get('/home', 'HomeController@index')->name('home');
+
+    Route::any('/{any}', 'CmsController@route')->where('any', '.*');
 });
 
-Auth::routes();
-
-Route::any('/{any}', 'CmsController@route')->where('any', '.*');
