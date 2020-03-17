@@ -44,6 +44,7 @@ Vue.component('content-component', require('./components/FrontEndComponents/Cont
 Vue.component('carousel-component', require('./components/FrontEndComponents/CarouselComponent.vue').default);
 Vue.component('side-nav', require('./components/FrontEndComponents/SideNavComponent.vue').default);
 Vue.component('accordion-component', require('./components/FrontEndComponents/AccordionComponent.vue').default);
+Vue.component('trapmusicparralax-component', require('./components/FrontEndComponents/TrapMusicParralaxComponent.vue').default);
 
 Vue.component('v-select', vSelect);
 

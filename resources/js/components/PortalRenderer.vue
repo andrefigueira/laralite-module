@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="portal-renderer">
         <div class="row">
             <div :class="'col-md-' + section.column" v-for="section in page.template.sections">
                 <component v-for="component in filterSectionComponents(section)" :is="component.frontendName" v-bind="component.properties"></component>
@@ -36,3 +36,9 @@
         }
     }
 </script>
+
+<style lang="scss">
+    .portal-renderer {
+        overflow-x: hidden;
+    }
+</style>

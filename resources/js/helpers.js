@@ -19,4 +19,8 @@ export default {
     loadComponent(namespace, component) {
         Vue.component(component, () => import('./components/' + namespace + component + '.vue'));
     },
+
+    isInView(elem) {
+        return $(elem).offset().top - $(window).scrollTop() < $(elem).height() ;
+    }
 }
