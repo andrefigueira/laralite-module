@@ -238,7 +238,7 @@
                 axios.get('/api/template').then(response => {
                     this.templates = response.data.data;
 
-                    if (this.template.id === undefined) {
+                    if (this.page.template_id === undefined) {
                         this.template = this.templates[0];
                     } else {
                         this.template = this.templates.filter((pageTemplate) => {

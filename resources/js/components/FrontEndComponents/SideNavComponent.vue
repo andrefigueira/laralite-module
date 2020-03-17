@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="nav-wrapper">
         <div class="side-nav">
-            <a href="#" class="side-nav-toggle" @click="toggleNavigation()"><i class="fas fa-bars"></i> <span v-show="showNav">Hide </span> Menu</a>
+            <a href="javascript:{}" class="side-nav-toggle" @click="toggleNavigation()"><i class="fas fa-bars"></i> <span v-show="showNav">Hide </span> Menu</a>
             <ul class="side-nav-menu" :class="(showNav ? 'show' : '')">
                 <li><a href="/">Home</a></li>
                 <li><a href="http://tickets.trapmusicmuseum.com">Tickets</a></li>
@@ -42,6 +42,10 @@
 
     $blue-color: #709be7;
     $yellow-color: gold;
+
+    .nav-wrapper {
+        display: inline;
+    }
 
     .side-nav {
         padding: 4rem 0 0 4rem;

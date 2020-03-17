@@ -14,7 +14,7 @@ class CmsController extends Controller
 
         $page = Page::where('slug', '=', $pageSlug)->firstOrFail();
 
-        return view('laralite.templates.' . strtolower($page->template->name), [
+        return view('laralite.templates.' . str_replace(' ', '-', strtolower($page->template->name)), [
             'page' => $page,
         ]);
     }

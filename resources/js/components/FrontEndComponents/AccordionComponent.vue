@@ -1,35 +1,14 @@
 <template>
-    <div role="tablist">
-        <b-card no-body class="mb-1">
+    <div role="tablist" class="accordion-wrapper" v-show="sections.length > 0">
+        <b-card no-body class="mb-1" v-for="(section, index) in sections">
             <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-button block href="#" v-b-toggle.accordion-1 variant="info">Accordion 1</b-button>
+                <b-button href="#" class="toggle-accordion" v-b-toggle="'accordion-' + index" variant="primary">
+                    {{ section.title }}
+                </b-button>
             </b-card-header>
-            <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
+            <b-collapse :id="'accordion-' + index" visible accordion="my-accordion" role="tabpanel">
                 <b-card-body>
-                    <b-card-text>I start opened because <code>visible</code> is <code>true</code></b-card-text>
-                    <b-card-text>text</b-card-text>
-                </b-card-body>
-            </b-collapse>
-        </b-card>
-
-        <b-card no-body class="mb-1">
-            <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-button block href="#" v-b-toggle.accordion-2 variant="info">Accordion 2</b-button>
-            </b-card-header>
-            <b-collapse id="accordion-2" accordion="my-accordion" role="tabpanel">
-                <b-card-body>
-                    <b-card-text>text</b-card-text>
-                </b-card-body>
-            </b-collapse>
-        </b-card>
-
-        <b-card no-body class="mb-1">
-            <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-button block href="#" v-b-toggle.accordion-3 variant="info">Accordion 3</b-button>
-            </b-card-header>
-            <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
-                <b-card-body>
-                    <b-card-text>test</b-card-text>
+                    <b-card-text v-html="section.content"></b-card-text>
                 </b-card-body>
             </b-collapse>
         </b-card>
@@ -43,7 +22,7 @@
             console.log('Component mounted.')
         },
         props: {
-
+            sections: {}
         },
         data() {
             return {
@@ -59,5 +38,10 @@
 <style lang="scss">
     @import "../../../sass/mixins";
 
-
+    .accordion-wrapper {
+        background: #FFF;
+        .toggle-accordion {
+            width: 100%;
+        }
+    }
 </style>

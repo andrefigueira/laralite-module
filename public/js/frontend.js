@@ -1958,33 +1958,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'AccordionComponent',
   mounted: function mounted() {
     console.log('Component mounted.');
   },
-  props: {},
+  props: {
+    sections: {}
+  },
   data: function data() {
     return {};
   },
@@ -2002,12 +1983,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -42837,7 +42812,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, ".accordion-wrapper {\n  background: #FFF;\n}\n.accordion-wrapper .toggle-accordion {\n  width: 100%;\n}", ""]);
 
 // exports
 
@@ -42856,7 +42831,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, ".logo {\n  display: block;\n  margin: 10rem auto;\n  width: 20rem;\n  height: auto;\n}\n.call-to-action {\n  font-family: \"Oswald\", sans-serif;\n  width: 100%;\n  background: #310A0A;\n  border: 4px solid transparent;\n  text-transform: uppercase;\n  margin: 0 0 0.5rem 0;\n}\n.call-to-action:hover {\n  background: none;\n  border: 4px solid #310A0A;\n}\n.wrapper {\n  height: 100vh;\n}\n\n/* Carousel base class */\n/* Since positioning the image, we need to help out the caption */\n.carousel-caption {\n  bottom: 3rem;\n  z-index: 10;\n}\n\n/* Declare heights because of positioning of img element */\n.carousel-item {\n  height: 32rem;\n  background-color: #777;\n}\n.carousel-item > img {\n  position: absolute;\n  top: 0;\n  left: 0;\n  min-width: 100%;\n  height: 32rem;\n}", ""]);
+exports.push([module.i, ".logo {\n  display: block;\n  margin: 10rem auto;\n  width: 20rem;\n  height: auto;\n}\n.call-to-action {\n  font-family: \"Oswald\", sans-serif;\n  width: 100%;\n  background: #310A0A;\n  border: 4px solid transparent;\n  text-transform: uppercase;\n  margin: 0 0 0.5rem 0;\n}\n.call-to-action:hover {\n  background: none;\n  border: 4px solid #310A0A;\n}\n\n/* Carousel base class */\n/* Since positioning the image, we need to help out the caption */\n.carousel-caption {\n  bottom: 3rem;\n  z-index: 10;\n}\n\n/* Declare heights because of positioning of img element */\n.carousel-item {\n  height: 32rem;\n  background-color: #777;\n}\n.carousel-item > img {\n  position: absolute;\n  top: 0;\n  left: 0;\n  min-width: 100%;\n  height: 32rem;\n}", ""]);
 
 // exports
 
@@ -42875,7 +42850,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, ".side-nav {\n  padding: 4rem 0 0 4rem;\n  font-family: \"Oswald\", sans-serif;\n}\n.side-nav .side-nav-toggle {\n  display: block;\n  position: fixed;\n  top: 2rem;\n  left: 2rem;\n  color: #709be7;\n  text-decoration: none;\n  text-transform: uppercase;\n  z-index: 100;\n}\n.side-nav .side-nav-menu {\n  position: fixed;\n  background-color: rgba(0, 0, 0, 0.5);\n  top: 0;\n  left: -20%;\n  width: 20%;\n  list-style: none;\n  margin: 0;\n  padding: 6rem 0 0 0;\n  height: 100vh;\n  z-index: 99;\n  transition: all 0.2s ease-in-out;\n}\n.side-nav .side-nav-menu.show {\n  left: 0;\n}\n.side-nav .side-nav-menu li a {\n  display: block;\n  padding: 1rem 2rem;\n  color: #FFF;\n  text-decoration: none;\n  text-transform: uppercase;\n  transition: all 0.2s ease-in-out;\n  font-size: 1.5rem;\n}\n.side-nav .side-nav-menu li a:hover {\n  color: gold;\n  padding-left: 3rem;\n}", ""]);
+exports.push([module.i, ".nav-wrapper {\n  display: inline;\n}\n.side-nav {\n  padding: 4rem 0 0 4rem;\n  font-family: \"Oswald\", sans-serif;\n}\n.side-nav .side-nav-toggle {\n  display: block;\n  position: fixed;\n  top: 2rem;\n  left: 2rem;\n  color: #709be7;\n  text-decoration: none;\n  text-transform: uppercase;\n  z-index: 100;\n}\n.side-nav .side-nav-menu {\n  position: fixed;\n  background-color: rgba(0, 0, 0, 0.5);\n  top: 0;\n  left: -20%;\n  width: 20%;\n  list-style: none;\n  margin: 0;\n  padding: 6rem 0 0 0;\n  height: 100vh;\n  z-index: 99;\n  transition: all 0.2s ease-in-out;\n}\n.side-nav .side-nav-menu.show {\n  left: 0;\n}\n.side-nav .side-nav-menu li a {\n  display: block;\n  padding: 1rem 2rem;\n  color: #FFF;\n  text-decoration: none;\n  text-transform: uppercase;\n  transition: all 0.2s ease-in-out;\n  font-size: 1.5rem;\n}\n.side-nav .side-nav-menu li a:hover {\n  color: gold;\n  padding-left: 3rem;\n}", ""]);
 
 // exports
 
@@ -75138,9 +75113,20 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { attrs: { role: "tablist" } },
-    [
-      _c(
+    {
+      directives: [
+        {
+          name: "show",
+          rawName: "v-show",
+          value: _vm.sections.length > 0,
+          expression: "sections.length > 0"
+        }
+      ],
+      staticClass: "accordion-wrapper",
+      attrs: { role: "tablist" }
+    },
+    _vm._l(_vm.sections, function(section, index) {
+      return _c(
         "b-card",
         { staticClass: "mb-1", attrs: { "no-body": "" } },
         [
@@ -75157,13 +75143,21 @@ var render = function() {
                   directives: [
                     {
                       name: "b-toggle",
-                      rawName: "v-b-toggle.accordion-1",
-                      modifiers: { "accordion-1": true }
+                      rawName: "v-b-toggle",
+                      value: "accordion-" + index,
+                      expression: "'accordion-' + index"
                     }
                   ],
-                  attrs: { block: "", href: "#", variant: "info" }
+                  staticClass: "toggle-accordion",
+                  attrs: { href: "#", variant: "primary" }
                 },
-                [_vm._v("Accordion 1")]
+                [
+                  _vm._v(
+                    "\n                " +
+                      _vm._s(section.title) +
+                      "\n            "
+                  )
+                ]
               )
             ],
             1
@@ -75173,7 +75167,7 @@ var render = function() {
             "b-collapse",
             {
               attrs: {
-                id: "accordion-1",
+                id: "accordion-" + index,
                 visible: "",
                 accordion: "my-accordion",
                 role: "tabpanel"
@@ -75183,14 +75177,9 @@ var render = function() {
               _c(
                 "b-card-body",
                 [
-                  _c("b-card-text", [
-                    _vm._v("I start opened because "),
-                    _c("code", [_vm._v("visible")]),
-                    _vm._v(" is "),
-                    _c("code", [_vm._v("true")])
-                  ]),
-                  _vm._v(" "),
-                  _c("b-card-text", [_vm._v("text")])
+                  _c("b-card-text", {
+                    domProps: { innerHTML: _vm._s(section.content) }
+                  })
                 ],
                 1
               )
@@ -75199,98 +75188,8 @@ var render = function() {
           )
         ],
         1
-      ),
-      _vm._v(" "),
-      _c(
-        "b-card",
-        { staticClass: "mb-1", attrs: { "no-body": "" } },
-        [
-          _c(
-            "b-card-header",
-            {
-              staticClass: "p-1",
-              attrs: { "header-tag": "header", role: "tab" }
-            },
-            [
-              _c(
-                "b-button",
-                {
-                  directives: [
-                    {
-                      name: "b-toggle",
-                      rawName: "v-b-toggle.accordion-2",
-                      modifiers: { "accordion-2": true }
-                    }
-                  ],
-                  attrs: { block: "", href: "#", variant: "info" }
-                },
-                [_vm._v("Accordion 2")]
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-collapse",
-            {
-              attrs: {
-                id: "accordion-2",
-                accordion: "my-accordion",
-                role: "tabpanel"
-              }
-            },
-            [_c("b-card-body", [_c("b-card-text", [_vm._v("text")])], 1)],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "b-card",
-        { staticClass: "mb-1", attrs: { "no-body": "" } },
-        [
-          _c(
-            "b-card-header",
-            {
-              staticClass: "p-1",
-              attrs: { "header-tag": "header", role: "tab" }
-            },
-            [
-              _c(
-                "b-button",
-                {
-                  directives: [
-                    {
-                      name: "b-toggle",
-                      rawName: "v-b-toggle.accordion-3",
-                      modifiers: { "accordion-3": true }
-                    }
-                  ],
-                  attrs: { block: "", href: "#", variant: "info" }
-                },
-                [_vm._v("Accordion 3")]
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-collapse",
-            {
-              attrs: {
-                id: "accordion-3",
-                accordion: "my-accordion",
-                role: "tabpanel"
-              }
-            },
-            [_c("b-card-body", [_c("b-card-text", [_vm._v("test")])], 1)],
-            1
-          )
-        ],
-        1
       )
-    ],
+    }),
     1
   )
 }
@@ -75316,49 +75215,9 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div")
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("img", {
-        staticClass: "logo",
-        attrs: { src: "/images/trap-music-museum-logo.png", alt: "" }
-      }),
-      _vm._v(" "),
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-md-2 offset-5" }, [
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-secondary call-to-action",
-              attrs: { href: "" }
-            },
-            [
-              _vm._v("Purchase tickets "),
-              _c("i", { staticClass: "fas fa-chevron-right" })
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-secondary call-to-action",
-              attrs: { href: "" }
-            },
-            [
-              _vm._v("Escape room "),
-              _c("i", { staticClass: "fas fa-chevron-right" })
-            ]
-          )
-        ])
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -75409,13 +75268,13 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
+  return _c("div", { staticClass: "nav-wrapper" }, [
     _c("div", { staticClass: "side-nav" }, [
       _c(
         "a",
         {
           staticClass: "side-nav-toggle",
-          attrs: { href: "#" },
+          attrs: { href: "javascript:{}" },
           on: {
             click: function($event) {
               return _vm.toggleNavigation()

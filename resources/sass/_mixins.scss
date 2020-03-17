@@ -2,3 +2,7 @@
 @mixin theme-font () {
     font-family: 'Oswald', sans-serif;
 }
+
+@mixin quote-font() {
+    font-family: 'Raleway', sans-serif;
+}

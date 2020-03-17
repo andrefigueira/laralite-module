@@ -1,13 +1,7 @@
 <template>
     <div>
-        <img class="logo" src="/images/trap-music-museum-logo.png" alt="">
 
-        <div class="row">
-            <div class="col-md-2 offset-5">
-                <a href="" class="btn btn-secondary call-to-action">Purchase tickets <i class="fas fa-chevron-right"></i></a>
-                <a href="" class="btn btn-secondary call-to-action">Escape room <i class="fas fa-chevron-right"></i></a>
-            </div><!-- End col -->
-        </div><!-- End row -->
+
     </div>
 </template>
 
@@ -45,10 +39,6 @@
             background: none;
             border: 4px solid #310A0A;
         }
-    }
-
-    .wrapper {
-        height: 100vh;
     }
 
     /* Carousel base class */
