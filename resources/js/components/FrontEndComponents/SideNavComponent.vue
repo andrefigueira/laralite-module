@@ -63,7 +63,7 @@
         }
         .side-nav-menu {
             position: fixed;
-            background-color:rgba(0, 0, 0, 0.5);
+            background-color:rgba(0, 0, 0, 0.8);
             top: 0;
             left: -20%;
             width: 20%;
