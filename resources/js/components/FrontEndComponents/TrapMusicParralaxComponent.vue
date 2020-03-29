@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row">
+        <div class="row home-main">
             <div class="col-md-12">
                 <img class="logo" src="/images/trap-music-museum-logo.png" alt="">
 
@@ -94,6 +94,10 @@
         name: 'TrapMusicParralaxComponent',
         mounted() {
             console.log('Component mounted.');
+
+            window.onload = function () {
+                document.body.className += 'loaded';
+            }
         },
         props: {
             sections: {}
@@ -182,5 +186,18 @@
     .parralax-image-3 {
         right: 0;
         transition: all ease 1s;
+    }
+
+    .home-main {
+        margin-top: -2rem;
+        opacity: 0;
+        transition: all ease-in-out 1s;
+    }
+
+    .loaded {
+        .home-main {
+            margin-top: 0;
+            opacity: 1;
+        }
     }
 </style>
