@@ -8,7 +8,7 @@
     <meta name="author" content="{{ $page->meta->author }}">
     <title>{{ $page->meta->title }}</title>
     <link href="/css/frontend.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
 </head>
 
@@ -22,8 +22,10 @@ background-attachment: fixed;
     <side-nav></side-nav>
 
     <portal-renderer :page="{{ $page ? $page : '{}' }}"></portal-renderer>
+
+    <footer-component></footer-component>
 </div><!-- End app -->
 
-<script src="/js/frontend.js"></script>
+<script src="/js/app.js"></script>
 </body>
 </html>

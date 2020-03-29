@@ -54,6 +54,19 @@ Vue.component('admin-content-component', require('./components/AdminPageComponen
 Vue.component('admin-accordion-component', require('./components/AdminPageComponents/AccordionComponent.vue').default);
 Vue.component('accordion-component', require('./components/FrontEndComponents/AccordionComponent.vue').default);
 
+
+Vue.component('portal-renderer', require('./components/PortalRenderer.vue').default);
+
+// Find way to load these dynamically
+Vue.component('content-component', require('./components/FrontEndComponents/ContentComponent.vue').default);
+Vue.component('carousel-component', require('./components/FrontEndComponents/CarouselComponent.vue').default);
+Vue.component('side-nav', require('./components/FrontEndComponents/SideNavComponent.vue').default);
+Vue.component('footer-component', require('./components/FrontEndComponents/FooterComponent.vue').default);
+Vue.component('accordion-component', require('./components/FrontEndComponents/AccordionComponent.vue').default);
+Vue.component('trapmusicparralax-component', require('./components/FrontEndComponents/TrapMusicParralaxComponent.vue').default);
+Vue.component('location-component', require('./components/FrontEndComponents/LocationComponent.vue').default);
+Vue.component('contact-component', require('./components/FrontEndComponents/ContactComponent.vue').default);
+
 Vue.component('v-select', vSelect);
 
 export const bus = new Vue();

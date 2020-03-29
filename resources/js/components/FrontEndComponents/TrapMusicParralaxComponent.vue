@@ -55,7 +55,7 @@
                     FRIDAY 4pm - 12AM<br>
                     Saturday 12pm - 12am<br>
                     Sunday 2pm -10pm<br>
-                    <a href="/" class="btn btn-outline-danger">More Information <i class="fas fa-chevron-right"></i></a>
+                    <a href="/" class="btn btn-white">More Information <i class="fas fa-chevron-right"></i></a>
                 </p>
             </div><!-- End col -->
         </div><!-- End row -->
@@ -69,10 +69,21 @@
                 </h3>
                 <h4 class="image-section-subtitle font-size-1">
                     Open 7 Days a week<br>
-                    Click here to book
+                    <a class="" href="#">Click here to book</a>
                 </h4>
             </div><!-- End col -->
         </div><!-- End row -->
+
+        <div class="row">
+            <div class="col-md-12">
+                <a href="#">
+                    <img class="merchandise-banner" src="/images/merchandise-banner.jpg" alt="Merchandise banner for Trap Music Museum">
+                </a>
+
+                <h4 class="call-to-action-text">The Trap Music Museum online store is open to give our patrons the opportunity to buy our official products online. <br>
+                    We offer t-shirts, caps, hoodies and more to come</h4>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -83,42 +94,6 @@
         name: 'TrapMusicParralaxComponent',
         mounted() {
             console.log('Component mounted.');
-
-            let st, lastScrollTop;
-
-            $(window).scroll(function(e) {
-                let parralaxImage1 = $('.parralax-image-1');
-                let parralaxImage2 = $('.parralax-image-2');
-                let parralaxImage3 = $('.parralax-image-3');
-
-                st = $(this).scrollTop();
-
-                if(st < lastScrollTop) {
-                    console.log('scrolling up');
-                    parralaxImage1.css({
-                        right: '-=100'
-                    });
-                    parralaxImage2.css({
-                        left: '-=100'
-                    });
-                    parralaxImage3.css({
-                        right: '-=100'
-                    });
-                } else {
-                    console.log('scrolling down');
-                    parralaxImage1.css({
-                        right: '+=100'
-                    });
-                    parralaxImage2.css({
-                        left: '+=100'
-                    });
-                    parralaxImage3.css({
-                        right: '+=100'
-                    });
-                }
-
-                lastScrollTop = st;
-            });
         },
         props: {
             sections: {}
@@ -195,17 +170,17 @@
     }
 
     .parralax-image-1 {
-        right: -300px;
+        right: 0;
         transition: all ease 1s;
     }
 
     .parralax-image-2 {
-        left: -300px;
+        left: 0;
         transition: all ease 1s;
     }
 
     .parralax-image-3 {
-        right: -300px;
+        right: 0;
         transition: all ease 1s;
     }
 </style>

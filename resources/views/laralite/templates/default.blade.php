@@ -20,6 +20,6 @@
     </div>
 </div><!-- End app -->
 
-<script src="/js/frontend.js"></script>
+<script src="/js/app.js"></script>
 </body>
 </html>

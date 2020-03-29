@@ -4919,3 +4919,103 @@ body {
   background: #000 !important;
 }
 
+.btn-outline-black {
+  color: #000;
+  border-color: #000;
+}
+
+.btn-black {
+  background: #000 !important;
+  color: #FFF !important;
+}
+
+.btn-white {
+  background: #FFF !important;
+  color: #000 !important;
+  border-radius: 0 !important;
+  border: 5px solid transparent !important;
+  transition: all ease-in-out 0.2s;
+}
+
+.btn-white:hover {
+  border: 5px solid #000 !important;
+}
+
+.footer {
+  padding: 2rem;
+  padding-top: 4rem;
+  margin-top: 4rem;
+  border-top: 1px solid #FFF;
+}
+
+.footer ul {
+  display: block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-transform: uppercase;
+  font-family: "Oswald", sans-serif;
+  font-size: 1.5rem;
+}
+
+.footer ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footer ul li a {
+  color: #CCC;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.footer ul li a:hover {
+  color: gold;
+  padding-left: 1rem;
+}
+
+.merchandise-banner {
+  display: block;
+  width: 100%;
+  margin: 5rem auto;
+}
+
+.call-to-action-text {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #FFF;
+  font-style: italic;
+  line-height: 3rem;
+}
+
+.portal-renderer .content {
+  padding: 2rem;
+  color: #FFF;
+  text-transform: uppercase;
+  font-weight: normal;
+  font-family: "Oswald", sans-serif;
+}
+
+.portal-renderer .content .table {
+  color: #FFF;
+}
+
+.portal-renderer .content .table table {
+  border: none;
+}
+
+.portal-renderer .content .table table tr td {
+  border: none;
+  padding: 0;
+}
+
+h1 {
+  font-weight: 400 !important;
+}
+
+h2 strong {
+  background: #FFF;
+  color: #000;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+

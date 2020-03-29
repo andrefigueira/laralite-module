@@ -4,7 +4,8 @@
             <a href="javascript:{}" class="side-nav-toggle" @click="toggleNavigation()"><i class="fas fa-bars"></i> <span v-show="showNav">Hide </span> Menu</a>
             <ul class="side-nav-menu" :class="(showNav ? 'show' : '')">
                 <li><a href="/">Home</a></li>
-                <li><a href="http://tickets.trapmusicmuseum.com">Tickets</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="https://tickets.trapmusicmuseum.com">Tickets</a></li>
                 <li><a href="/groups">Groups</a></li>
                 <li><a href="/sip-and-trap">Sip &amp; Trap</a></li>
                 <li><a href="/faq">FAQ</a></li>
