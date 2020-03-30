@@ -4559,6 +4559,10 @@ div.table .table-row {
   border: none;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .v-select {
   position: relative;
   font-family: inherit;
