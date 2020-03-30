@@ -34,3 +34,21 @@
 .center {
     text-align: center;
 }
+
+.subheader {
+    @include subheader-font;
+}
+
+.content {
+    table {
+        border: none;
+        border-top: 1px solid #FFF;
+        border-bottom: 1px solid #FFF;
+        tr {
+            border: none;
+            td {
+                border: none;
+            }
+        }
+    }
+}

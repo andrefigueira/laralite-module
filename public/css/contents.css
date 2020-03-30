@@ -32,3 +32,21 @@
   text-align: center;
 }
 
+.subheader {
+  font-family: "Lato", sans-serif;
+}
+
+.content table {
+  border: none;
+  border-top: 1px solid #FFF;
+  border-bottom: 1px solid #FFF;
+}
+
+.content table tr {
+  border: none;
+}
+
+.content table tr td {
+  border: none;
+}
+

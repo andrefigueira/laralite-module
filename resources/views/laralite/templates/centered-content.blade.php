@@ -10,12 +10,18 @@
     <link href="/css/frontend.css" rel="stylesheet">
     <link href="/css/contents.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300i,400,400i,700,700i,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
 </head>
 
 <body>
-<div id="app" v-cloak>
-    <div class="wrapper" style="background-image: url('/images/background.jpg');">
+<div id="app" style="
+background-image: url(/images/background.jpg);
+background-size: cover;
+background-repeat: no-repeat;
+background-attachment: fixed;
+" v-cloak>
+    <div class="wrapper">
         <page-loaded></page-loaded>
         <top-nav></top-nav>
 
@@ -24,7 +30,6 @@
                 <portal-renderer :page="{{ $page ? $page : '{}' }}"></portal-renderer>
             </div><!-- End col -->
         </div><!-- End row -->
-
 
         <footer-component></footer-component>
     </div>
