@@ -24,6 +24,9 @@
                 <portal-renderer :page="{{ $page ? $page : '{}' }}"></portal-renderer>
             </div><!-- End col -->
         </div><!-- End row -->
+
+
+        <footer-component></footer-component>
     </div>
 </div><!-- End app -->
 
