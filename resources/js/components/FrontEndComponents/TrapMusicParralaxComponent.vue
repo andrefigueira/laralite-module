@@ -2,7 +2,17 @@
     <div>
         <div class="row home-main">
             <div class="col-md-12">
-                <img class="logo" src="/images/trap-music-museum-logo.png" alt="">
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="#" class="logo-link text-right">630 Travis ST</a>
+                    </div>
+                    <div class="col-md-4">
+                        <img class="logo" src="/images/trap-music-museum-logo.png" alt="">
+                    </div>
+                    <div class="col-md-4">
+                        <a href="#" class="logo-link text-left">Atlanta, GA</a>
+                    </div>
+                </div>
 
                 <div class="row mb-5">
                     <div class="col-md-2 offset-5">
@@ -116,6 +126,23 @@
 <style lang="scss">
     @import "../../../sass/mixins";
     @import "../../../sass/utilities";
+
+    $yellow-color: gold;
+
+    .logo-link {
+        display: block;
+        color: #FFF;
+        text-transform: uppercase;
+        font-size: 2rem;
+        padding-top: 15rem;
+        transition: all 0.2s ease-in-out;
+        @include theme-font;
+        &:hover {
+            color: $yellow-color;
+            font-size: 2.2rem;
+            text-decoration: none!important;
+        }
+    }
 
     .image-section {
         padding-left: 3rem!important;

@@ -61,6 +61,7 @@ Vue.component('portal-renderer', require('./components/PortalRenderer.vue').defa
 Vue.component('content-component', require('./components/FrontEndComponents/ContentComponent.vue').default);
 Vue.component('carousel-component', require('./components/FrontEndComponents/CarouselComponent.vue').default);
 Vue.component('side-nav', require('./components/FrontEndComponents/SideNavComponent.vue').default);
+Vue.component('top-nav', require('./components/FrontEndComponents/TopNavComponent.vue').default);
 Vue.component('footer-component', require('./components/FrontEndComponents/FooterComponent.vue').default);
 Vue.component('accordion-component', require('./components/FrontEndComponents/AccordionComponent.vue').default);
 Vue.component('trapmusicparralax-component', require('./components/FrontEndComponents/TrapMusicParralaxComponent.vue').default);

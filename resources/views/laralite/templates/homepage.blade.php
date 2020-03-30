@@ -19,7 +19,7 @@ background-size: cover;
 background-repeat: no-repeat;
 background-attachment: fixed;
 " v-cloak>
-    <side-nav></side-nav>
+    <top-nav></top-nav>
 
     <portal-renderer :page="{{ $page ? $page : '{}' }}"></portal-renderer>
 
