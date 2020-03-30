@@ -2,14 +2,18 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-12">
-                <div class="list-group" :class="[forms.selected ? 'forms-selected': '']">
-                    <a href="#" @click="selectForm('general')" class="list-group-item list-group-item-action">General Enquires <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
-                    <a href="#" @click="selectForm('refunds')" class="list-group-item list-group-item-action">Refunds <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
-                    <a href="#" @click="selectForm('media')" class="list-group-item list-group-item-action">Media <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
-                </div>
+                <div class="row mb-4">
+                    <div class="col-md-4 offset-4">
+                        <div class="list-group" :class="[forms.selected ? 'forms-selected': '']">
+                            <a href="#" @click="selectForm('general')" class="list-group-item list-group-item-action">General Enquires <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
+                            <a href="#" @click="selectForm('refunds')" class="list-group-item list-group-item-action">Refunds <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
+                            <a href="#" @click="selectForm('media')" class="list-group-item list-group-item-action">Media <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
+                        </div>
 
-                <div class="list-group mb-3" :class="[forms.selected ? '': 'forms-selected']">
-                    <a href="#" @click="selectForm(false)" class="list-group-item list-group-item-action"><i class="fas fa-chevron-circle-left"></i> Change form</a>
+                        <div class="list-group mb-3" :class="[forms.selected ? '': 'forms-selected']">
+                            <a href="#" @click="selectForm(false)" class="list-group-item list-group-item-action"><i class="fas fa-chevron-circle-left"></i> Change form</a>
+                        </div>
+                    </div>
                 </div>
 
                 <form action="" v-show="forms.selected === 'general'" class="contact-form" :class="[forms.selected === 'general' ? 'form-selected': '']">

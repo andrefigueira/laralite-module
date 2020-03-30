@@ -4892,6 +4892,10 @@ div.table .table-row {
   display: none;
 }
 
+#app {
+  min-height: 100vh;
+}
+
 blockquote {
   quotes: "\201C" "\201D" "\2018" "\2019";
 }
