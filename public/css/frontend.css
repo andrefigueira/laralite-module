@@ -4978,9 +4978,7 @@ body {
 .portal-renderer .content {
   padding: 2rem;
   color: #FFF;
-  text-transform: uppercase;
   font-weight: normal;
-  font-family: "Oswald", sans-serif;
 }
 
 .portal-renderer .content .table {

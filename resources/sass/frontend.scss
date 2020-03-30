@@ -94,9 +94,7 @@ body {
     .content {
         padding: 2rem;
         color: #FFF;
-        text-transform: uppercase;
         font-weight: normal;
-        @include theme-font;
         .table {
             color: #FFF;
             table {
