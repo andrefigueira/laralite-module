@@ -4537,6 +4537,10 @@ div.table .table-row {
   color: #FFF;
 }
 
+.center {
+  text-align: center;
+}
+
 .v-select {
   position: relative;
   font-family: inherit;
