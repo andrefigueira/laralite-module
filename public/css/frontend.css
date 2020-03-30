@@ -4929,18 +4929,6 @@ body {
   color: #FFF !important;
 }
 
-.btn-white {
-  background: #FFF !important;
-  color: #000 !important;
-  border-radius: 0 !important;
-  border: 5px solid transparent !important;
-  transition: all ease-in-out 0.2s;
-}
-
-.btn-white:hover {
-  border: 5px solid #000 !important;
-}
-
 .footer {
   padding: 2rem;
   padding-top: 4rem;

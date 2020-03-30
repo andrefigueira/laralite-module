@@ -1,17 +1,25 @@
 <template>
     <div>
-        <ckeditor :editor="editor" :value="value.editorData" :config="editorConfig" @input="onChange"></ckeditor>
+        <editor
+            api-key="1zv9du0onoyl619egrfevih7r7p4p8vawafvqhi5hzzfutmf"
+            :value="value.editorData"
+            @input="onChange"
+            :init="config"
+        />
     </div>
 </template>
 
 <script>
-    import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-
     import { bus } from '../../app';
+    import helpers from '../../helpers'
+    import Editor from '@tinymce/tinymce-vue'
 
     export default {
         mounted() {
             console.log('Component mounted.');
+        },
+        components: {
+            Editor,
         },
         props: {
             value: {
@@ -39,18 +47,29 @@
         },
         data() {
             return {
-                editor: ClassicEditor,
                 editorData: '',
-                editorConfig: {
-                    heading: {
-                        options: [
-                            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                            { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
-                            { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
-                            { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' }
-                        ]
+                config: {
+                    height: 500,
+                    plugins: [
+                        'advlist autolink lists link image charmap print preview anchor importcss',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code help wordcount'
+                    ],
+                    menubar: 'edit view insert format tools table help',
+                    toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+                    content_css: '/css/contents.css',
+                    quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+                    contextmenu: "link image imagetools table",
+                    formats: {
+                        alignleft: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'left' },
+                        aligncenter: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'center' },
+                        alignright: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'right' },
+                        alignfull: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'full' },
+                        bold: { inline: 'span', classes: 'bold' },
+                        italic: { inline: 'span', classes: 'italic' },
+                        underline: { inline: 'span', classes: 'underline', exact: true },
+                        strikethrough: { inline: 'del' },
+                        customformat: { inline: 'span', styles: { color: '#00ff00', fontSize: '20px' }, attributes: { title: 'My custom format'} , classes: 'example1'}
                     }
                 }
             }

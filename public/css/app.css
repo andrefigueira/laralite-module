@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito);/*!
+@import url(https://fonts.googleapis.com/css?family=Nunito);@import url(https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700&display=swap);/*!
  * Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
@@ -4505,6 +4505,36 @@ div.table .table-row {
 
 .font-size-4 {
   font-size: 5rem;
+}
+
+.btn-white {
+  background: #FFF !important;
+  color: #000 !important;
+  border-radius: 0 !important;
+  border: 5px solid transparent !important;
+  transition: all ease-in-out 0.2s;
+  text-transform: uppercase;
+  font-family: "Oswald", sans-serif;
+}
+
+.btn-white:hover {
+  border: 5px solid #000 !important;
+}
+
+.grey-content {
+  color: #cac7c7 !important;
+  text-transform: uppercase;
+  font-family: "Oswald", sans-serif;
+}
+
+.uppercase-content {
+  text-transform: uppercase;
+  font-family: "Oswald", sans-serif;
+}
+
+.black-background {
+  background: #000;
+  color: #FFF;
 }
 
 .v-select {

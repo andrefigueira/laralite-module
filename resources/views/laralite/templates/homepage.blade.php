@@ -8,6 +8,7 @@
     <meta name="author" content="{{ $page->meta->author }}">
     <title>{{ $page->meta->title }}</title>
     <link href="/css/frontend.css" rel="stylesheet">
+    <link href="/css/contents.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
 </head>
@@ -19,6 +20,7 @@ background-size: cover;
 background-repeat: no-repeat;
 background-attachment: fixed;
 " v-cloak>
+    <page-loaded></page-loaded>
     <top-nav></top-nav>
 
     <portal-renderer :page="{{ $page ? $page : '{}' }}"></portal-renderer>

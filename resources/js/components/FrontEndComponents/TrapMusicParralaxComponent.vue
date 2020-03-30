@@ -32,32 +32,13 @@
                 </h3>
                 <h4 class="image-section-subtitle">- The Source</h4>
 
-                <img
-                    style="
-                position: absolute;
-                height: 50rem;
-                width: auto;
-                "
-                    src="/images/parralax-image-1.png" alt="Parralex Image 1" class="parralax-image-1">
+                <img src="/images/parralax-image-1.png" alt="Parralex Image 1" class="parralax-image-1">
 
                 <div class="spacer" style="height: 52rem"></div>
 
-                <img
-                    style="
-                position: absolute;
-                height: 70rem;
-                width: auto;
-                "
-                    src="/images/parralax-image-2.png" alt="Parralex Image 2" class="parralax-image-2">
+                <img src="/images/parralax-image-2.png" alt="Parralex Image 2" class="parralax-image-2">
 
-                <img
-                    style="
-                position: absolute;
-                margin: 20rem 0 0 0;
-                height: 50rem;
-                width: auto;
-                "
-                    src="/images/parralax-image-3.png" alt="Parralex Image 3" class="parralax-image-3">
+                <img src="/images/parralax-image-3.png" alt="Parralex Image 3" class="parralax-image-3">
 
                 <h3 class="image-section-supplemental-title">MUSEUM HOURS</h3>
                 <p class="image-section-supplemental-content">
@@ -105,9 +86,25 @@
         mounted() {
             console.log('Component mounted.');
 
-            window.onload = function () {
-                document.body.className += 'loaded';
-            }
+            $(document).ready(function () {
+                $(window).scroll(function () {
+                    let image1 = $('.parralax-image-1');
+                    let image2 = $('.parralax-image-2');
+                    let image3 = $('.parralax-image-3');
+
+                    if (image1.is(':visible')) {
+                        image1.addClass('visible');
+                    }
+
+                    if (image2.is(':visible')) {
+                        image2.addClass('visible');
+                    }
+
+                    if (image3.is(':visible')) {
+                        image3.addClass('visible');
+                    }
+                });
+            });
         },
         props: {
             sections: {}
@@ -201,30 +198,48 @@
     }
 
     .parralax-image-1 {
-        right: 0;
-        transition: all ease 1s;
+        right: -20rem;
+        transition: all ease 5s;
+        position: absolute;
+        height: 50rem;
+        width: auto;
+        opacity: 0;
+        &.visible {
+            opacity: 1;
+            right: 0;
+        }
     }
 
     .parralax-image-2 {
-        left: 0;
-        transition: all ease 1s;
+        left: -20rem;
+        transition: all ease 10s;
+        position: absolute;
+        height: 70rem;
+        width: auto;
+        opacity: 0;
+        &.visible {
+            left: 0;
+            opacity: 1;
+        }
     }
 
     .parralax-image-3 {
-        right: 0;
-        transition: all ease 1s;
+        right: -20rem;
+        transition: all ease 15s;
+        position: absolute;
+        margin: 20rem 0 0 0;
+        height: 50rem;
+        width: auto;
+        opacity: 0;
+        &.visible {
+            right: 0;
+            opacity: 1;
+        }
     }
 
     .home-main {
         margin-top: -2rem;
         opacity: 0;
         transition: all ease-in-out 1s;
-    }
-
-    .loaded {
-        .home-main {
-            margin-top: 0;
-            opacity: 1;
-        }
     }
 </style>

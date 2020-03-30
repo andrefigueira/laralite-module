@@ -76,10 +76,4 @@
             }
         }
     }
-
-    .loaded {
-        .top-nav {
-            opacity: 1;
-        }
-    }
 </style>

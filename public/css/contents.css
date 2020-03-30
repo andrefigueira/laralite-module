@@ -1,0 +1,30 @@
+@import url(https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700&display=swap);.btn-white {
+  background: #FFF !important;
+  color: #000 !important;
+  border-radius: 0 !important;
+  border: 5px solid transparent !important;
+  transition: all ease-in-out 0.2s;
+  text-transform: uppercase;
+  font-family: "Oswald", sans-serif;
+}
+
+.btn-white:hover {
+  border: 5px solid #000 !important;
+}
+
+.grey-content {
+  color: #cac7c7 !important;
+  text-transform: uppercase;
+  font-family: "Oswald", sans-serif;
+}
+
+.uppercase-content {
+  text-transform: uppercase;
+  font-family: "Oswald", sans-serif;
+}
+
+.black-background {
+  background: #000;
+  color: #FFF;
+}
+
