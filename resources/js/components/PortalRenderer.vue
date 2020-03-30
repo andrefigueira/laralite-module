@@ -39,6 +39,6 @@
 
 <style lang="scss">
     .portal-renderer {
-        overflow-x: hidden;
+        /*overflow-x: hidden;*/
     }
 </style>

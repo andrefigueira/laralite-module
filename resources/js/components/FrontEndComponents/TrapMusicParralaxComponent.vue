@@ -23,7 +23,7 @@
             </div><!-- End col -->
         </div><!-- End row -->
 
-        <div class="spacer" style="height: 30rem"></div>
+        <div class="spacer" style="height: 3rem"></div>
 
         <div class="row">
             <div class="col-md-12 image-section image-section-1">
