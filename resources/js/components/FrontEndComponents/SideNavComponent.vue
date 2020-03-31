@@ -5,7 +5,7 @@
             <ul class="side-nav-menu" :class="(showNav ? 'show' : '')">
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About</a></li>
-                <li><a href="https://tickets.trapmusicmuseum.com">Tickets</a></li>
+                <li><a href="https://trapmusicmuseum.us/tickets">Tickets</a></li>
                 <li><a href="/groups">Groups</a></li>
                 <li><a href="/sip-and-trap">Sip &amp; Trap</a></li>
                 <li><a href="/faq">FAQ</a></li>
