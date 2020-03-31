@@ -70,7 +70,9 @@
                         underline: { inline: 'span', classes: 'underline', exact: true },
                         strikethrough: { inline: 'del' },
                         customformat: { inline: 'span', styles: { color: '#00ff00', fontSize: '20px' }, attributes: { title: 'My custom format'} , classes: 'example1'}
-                    }
+                    },
+                    font_formats: 'Oswold=Oswald,san-serif;ProximaNova=Lato,san-serif;Arial=arial,helvetica,sans-serif;',
+                    fontsize_formats: '11px 12px 14px 16px 18px 24px 36px 48px'
                 }
             }
         }
