@@ -5,7 +5,7 @@
                 <div class="row mb-4">
                     <div class="col-md-4 offset-4">
                         <div class="list-group" :class="[forms.selected ? 'forms-selected': '']">
-                            <a href="#" @click="selectForm('general')" class="list-group-item list-group-item-action">General Enquires <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
+                            <a href="#" @click="selectForm('general')" class="list-group-item list-group-item-action">General Inquiries <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
                             <a href="#" @click="selectForm('refunds')" class="list-group-item list-group-item-action">Refunds <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
                         </div>
 
@@ -27,7 +27,7 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="inquiry-type">Type of Inquiry</label>
+                                <label for="inquiry-type">Select Type of Inquiry</label>
                                 <select id="inquiry-type" class="form-control">
                                     <option selected="selected">Press / Media</option>
                                     <option>Private Group Events</option>
