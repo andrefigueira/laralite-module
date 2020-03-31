@@ -11,13 +11,13 @@
                 </ul>
             </div>
             <div class="col-md-3">
-                <img class="footer-logo" src="/images/trap-music-museum-logo.png" alt="">
+                <a class="footer-link" href="https://trapmusicmuseum.us/tickets"><img class="footer-logo" src="/images/trap-music-museum-logo.png" alt=""></a>
             </div>
             <div class="col-md-3">
-                <img class="footer-logo" src="/images/sip-and-trap-logo.png" alt="">
+                <a class="footer-link" href="https://trappyhour.resova.us/"><img class="footer-logo" src="/images/sip-and-trap-logo.png" alt=""></a>
             </div>
             <div class="col-md-3">
-                <img class="footer-logo" src="/images/escape-trap-logo.png" alt="">
+                <a class="footer-link" href="https://escapethetrap.resova.us/"><img class="footer-logo" src="/images/escape-trap-logo.png" alt=""></a>
             </div>
         </div>
     </footer>
@@ -51,5 +51,9 @@
         .footer-logo {
             max-height: 10rem;
         }
+    }
+
+    .footer-link {
+        cursor: pointer;
     }
 </style>
