@@ -4,8 +4,8 @@
             <ul class="top-nav-menu">
                 <li><a href="/">Home</a></li>
                 <li><a href="/hours">Hours</a></li>
-                <li><a href="https://tickets.trapmusicmuseum.com">Tickets</a></li>
-                <li><a href="/escape-room">Escape Room</a></li>
+                <li><a href="https://trapmusicmuseum.com/tickets">Tickets</a></li>
+                <li><a href="https://escapethetrap.resova.us/">Escape Room</a></li>
                 <li><a href="/waiver">Waiver</a></li>
             </ul>
         </div><!-- End side nav -->
