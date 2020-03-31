@@ -26,8 +26,62 @@
                             <input id="email" type="email" class="form-control mb-4" placeholder="Enter a valid email address...">
                         </div>
                         <div class="col-md-12">
-                            <label for="message">Message</label>
-                            <textarea id="message" class="form-control mb-4" placeholder="Enter your message..."></textarea>
+                            <div class="form-group">
+                                <label for="inquiry-type">Type of Inquiry</label>
+                                <select id="inquiry-type" class="form-control">
+                                    <option selected="selected">Press / Media</option>
+                                    <option>Private Group Events</option>
+                                    <option>Sponsorships</option>
+                                    <option>Customer Service & General Information</option>
+                                </select>
+                            </div>
+
+                            <label for="description">Description</label>
+                            <textarea id="description" class="form-control mb-4" placeholder="Enter your message..."></textarea>
+
+                            <button class="btn btn-white">Send Enquiry</button>
+                        </div>
+                    </div>
+                </form>
+
+                <form action="" v-show="forms.selected === 'refunds'" class="contact-form" :class="[forms.selected === 'refunds' ? 'form-selected': '']">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="refund-name">Full Name</label>
+                            <input id="refund-name" type="text" class="form-control mb-4" placeholder="Enter your name...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="refund-email">Email Address</label>
+                            <input id="refund-email" type="email" class="form-control mb-4" placeholder="Enter a valid email address...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="refund-phone">Phone Number</label>
+                            <input id="refund-phone" type="tel" class="form-control mb-4" placeholder="Enter your telephone number...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="confirmation-number">Confirmation Number</label>
+                            <input id="confirmation-number" type="text" class="form-control mb-4" placeholder="Enter your confirmation number...">
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="refund-product-purchased">Product Purchased</label>
+                                <select id="refund-product-purchased" class="form-control">
+                                    <option selected="selected">Trap Music Museum Ticket</option>
+                                    <option>Escape room reservation</option>
+                                    <option>Sip & Trap Happy Hour</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="option-selected">What would you like to do?</label>
+                                <select id="option-selected" class="form-control">
+                                    <option selected="selected">Priority Postpone</option>
+                                    <option>Refund</option>
+                                </select>
+                            </div>
+
+                            <label for="refund-description">Description</label>
+                            <textarea id="refund-description" class="form-control mb-4" placeholder="Enter your message..."></textarea>
 
                             <button class="btn btn-white">Send Enquiry</button>
                         </div>
