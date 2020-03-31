@@ -7,7 +7,6 @@
                         <div class="list-group" :class="[forms.selected ? 'forms-selected': '']">
                             <a href="#" @click="selectForm('general')" class="list-group-item list-group-item-action">General Enquires <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
                             <a href="#" @click="selectForm('refunds')" class="list-group-item list-group-item-action">Refunds <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
-                            <a href="#" @click="selectForm('media')" class="list-group-item list-group-item-action">Media <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
                         </div>
 
                         <div class="list-group mb-3" :class="[forms.selected ? '': 'forms-selected']">
@@ -95,16 +94,19 @@
             height: 0;
         }
         .list-group-item {
+            background: #310A0A;
+            color: #FFF;
+            border: 3px solid #310A0A;
             &.active {
-                background: #310A0A;
+                background: none;
                 border-color: #310A0A;
             }
             &.active:hover {
-                background: #310A0A;
+                background: none;
                 border-color: #310A0A;
             }
             &:hover {
-                background: #491111;
+                background: none;
                 border-color: #310A0A;
                 color: #FFF;
             }
