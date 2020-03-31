@@ -4,7 +4,7 @@
             <ul class="top-nav-menu">
                 <li><a href="/">Home</a></li>
                 <li><a href="/hours">Hours</a></li>
-                <li><a href="https://trapmusicmuseum.com/tickets">Tickets</a></li>
+                <li><a href="https://trapmusicmuseum.us/tickets">Tickets</a></li>
                 <li><a href="https://escapethetrap.resova.us/">Escape Room</a></li>
                 <li><a href="/waiver">Waiver</a></li>
             </ul>

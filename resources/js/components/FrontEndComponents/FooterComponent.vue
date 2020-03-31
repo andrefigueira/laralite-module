@@ -1,12 +1,25 @@
 <template>
     <footer class="footer">
-        <ul>
-            <li><a href="/contact">Contact us</a></li>
-            <li><a href="/faq">Frequently Asked Questions</a></li>
-            <li><a href="https://tickets.trapmusicmuseum.com">Tickets</a></li>
-            <li><a href="/hours">Hours</a></li>
-            <li><a href="/">Home</a></li>
-        </ul>
+        <div class="row">
+            <div class="col-md-3">
+                <ul>
+                    <li><a href="/contact">Contact us</a></li>
+                    <li><a href="/faq">Frequently Asked Questions</a></li>
+                    <li><a href="https://trapmusicmuseum.us/tickets">Tickets</a></li>
+                    <li><a href="/hours">Hours</a></li>
+                    <li><a href="/">Home</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <img class="footer-logo" src="/images/trap-music-museum-logo.png" alt="">
+            </div>
+            <div class="col-md-3">
+                <img class="footer-logo" src="/images/sip-and-trap-logo.png" alt="">
+            </div>
+            <div class="col-md-3">
+                <img class="footer-logo" src="/images/escape-trap-logo.png" alt="">
+            </div>
+        </div>
     </footer>
 </template>
 
@@ -31,5 +44,12 @@
 </script>
 
 <style lang="scss">
-
+    .footer {
+        ul {
+            display: block;
+        }
+        .footer-logo {
+            max-height: 10rem;
+        }
+    }
 </style>
