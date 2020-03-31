@@ -16,8 +16,8 @@
 
                 <div class="row mb-5">
                     <div class="col-md-2 offset-5">
-                        <a href="" class="btn btn-secondary call-to-action">Purchase tickets <i class="fas fa-chevron-right"></i></a>
-                        <a href="" class="btn btn-secondary call-to-action">Escape room <i class="fas fa-chevron-right"></i></a>
+                        <a href="https://trapmusicmuseum.us/tickets" class="btn btn-secondary call-to-action">Purchase tickets <i class="fas fa-chevron-right"></i></a>
+                        <a href="https://escapethetrap.resova.us/" class="btn btn-secondary call-to-action">Escape room <i class="fas fa-chevron-right"></i></a>
                     </div><!-- End col -->
                 </div><!-- End row -->
             </div><!-- End col -->
