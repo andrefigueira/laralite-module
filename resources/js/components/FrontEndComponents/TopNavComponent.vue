@@ -2,11 +2,36 @@
     <div class="nav-wrapper">
         <div class="top-nav">
             <ul class="top-nav-menu">
-                <li><a href="/">Home</a></li>
-                <li><a href="/hours">Hours</a></li>
-                <li><a href="https://trapmusicmuseum.us/tickets">Tickets</a></li>
-                <li><a href="https://escapethetrap.resova.us/">Escape Room</a></li>
-                <li><a href="/waiver">Waiver</a></li>
+                <li>
+                    <a href="/">
+                        <i class="fas fa-home d-xl-none d-md-none"></i>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/hours">
+                        <i class="fas fa-clock d-xl-none d-md-none"></i>
+                        Hours
+                    </a>
+                </li>
+                <li>
+                    <a href="https://trapmusicmuseum.us/tickets">
+                        <i class="fas fa-ticket-alt d-xl-none d-md-none"></i>
+                        Tickets
+                    </a>
+                </li>
+                <li>
+                    <a href="https://escapethetrap.resova.us/">
+                        <i class="fas fa-door-open d-xl-none d-md-none"></i>
+                        Escape Room
+                    </a>
+                </li>
+                <li>
+                    <a href="/waiver">
+                        <i class="fas fa-file-alt d-xl-none d-md-none"></i>
+                        Waiver
+                    </a>
+                </li>
             </ul>
         </div><!-- End side nav -->
     </div>
@@ -69,6 +94,10 @@
                     text-transform: uppercase;
                     transition: all 0.2s ease-in-out;
                     font-size: 1.5rem;
+                    .fas {
+                        display: block;
+                        font-size: 2rem;
+                    }
                     &:hover {
                         color: $yellow-color;
                     }

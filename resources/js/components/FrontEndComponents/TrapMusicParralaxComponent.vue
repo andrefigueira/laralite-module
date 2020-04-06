@@ -3,19 +3,19 @@
         <div class="row home-main">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-lg-4 col-sm-12">
                         <a href="#" class="logo-link text-right">630 Travis ST</a>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-lg-4 col-sm-12">
                         <img class="logo" src="/images/trap-music-museum-logo.png" alt="">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-lg-4 col-sm-12">
                         <a href="#" class="logo-link text-left">Atlanta, GA</a>
                     </div>
                 </div>
 
                 <div class="row mb-5">
-                    <div class="col-md-2 offset-5">
+                    <div class="col-lg-2 offset-lg-5 col-md-6 offset-md-3">
                         <a href="https://trapmusicmuseum.us/tickets" class="btn btn-secondary call-to-action">Purchase tickets <i class="fas fa-chevron-right"></i></a>
                         <a href="https://escapethetrap.resova.us/" class="btn btn-secondary call-to-action">Escape room <i class="fas fa-chevron-right"></i></a>
                     </div><!-- End col -->
@@ -32,13 +32,13 @@
                 </h3>
                 <h4 class="image-section-subtitle">- The Source</h4>
 
-                <img src="/images/parralax-image-1.png" alt="Parralex Image 1" class="parralax-image-1">
+                <img src="/images/parralax-image-1.png" alt="Parralex Image 1" class="parralax-image parralax-image-1">
 
                 <div class="spacer" style="height: 52rem"></div>
 
-                <img src="/images/parralax-image-2.png" alt="Parralex Image 2" class="parralax-image-2">
+                <img src="/images/parralax-image-2.png" alt="Parralex Image 2" class="parralax-image parralax-image-2">
 
-                <img src="/images/parralax-image-3.png" alt="Parralex Image 3" class="parralax-image-3">
+                <img src="/images/parralax-image-3.png" alt="Parralex Image 3" class="parralax-image parralax-image-3">
 
                 <h3 class="image-section-supplemental-title">MUSEUM HOURS</h3>
                 <p class="image-section-supplemental-content">

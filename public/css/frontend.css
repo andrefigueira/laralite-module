@@ -4894,6 +4894,7 @@ div.table .table-row {
 
 #app {
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 blockquote {
@@ -5003,5 +5004,352 @@ h2 strong {
   color: #000;
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 568px) {
+  .nav-wrapper {
+    overflow: hidden;
+  }
+
+  .nav-wrapper .top-nav .top-nav-menu {
+    position: absolute !important;
+  }
+
+  .nav-wrapper .top-nav .top-nav-menu li a {
+    font-size: 1rem !important;
+    padding: 1rem 0.8rem !important;
+  }
+
+  .logo-link.text-right {
+    text-align: center !important;
+    padding-top: 4rem !important;
+  }
+
+  .logo {
+    margin: 3rem auto !important;
+  }
+
+  .logo-link.text-left {
+    text-align: center !important;
+    padding-top: 0rem !important;
+    margin-bottom: 4rem !important;
+  }
+
+  .footer {
+    padding-top: 1rem !important;
+    margin-bottom: 2rem;
+  }
+
+  .footer ul li a {
+    text-align: center !important;
+  }
+
+  .footer ul li a:hover {
+    padding-left: 0;
+  }
+
+  .footer .footer-link {
+    display: block;
+    text-align: center !important;
+    margin-top: 2rem;
+  }
+
+  .call-to-action {
+    display: block !important;
+    width: 80% !important;
+    margin: 0 auto 0.5rem auto !important;
+  }
+
+  .call-to-action-text {
+    padding: 2rem;
+  }
+
+  .spacer {
+    display: none;
+  }
+
+  .parralax-image {
+    display: none;
+  }
+
+  .image-section-title {
+    margin-top: 5rem;
+  }
+
+  .image-section-supplemental-title {
+    margin-top: 5rem;
+  }
+
+  .btn-white {
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 1.3rem !important;
+  }
+
+  h2 {
+    font-size: 1.1rem !important;
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 1rem !important;
+    font-weight: bold !important;
+  }
+
+  .subheader {
+    font-size: 1rem !important;
+    font-weight: bold !important;
+  }
+
+  .logo-link.text-right {
+    padding-top: 2rem !important;
+  }
+
+  .logo {
+    padding: 2rem;
+    margin: 1rem auto !important;
+  }
+
+  .highlight-text {
+    font-size: 4rem !important;
+  }
+
+  .nav-wrapper .top-nav .top-nav-menu li a {
+    font-size: 0.4rem !important;
+  }
+
+  .image-section-title {
+    font-size: 2rem !important;
+  }
+
+  .call-to-action-text {
+    line-height: 2rem !important;
+    font-size: 1.2rem !important;
+  }
+}
+
+@media only screen and (min-device-width: 414px) and (max-device-width: 736px) {
+  .nav-wrapper {
+    overflow: hidden;
+  }
+
+  .nav-wrapper .top-nav .top-nav-menu {
+    position: absolute !important;
+  }
+
+  .nav-wrapper .top-nav .top-nav-menu li a {
+    font-size: 1rem !important;
+    padding: 1rem 0.8rem !important;
+  }
+
+  .logo-link.text-right {
+    text-align: center !important;
+    padding-top: 4rem !important;
+  }
+
+  .logo {
+    margin: 3rem auto !important;
+  }
+
+  .logo-link.text-left {
+    text-align: center !important;
+    padding-top: 0rem !important;
+    margin-bottom: 4rem !important;
+  }
+
+  .footer {
+    padding-top: 1rem !important;
+    margin-bottom: 2rem;
+  }
+
+  .footer ul li a {
+    text-align: center !important;
+  }
+
+  .footer ul li a:hover {
+    padding-left: 0;
+  }
+
+  .footer .footer-link {
+    display: block;
+    text-align: center !important;
+    margin-top: 2rem;
+  }
+
+  .call-to-action {
+    display: block !important;
+    width: 80% !important;
+    margin: 0 auto 0.5rem auto !important;
+  }
+
+  .call-to-action-text {
+    padding: 2rem;
+  }
+
+  .spacer {
+    display: none;
+  }
+
+  .parralax-image {
+    display: none;
+  }
+
+  .image-section-title {
+    margin-top: 5rem;
+  }
+
+  .image-section-supplemental-title {
+    margin-top: 5rem;
+  }
+
+  .btn-white {
+    width: 100%;
+  }
+
+  .logo-link.text-right {
+    padding-top: 4rem !important;
+  }
+}
+
+@media only screen and (min-device-width: 375px) and (max-device-width: 812px) and (-webkit-device-pixel-ratio: 3) {
+  .nav-wrapper {
+    overflow: hidden;
+  }
+
+  .nav-wrapper .top-nav .top-nav-menu {
+    position: absolute !important;
+  }
+
+  .nav-wrapper .top-nav .top-nav-menu li a {
+    font-size: 1rem !important;
+    padding: 1rem 0.8rem !important;
+  }
+
+  .logo-link.text-right {
+    text-align: center !important;
+    padding-top: 4rem !important;
+  }
+
+  .logo {
+    margin: 3rem auto !important;
+  }
+
+  .logo-link.text-left {
+    text-align: center !important;
+    padding-top: 0rem !important;
+    margin-bottom: 4rem !important;
+  }
+
+  .footer {
+    padding-top: 1rem !important;
+    margin-bottom: 2rem;
+  }
+
+  .footer ul li a {
+    text-align: center !important;
+  }
+
+  .footer ul li a:hover {
+    padding-left: 0;
+  }
+
+  .footer .footer-link {
+    display: block;
+    text-align: center !important;
+    margin-top: 2rem;
+  }
+
+  .call-to-action {
+    display: block !important;
+    width: 80% !important;
+    margin: 0 auto 0.5rem auto !important;
+  }
+
+  .call-to-action-text {
+    padding: 2rem;
+  }
+
+  .spacer {
+    display: none;
+  }
+
+  .parralax-image {
+    display: none;
+  }
+
+  .image-section-title {
+    margin-top: 5rem;
+  }
+
+  .image-section-supplemental-title {
+    margin-top: 5rem;
+  }
+
+  .btn-white {
+    width: 100%;
+  }
+
+  .nav-wrapper .top-nav .top-nav-menu li a {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .logo-link.text-right {
+    text-align: center !important;
+    padding-top: 4rem !important;
+  }
+
+  .logo {
+    margin: 3rem auto !important;
+  }
+
+  .logo-link.text-left {
+    text-align: center !important;
+    padding-top: 0rem !important;
+    margin-bottom: 4rem !important;
+  }
+
+  .footer {
+    padding-top: 1rem !important;
+    margin-bottom: 2rem;
+  }
+
+  .footer ul li a {
+    text-align: center !important;
+  }
+
+  .footer ul li a:hover {
+    padding-left: 0;
+  }
+
+  .footer .footer-link {
+    display: block;
+    text-align: center !important;
+    margin-top: 2rem;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
+  .home-main {
+    margin-top: 6rem !important;
+  }
+
+  .logo-link.text-right {
+    text-align: center !important;
+    padding-top: 4rem !important;
+  }
+
+  .logo {
+    margin: 3rem auto !important;
+  }
+
+  .logo-link.text-left {
+    text-align: center !important;
+    padding-top: 4rem !important;
+    margin-bottom: 4rem !important;
+  }
 }
 

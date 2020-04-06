@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="row mb-4">
-                    <div class="col-md-4 offset-4">
+                    <div class="col-md-4 offset-md-4 col-sm-12">
                         <div class="list-group" :class="[forms.selected ? 'forms-selected': '']">
                             <a href="#" @click="selectForm('general')" class="list-group-item list-group-item-action">General Inquiries <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>
                             <a href="#" @click="selectForm('refunds')" class="list-group-item list-group-item-action">Refunds <i class="mt-1 float-right fas fa-arrow-circle-right"></i></a>

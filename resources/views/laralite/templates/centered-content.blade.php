@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato:300i,400,400i,700,700i,900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="/images/trap-music-museum-logo.png"/>
 </head>
 
 <body>
@@ -26,7 +27,7 @@ background-attachment: fixed;
         <top-nav></top-nav>
 
         <div class="row">
-            <div class="col-md-8 offset-2">
+            <div class="col-lg-8 offset-lg-2">
                 <portal-renderer :page="{{ $page ? $page : '{}' }}"></portal-renderer>
             </div><!-- End col -->
         </div><!-- End row -->

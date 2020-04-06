@@ -11,6 +11,7 @@
     <link href="/css/contents.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="/images/trap-music-museum-logo.png"/>
 </head>
 
 <body>
