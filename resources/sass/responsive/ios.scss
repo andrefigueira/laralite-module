@@ -63,12 +63,41 @@
         display: none;
     }
 
-    .parralax-image {
+    .parralax-image-1 {
+        position: relative!important;
+        height: 21rem!important;
+    }
+
+    .parralax-image-2 {
         display: none;
     }
 
+    .parralax-image-3 {
+        display: none;
+    }
+
+    .parralax-image-2-mobile {
+        display: block!important;
+        position: relative!important;
+        height: 27rem!important;
+        left: -35rem;
+        transition: all 5s ease-in-out;
+        &.visible {
+            left: -2rem;
+        }
+    }
+
+    .parralax-image-3-mobile {
+        display: block!important;
+        position: relative!important;
+        height: 21rem!important;
+        &.visible {
+
+        }
+    }
+
     .image-section-title {
-        margin-top: 5rem;
+        margin-top: 2rem;
     }
 
     .image-section-supplemental-title {

@@ -4965,15 +4965,15 @@ body {
 .merchandise-banner {
   display: block;
   width: 100%;
-  margin: 5rem auto;
+  margin: 3rem auto;
 }
 
 .call-to-action-text {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   text-align: center;
   color: #FFF;
   font-style: italic;
-  line-height: 3rem;
+  line-height: 2rem;
 }
 
 .portal-renderer .content {
@@ -5068,12 +5068,39 @@ h2 strong {
     display: none;
   }
 
-  .parralax-image {
+  .parralax-image-1 {
+    position: relative !important;
+    height: 21rem !important;
+  }
+
+  .parralax-image-2 {
     display: none;
   }
 
+  .parralax-image-3 {
+    display: none;
+  }
+
+  .parralax-image-2-mobile {
+    display: block !important;
+    position: relative !important;
+    height: 27rem !important;
+    left: -35rem;
+    transition: all 5s ease-in-out;
+  }
+
+  .parralax-image-2-mobile.visible {
+    left: -2rem;
+  }
+
+  .parralax-image-3-mobile {
+    display: block !important;
+    position: relative !important;
+    height: 21rem !important;
+  }
+
   .image-section-title {
-    margin-top: 5rem;
+    margin-top: 2rem;
   }
 
   .image-section-supplemental-title {
@@ -5192,12 +5219,39 @@ h2 strong {
     display: none;
   }
 
-  .parralax-image {
+  .parralax-image-1 {
+    position: relative !important;
+    height: 21rem !important;
+  }
+
+  .parralax-image-2 {
     display: none;
   }
 
+  .parralax-image-3 {
+    display: none;
+  }
+
+  .parralax-image-2-mobile {
+    display: block !important;
+    position: relative !important;
+    height: 27rem !important;
+    left: -35rem;
+    transition: all 5s ease-in-out;
+  }
+
+  .parralax-image-2-mobile.visible {
+    left: -2rem;
+  }
+
+  .parralax-image-3-mobile {
+    display: block !important;
+    position: relative !important;
+    height: 21rem !important;
+  }
+
   .image-section-title {
-    margin-top: 5rem;
+    margin-top: 2rem;
   }
 
   .image-section-supplemental-title {
@@ -5275,12 +5329,39 @@ h2 strong {
     display: none;
   }
 
-  .parralax-image {
+  .parralax-image-1 {
+    position: relative !important;
+    height: 21rem !important;
+  }
+
+  .parralax-image-2 {
     display: none;
   }
 
+  .parralax-image-3 {
+    display: none;
+  }
+
+  .parralax-image-2-mobile {
+    display: block !important;
+    position: relative !important;
+    height: 27rem !important;
+    left: -35rem;
+    transition: all 5s ease-in-out;
+  }
+
+  .parralax-image-2-mobile.visible {
+    left: -2rem;
+  }
+
+  .parralax-image-3-mobile {
+    display: block !important;
+    position: relative !important;
+    height: 21rem !important;
+  }
+
   .image-section-title {
-    margin-top: 5rem;
+    margin-top: 2rem;
   }
 
   .image-section-supplemental-title {

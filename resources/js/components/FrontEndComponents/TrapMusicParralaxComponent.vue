@@ -48,6 +48,8 @@
                     Sunday 2pm -10pm<br>
                     <a href="/" class="btn btn-white">More Information <i class="fas fa-chevron-right"></i></a>
                 </p>
+
+                <img src="/images/parralax-image-2.png" alt="Parralex Image 2" class="parralax-image parralax-image-2-mobile">
             </div><!-- End col -->
         </div><!-- End row -->
 
@@ -91,6 +93,8 @@
                     let image1 = $('.parralax-image-1');
                     let image2 = $('.parralax-image-2');
                     let image3 = $('.parralax-image-3');
+                    let image4 = $('.parralax-image-2-mobile');
+                    let image5 = $('.parralax-image-3-mobile');
 
                     if (image1.is(':visible')) {
                         image1.addClass('visible');
@@ -102,6 +106,14 @@
 
                     if (image3.is(':visible')) {
                         image3.addClass('visible');
+                    }
+
+                    if (image4.is(':visible')) {
+                        image4.addClass('visible');
+                    }
+
+                    if (image5.is(':visible')) {
+                        image5.addClass('visible');
                     }
                 });
             });
@@ -166,6 +178,8 @@
             color: #FFF;
             text-transform: uppercase;
             text-align: left;
+            font-size: 2rem;
+            font-weight: normal;
             .highlight-text {
                 display: block;
                 font-size: 5rem;
@@ -194,6 +208,9 @@
             text-align: right;
             font-size: 2rem;
             @include theme-font;
+            .btn {
+                margin-top: 2rem;
+            }
         }
     }
 
@@ -235,6 +252,14 @@
             right: 0;
             opacity: 1;
         }
+    }
+
+    .parralax-image-2-mobile {
+        display: none;
+    }
+
+    .parralax-image-3-mobile {
+        display: none;
     }
 
     .home-main {
