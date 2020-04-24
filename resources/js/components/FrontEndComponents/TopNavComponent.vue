@@ -9,13 +9,19 @@
                     </a>
                 </li>
                 <li>
+                    <a href="/about">
+                        <i class="fas fa-clock d-xl-none d-md-none"></i>
+                        About
+                    </a>
+                </li>
+                <li>
                     <a href="/hours">
                         <i class="fas fa-clock d-xl-none d-md-none"></i>
                         Hours
                     </a>
                 </li>
                 <li>
-                    <a href="https://trapmusicmuseum.us/tickets">
+                    <a href="/covid-19">
                         <i class="fas fa-ticket-alt d-xl-none d-md-none"></i>
                         Tickets
                     </a>
