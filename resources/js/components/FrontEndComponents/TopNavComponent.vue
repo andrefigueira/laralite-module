@@ -9,12 +9,6 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/about">
-                        <i class="fas fa-clock d-xl-none d-md-none"></i>
-                        About
-                    </a>
-                </li>
-                <li>
                     <a href="/hours">
                         <i class="fas fa-clock d-xl-none d-md-none"></i>
                         Hours
