@@ -39,7 +39,9 @@
                             <label for="description">Description</label>
                             <textarea id="description" class="form-control mb-4" placeholder="Enter your message..."></textarea>
 
-                            <button class="btn btn-white">Send Enquiry</button>
+                            <div class="g-recaptcha" data-sitekey="6LeT5O4UAAAAAC8_xUHloCuGms61O7XLKFEI-NgK" data-callback="enableBtn"></div>
+
+                            <button class="btn btn-white" @click.prevent="submitContactForm()" disabled>Send Enquiry</button>
                         </div>
                     </div>
                 </form>
@@ -83,7 +85,9 @@
                             <label for="refund-description">Description</label>
                             <textarea id="refund-description" class="form-control mb-4" placeholder="Enter your message..."></textarea>
 
-                            <button class="btn btn-white">Send Enquiry</button>
+                            <div class="g-recaptcha" data-sitekey="6LeT5O4UAAAAAC8_xUHloCuGms61O7XLKFEI-NgK" data-callback="enableBtn"></div>
+
+                            <button class="btn btn-white" @click.preve="submitRefundForm()" disabled>Send Enquiry</button>
                         </div>
                     </div>
                 </form>
@@ -120,6 +124,15 @@
         methods: {
             selectForm(name) {
                 this.forms.selected = name;
+            },
+            enableBtn() {
+                document.getElementById("contact-button").disabled = false;
+            },
+            submitContactForm() {
+                debugger;
+            },
+            submitRefundForm() {
+
             }
         }
     }

@@ -40,6 +40,6 @@ background-attachment: fixed;
 
     gtag('config', 'UA-164486427-1');
 </script>
-
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>
