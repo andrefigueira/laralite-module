@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+@import "~@fortawesome/fontawesome-free/css/all.css";
+@import "~vue-select/src/scss/vue-select";
+
+$theme-border-color: rgba(0, 40, 100, 0.12);
+$theme-background-color: #f5f7fb;
+
+@mixin theme-box-style() {
+    background: #FFF;
+    border: 1px solid $theme-border-color;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 0.2rem;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    background: #f5f7fb!important;
+    font-size: .875rem;
+}
+
+.sticky-top-correction {
+    padding-top: 32px;
+}
+
+ul.errors {
+    display: block;
+    padding: 0 0 0 1rem;
+    margin: 0;
+}
+
+.content-sidebar {
+    border: 1px solid #D9D9D9;
+    padding: 1rem;
+    border-radius: 2px;
+    margin-top: -0.55rem;
+}
+
+.admin-title-section {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    @include theme-box-style;
+    .admin-title {
+        font-size: 1.2rem;
+        padding: 0;
+        margin: 0.2rem 0 0 0;
+    }
+}
+
+.sidebar {
+    position: relative;
+    margin-top: 1.5rem!important;
+    @include theme-box-style;
+    .nav-item {
+        .nav-link {
+            font-size: 0.9rem;
+            color: #555;
+            .fas {
+                margin-right: .3rem;
+                width: 1.3rem;
+                color: #999;
+            }
+            &:hover {
+                background: #E9E9E9;
+            }
+            &.active {
+                background: #E9E9E9;
+            }
+        }
+    }
+}
+
+.sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+    .sidebar-sticky {
+        position: -webkit-sticky;
+        position: sticky;
+    }
+}
+
+.sidebar-heading {
+    font-size: .75rem;
+    text-transform: uppercase;
+}
+
+/*
+ * Content
+ */
+
+[role="main"] {
+    padding-top: 133px; /* Space for fixed navbar */
+}
+
+@media (min-width: 768px) {
+    [role="main"] {
+        padding-top: 48px; /* Space for fixed navbar */
+    }
+}
+
+/*
+ * Navbar
+ */
+
+.navbar {
+    background: #FFF;
+    .navbar-brand {
+        padding: 0.5rem 1rem!important;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #333!important;
+        .version-tag {
+            color: #777;
+            font-size: 0.7rem;
+            font-weight: normal;
+        }
+    }
+    .navbar-nav {
+        .nav-item {
+            .nav-link {
+                color: #333!important;
+            }
+        }
+    }
+    border: 1px solid $theme-border-color;
+    .form-control {
+        padding: .75rem 1rem;
+        border-width: 0;
+        border-radius: 0;
+    }
+}
+
+.form-control {
+    border: 1px solid rgba(0, 40, 100, 0.12);
+}
+
+.form-control-dark {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .1);
+    border-color: rgba(255, 255, 255, .1);
+    &:focus {
+        border-color: transparent;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+    }
+}
+
+div.table {
+    padding: 1rem;
+    .table-header {
+        font-weight: bold;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #DDD;
+    }
+    .table-row {
+        padding-top: .7rem;
+        padding-bottom: .3rem;
+        border-bottom: 1px solid #CCC;
+        a {
+            //color: #333!important;
+        }
+    }
+}
+
+.page-section {
+    @include theme-box-style;
+}
+
+.draggable-list-group div:empty {
+    background: #FFF;
+    border: 4px dashed #D9D9D9;
+    border-radius: 4px;
+    padding: 4rem;
+}
+
+.alert {
+    border: none!important;
+    box-shadow: none!important;
+    font-size: 0.8rem;
+    .progress {
+        margin-top: 1rem;
+    }
+}
+
+.pagination-hr {
+    margin-top: -1rem;
+}
+
+ul.nav-pills {
+    .nav-link {
+        color: #333;
+        &:hover {
+            color: #666;
+        }
+        &:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        &.active {
+            &:hover {
+                background: #666;
+            }
+            background: #333;
+            color: #FFF;
+        }
+    }
+}
+
+ul.pagination {
+    font-size: 0.9rem;
+    li.page-item {
+        &.active {
+            a.page-link {
+                color: #FFF;
+                background: #333;
+                border-color: #333;
+            }
+        }
+        a.page-link {
+            color: #333;
+            &:hover {
+                color: #FFF;
+                border-color: #444;
+                background: #444;
+            }
+            &:focus {
+                outline: none;
+                box-shadow: none;
+            }
+        }
+    }
+}
