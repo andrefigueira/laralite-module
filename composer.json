@@ -31,7 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Modules\\Laralite": "src"
+            "Modules\\Laralite\\": "src"
         }
     },
     "autoload-dev": {
