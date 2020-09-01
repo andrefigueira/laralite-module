@@ -4,7 +4,8 @@
     "description": "The Laralite CMS module.",
     "license": "MIT",
     "require": {
-        "php": "^7.2"
+        "php": "^7.2",
+        "joshbrw/laravel-module-installer": "^0.1.4"
     },
     "autoload": {
         "psr-4": {
