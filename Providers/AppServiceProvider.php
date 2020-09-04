@@ -30,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
         $this->commands([
             \Modules\Laralite\Console\ReportDeploy::class,
             \Modules\Laralite\Console\RefreshComponents::class,
+            \Modules\Laralite\Console\RefreshTemplates::class,
+            \Modules\Laralite\Console\CreateUser::class,
         ]);
     }
 }

@@ -2,8 +2,8 @@
     <!-- Fixed navbar -->
     <nav class="navbar navbar-expand-md fixed-top p-0">
         <a class="navbar-brand" href="/admin/">
-            CradleMoney CMS
-            <span class="version-tag">v1.0.0-beta</span>
+            {{ env('APP_NAME') }} CMS
+            <span class="version-tag">v{{ env('APP_VERSION') }}</span>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

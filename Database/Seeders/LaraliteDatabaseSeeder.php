@@ -16,7 +16,6 @@ class LaraliteDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        $this->call(ComponentsSeeder::class);
         // $this->call("OthersTableSeeder");
     }
 }

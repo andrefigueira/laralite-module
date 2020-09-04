@@ -17,7 +17,7 @@ class CreateComponentsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('slug');
-            $table->json('properties');
+            $table->json('properties')->nullable();
             $table->timestamps();
         });
     }

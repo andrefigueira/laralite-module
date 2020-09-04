@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Login</title>
-    <link href="/css/login.css" rel="stylesheet">
+    <link href="/css/admin.css" rel="stylesheet">
 </head>
 
 <body class="bg-light">
@@ -14,6 +14,6 @@
     @yield('content')
 </div><!-- End app -->
 
-<script src="/js/app.js"></script>
+<script src="/js/admin.js"></script>
 </body>
 </html>

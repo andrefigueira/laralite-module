@@ -41,7 +41,7 @@ class CmsController extends Controller
             return redirect('my-account');
         }
 
-        $template = $page->template->module_name . '::templates.' . str_replace(' ', '-', strtolower($page->template->name));
+        $template = strtolower($page->template->module_name) . '::templates.' . str_replace(' ', '-', strtolower($page->template->name));
 
         Log::debug('Parsed template to use for page rendering', [
             'template' => $template,
@@ -58,13 +58,6 @@ class CmsController extends Controller
             $page->authenticated = true;
             $page->authed_user = $authedUser;
             $page->authed_user->token = $authedUser->createToken('access-token')->plainTextToken;
-
-            if ($request->get('i')) {
-                // @todo: Find a way of injecting this via the CradleMoney module
-                $activeAccount = CustomerAccount::where('unique_id', '=', $request->get('i'))->first();
-
-                $page->authed_user->activeAccount = $activeAccount;
-            }
         }
 
         return view($template, [
