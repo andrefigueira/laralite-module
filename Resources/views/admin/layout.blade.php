@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>CradleMoney CMS</title>
+    <title>{{ env('APP_NAME') }} CMS</title>
     <link href="/css/admin.css" rel="stylesheet">
 </head>
 

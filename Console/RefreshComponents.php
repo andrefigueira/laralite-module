@@ -4,6 +4,8 @@ namespace Modules\Laralite\Console;
 
 use Illuminate\Console\Command;
 use DB;
+use Modules\Laralite\Models\Component;
+use Modules\Laralite\Models\Template;
 
 class RefreshComponents extends Command
 {
@@ -52,14 +54,26 @@ class RefreshComponents extends Command
 
         $this->warn('- Inserting components');
 
-        foreach (config('laralite.components') as $component) {
-            $this->warn('-- Inserting component: ' . $component['name']);
 
-            if (isset($component['properties'])) {
-                $component['properties'] = json_encode($component['properties']);
+
+        $moduleStatusFile = dirname(__DIR__, 3) . '/modules_statuses.json';
+        $moduleStatuses = json_decode(file_get_contents($moduleStatusFile));
+
+        foreach ($moduleStatuses as $name => $status) {
+            $configKey = strtolower($name);
+            $moduleConfig = config($configKey);
+
+            if (isset($moduleConfig['components'])) {
+                $this->info('Components defined for (' . $name . ') module');
+
+                foreach ($moduleConfig['components'] as $component) {
+                    $this->warn('-- Inserting component: ' . $component['name']);
+
+                    Component::create($component);
+                }
+            } else {
+                $this->warn('No components defined for (' . $name . ') module, skipping...');
             }
-
-            DB::table('components')->insert($component);
         }
 
         $this->info('Refresh complete');
