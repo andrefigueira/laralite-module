@@ -49,6 +49,12 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {{ request()->is('admin/authentication*') ? 'active' : '' }}" href="/admin/shop">
+                <i class="fas fa-shopping-cart"></i>
+                Shop
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link {{ request()->is('admin/authentication*') ? 'active' : '' }}" href="/admin/authentication">
                 <i class="fas fa-lock"></i>
                 Authentication

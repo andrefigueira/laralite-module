@@ -54,8 +54,6 @@ class RefreshComponents extends Command
 
         $this->warn('- Inserting components');
 
-
-
         $moduleStatusFile = dirname(__DIR__, 3) . '/modules_statuses.json';
         $moduleStatuses = json_decode(file_get_contents($moduleStatusFile));
 

@@ -4,6 +4,7 @@ return [
     'name' => 'Laralite',
 
     'authPassword' => '5GGWajbNkS9ZtCnL',
+
     'components' => [
         [
             'name' => 'Content',
@@ -23,6 +24,42 @@ return [
         [
             'name' => 'Location',
             'slug' => 'location'
+        ],
+        [
+            'name' => 'Contact',
+            'slug' => 'contact',
+        ],
+        [
+            'name' => 'Login',
+            'slug' => 'login'
+        ],
+        [
+            'name' => 'Signup',
+            'slug' => 'signup'
+        ],
+        [
+            'name' => 'MyAccount',
+            'slug' => 'my-ccount'
+        ],
+        [
+            'name' => 'ResetPassword',
+            'slug' => 'reset-password'
+        ],
+        [
+            'name' => 'ResetPasswordForm',
+            'slug' => 'reset-password-form'
+        ],
+        [
+            'name' => 'EditPersonalDetails',
+            'slug' => 'edit-personal-details'
+        ],
+        [
+            'name' => 'Homepage',
+            'slug' => 'homepage'
+        ],
+        [
+            'name' => 'Inventory',
+            'slug' => 'inventory'
         ],
     ],
 ];
