@@ -57,9 +57,5 @@ return [
             'name' => 'Homepage',
             'slug' => 'homepage'
         ],
-        [
-            'name' => 'Inventory',
-            'slug' => 'inventory'
-        ],
     ],
 ];
