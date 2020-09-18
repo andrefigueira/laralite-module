@@ -52,7 +52,7 @@ ul.errors {
     margin-bottom: 0.5rem;
     @include theme-box-style;
     .admin-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem!important;
         padding: 0;
         margin: 0.2rem 0 0 0;
     }
@@ -180,6 +180,10 @@ div.table {
 
 .page-section {
     @include theme-box-style;
+    font-size: 0.9rem;
+    .form-control {
+        font-size: 0.9rem;
+    }
 }
 
 .draggable-list-group div:empty {

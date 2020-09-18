@@ -2,10 +2,12 @@
     <div>
         <div class="row">
             <div class="col-md-12">
+              <div class="admin-title-section">
                 <h2 class="admin-title">
                     {{ type === 'create' ? 'Create new page' : 'Edit page ' }}
                     <strong v-show="type === 'edit'">{{ page.name }}</strong>
                 </h2>
+              </div>
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
             </div><!-- End col -->

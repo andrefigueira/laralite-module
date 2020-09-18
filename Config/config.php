@@ -38,10 +38,6 @@ return [
             'slug' => 'signup'
         ],
         [
-            'name' => 'MyAccount',
-            'slug' => 'my-ccount'
-        ],
-        [
             'name' => 'ResetPassword',
             'slug' => 'reset-password'
         ],

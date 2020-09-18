@@ -2,12 +2,12 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-              <div class="admin-title-section">
+                <div class="admin-title-section">
                   <h2 class="admin-title">
-                      {{ type === 'create' ? 'Create new user' : 'Edit user ' }}
-                      <strong v-show="type === 'edit'">{{ user.name }}</strong>
+                      {{ type === 'create' ? 'Create new product category' : 'Edit product ' }}
+                      <strong v-show="type === 'edit'">{{ productCategory.name }}</strong>
                   </h2>
-              </div>
+                </div><!-- End admin title section -->
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
             </div><!-- End col -->
@@ -17,56 +17,29 @@
                 <div class="page-section p-4 mb-4">
                     <div class="row">
                         <div class="col-md-6">
-                            <b-form-group id="user-name-group" label="User name" label-for="user-name">
+                            <b-form-group id="product-category-name-group" label="Product category name" label-for="product-category-name">
                                 <b-form-input
-                                    id="user-name-input"
+                                    id="product-category-name-input"
                                     required
                                     v-model="form.name"
                                     :state="validateState('name')"
-                                    placeholder="Enter user name"
+                                    placeholder="Enter product category name"
+                                    @keyup="generateSlug()"
                                 ></b-form-input>
                                 <b-form-invalid-feedback>Enter a valid name with more than 3 characters</b-form-invalid-feedback>
                             </b-form-group>
                         </div><!-- End col -->
                         <div class="col-md-6">
-                            <b-form-group id="user-email-group" label="User email" label-for="user-email">
-                                <b-form-input
-                                    type="email"
-                                    id="user-email-input"
-                                    required
-                                    v-model="form.email"
-                                    :state="validateState('email')"
-                                    placeholder="Enter user email"
-                                    autocapitalize="none"
-                                ></b-form-input>
-                                <b-form-invalid-feedback>Enter a valid email address</b-form-invalid-feedback>
-                            </b-form-group>
-                        </div><!-- End col -->
-                        <div class="col-md-6">
-                            <b-form-group id="user-password-group" label="Password" label-for="user-password">
-                                <b-form-input
-                                    type="password"
-                                    id="user-password-input"
-                                    required
-                                    v-model="form.password"
-                                    :state="validateState('password')"
-                                    placeholder="Enter user password"
-                                ></b-form-input>
-                                <b-form-invalid-feedback>Enter a valid password</b-form-invalid-feedback>
-                            </b-form-group>
-                        </div><!-- End col -->
-                        <div class="col-md-6">
-                            <b-form-group id="user-confirm-password-group" label="Confirm password" label-for="user-confirm-password">
-                                <b-form-input
-                                    type="password"
-                                    id="user-confirm-password-input"
-                                    required
-                                    v-model="form.confirmPassword"
-                                    :state="validateState('confirmPassword')"
-                                    placeholder="Confirm password"
-                                ></b-form-input>
-                                <b-form-invalid-feedback>Passwords must match</b-form-invalid-feedback>
-                            </b-form-group>
+                          <b-form-group id="product-category-slug-group" label="Product category slug" label-for="product-category-slug">
+                            <b-form-input
+                                id="product-category-slug-input"
+                                required
+                                v-model="form.slug"
+                                :state="validateState('slug')"
+                                placeholder="Enter product category slug"
+                            ></b-form-input>
+                            <b-form-invalid-feedback>Enter a valid slug with more than 3 characters</b-form-invalid-feedback>
+                          </b-form-group>
                         </div><!-- End col -->
                         <div class="col-md-12">
                             <b-button class="mt-2" variant="success" :disabled="saving" @click="save()">{{ button }}</b-button>
@@ -96,9 +69,11 @@
                 type: String,
                 default: 'create'
             },
-            user: {
+            productCategory: {
                 type: Object,
-                default: {}
+                default: function () {
+                  return {};
+                }
             }
         },
         data() {
@@ -110,9 +85,8 @@
                 form: {
                     id: '',
                     name: '',
-                    email: '',
-                    password: '',
-                    confirmPassword: ''
+                    slug: '',
+                    description: '',
                 }
             }
         },
@@ -122,23 +96,16 @@
                     required,
                     minLength: minLength(3)
                 },
-                email: {
+                slug: {
                     required,
-                    email
+                    minLength: minLength(3)
                 },
-                password: {
-                    required: requiredIf('noUserDefined'),
-                    minLength: minLength(6)
-                },
-                confirmPassword: {
-                    confirmPassword: sameAs('password')
-                }
+                description: {}
             }
         },
         computed: {
-            noUserDefined() {
-                debugger;
-                return this.user.id !== undefined;
+            noProductCategoryDefined() {
+                return this.productCategory.id !== undefined;
             },
             button() {
                 if (this.type === 'create') {
@@ -148,10 +115,10 @@
                 return 'Save changes'
             },
             formEndpoint() {
-                let endpoint = '/api/user';
+                let endpoint = '/api/product-category';
 
                 if (this.type === 'edit') {
-                    endpoint = '/api/user/' + this.user.id;
+                    endpoint = '/api/product-category/' + this.productCategory.id;
                 }
 
                 return endpoint;
@@ -172,10 +139,11 @@
                 return $dirty ? !$error : null;
             },
             load() {
-                if (this.user.id !== undefined) {
-                    this.form.id = this.user.id;
-                    this.form.name = this.user.name;
-                    this.form.email = this.user.email;
+                if (this.productCategory.id !== undefined) {
+                    this.form.id = this.productCategory.id;
+                    this.form.name = this.productCategory.name;
+                    this.form.slug = this.productCategory.slug;
+                    this.form.description = this.productCategory.description;
                 }
             },
             save() {
@@ -192,31 +160,31 @@
                     url: this.formEndpoint,
                     data:  {
                         name: this.form.name,
-                        email: this.form.email,
-                        password: this.form.password
+                        slug: this.form.slug,
+                        description: this.form.description,
                     }
                 }).then(response => {
                     this.saving = false;
 
-                    bus.$emit('user-created', response.data.data);
+                    bus.$emit('product-category-created', response.data.data);
 
                     if (this.type === 'create') {
-                        window.location.replace('/admin/users');
+                        window.location.replace('/admin/product-category');
                     }
 
                     this.alertShow = true;
-                    this.alertMessage = 'Saved changes to user';
+                    this.alertMessage = 'Saved changes to product category';
                     this.alertType = 'success';
                 }).catch(error => {
                     this.saving = false;
 
                     // 409 status code: conflict, i.e. already exists in system
                     if (error.response.status === 409) {
-                        console.log('User already exists in system');
+                        console.log('Product category already exists in system');
 
                         this.alertShow = true;
                         this.alertType = 'danger';
-                        this.alertMessage = 'User already exists!';
+                        this.alertMessage = 'Product category already exists!';
 
                         return;
                     }
@@ -235,11 +203,11 @@
 
                     this.alertShow = true;
                     this.alertType = 'danger';
-                    this.alertMessage = 'Failed to create user try again later';
+                    this.alertMessage = 'Failed to create product category try again later';
                 });
             },
             generateSlug() {
-                this.sectionSlug = this.sectionName.toLowerCase()
+                this.form.slug = this.form.name.toLowerCase()
                     .replace(/[^\w ]+/g,'')
                     .replace(/ +/g,'-');
             }

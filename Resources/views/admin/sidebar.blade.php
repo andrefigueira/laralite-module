@@ -49,9 +49,15 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->is('admin/authentication*') ? 'active' : '' }}" href="/admin/shop">
+            <a class="nav-link {{ request()->is('admin/product*') ? 'active' : '' }}" href="/admin/product">
                 <i class="fas fa-shopping-cart"></i>
-                Shop
+                Products
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('admin/product-category*') ? 'active' : '' }}" href="/admin/product-category">
+                <i class="fas fa-tag"></i>
+                Product Categories
             </a>
         </li>
         <li class="nav-item">
