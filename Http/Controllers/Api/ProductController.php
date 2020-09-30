@@ -13,7 +13,7 @@ class ProductController extends Controller
 {
     public function get(Request $request)
     {
-        return Product::paginate();
+        return Product::with('category')->paginate();
     }
 
     public function getOne($id)
@@ -40,8 +40,9 @@ class ProductController extends Controller
         try {
             $product = Product::create([
                 'name' => $request->get('name'),
-                'description' => $request->get('description'),
+                'description' => $request->get('description '),
                 'price' => $request->get('price'),
+                'category_id' => $request->get('category_id'),
             ]);
 
             Log::info('Created product', [
@@ -84,6 +85,7 @@ class ProductController extends Controller
                 'name' => $request->get('name'),
                 'description' => $request->get('description'),
                 'price' => $request->get('price'),
+                'category_id' => $request->get('category_id'),
             ]);
 
             Log::info('Updated product', [

@@ -57,5 +57,7 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::get('/component', 'Api\ComponentController@get');
     Route::patch('/component/{id}', 'Api\ComponentController@update');
 
-    Route::post('/form', 'Api\FormController@submit');
+    Route::post('/image/upload','Api\FileController@imageUpload');
+
+//    Route::post('/form', 'Api\FormController@submit');
 });

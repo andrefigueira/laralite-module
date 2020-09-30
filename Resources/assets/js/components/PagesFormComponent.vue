@@ -45,12 +45,12 @@
                         <div class="page-section p-4">
                             <b-card no-body>
                                 <b-tabs pills card end>
-                                    <b-tab title="Components" active>
+                                    <b-tab title="Page Features" active>
                                         <b-card-text>
                                             <page-components v-model="components" :template="template"></page-components>
                                         </b-card-text>
                                     </b-tab>
-                                    <b-tab title="Meta">
+                                    <b-tab title="SEO">
                                         <b-card-text>
                                             <b-form-group id="page-title-group" label="Title" label-for="page-title">
                                                 <b-form-input

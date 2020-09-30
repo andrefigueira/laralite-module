@@ -9,49 +9,82 @@ return [
         [
             'name' => 'Content',
             'slug' => 'content',
+            'settings' => [
+                'icon' => 'fa-align-justify',
+            ],
             'properties' => [
                 'editorData' => '',
             ],
         ],
         [
             'name' => 'Carousel',
-            'slug' => 'carousel'
+            'slug' => 'carousel',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
         [
             'name' => 'Accordion',
-            'slug' => 'accordion'
+            'slug' => 'accordion',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
         [
             'name' => 'Location',
-            'slug' => 'location'
+            'slug' => 'location',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
         [
             'name' => 'Contact',
             'slug' => 'contact',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
         [
             'name' => 'Login',
-            'slug' => 'login'
+            'slug' => 'login',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
         [
             'name' => 'Signup',
-            'slug' => 'signup'
+            'slug' => 'signup',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
         [
             'name' => 'ResetPassword',
-            'slug' => 'reset-password'
+            'slug' => 'reset-password',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
         [
             'name' => 'ResetPasswordForm',
-            'slug' => 'reset-password-form'
+            'slug' => 'reset-password-form',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
         [
             'name' => 'EditPersonalDetails',
-            'slug' => 'edit-personal-details'
+            'slug' => 'edit-personal-details',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
         [
             'name' => 'Homepage',
-            'slug' => 'homepage'
+            'slug' => 'homepage',
+            'settings' => [
+                'icon' => '',
+            ],
         ],
     ],
 ];

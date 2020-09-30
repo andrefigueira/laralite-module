@@ -8,16 +8,18 @@
 
         <table class="table" v-show="showResults">
             <tr>
-                <th>Name</th>
+                <th width="25%">Name</th>
+                <th>Category</th>
                 <th>Price</th>
                 <th></th>
             </tr>
             <tr v-for="product in products">
-                <td>{{ product.name }}</td>
+                <td><a class="table-link" :href="'/admin/product/edit/' + product.id">{{ product.name }}</a></td>
+                <td>{{ product.category.name }}</td>
                 <td>{{ product.price }}</td>
                 <td>
-                    <b-button @click="confirmDelete(product)" variant="danger" size="sm" class="float-right">Delete</b-button>
-                    <a :href="'/admin/product/edit/' + product.id" class="btn btn-sm btn-primary float-right mr-1">Edit</a>
+                    <b-button @click="confirmDelete(product)" variant="default" size="sm" class="float-right"><i class="far fa-trash-alt"></i></b-button>
+                    <a :href="'/admin/product/edit/' + product.id" class="btn btn-sm btn-default float-right mr-1"><i class="far fa-edit"></i></a>
                 </td>
             </tr>
         </table>

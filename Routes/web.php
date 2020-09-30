@@ -61,9 +61,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/admin/authentication', 'Admin\AuthenticationController@index');
     Route::get('/admin/settings', 'Admin\SettingsController@index');
 
-    Route::get('/home', 'HomeController@index')->name('home');
-
-    Route::get('/preview/email/{name}', 'CradleMoney\EmailController@preview');
+//    Route::get('/home', 'HomeController@index')->name('home');
 });
 
 /**

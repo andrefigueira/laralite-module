@@ -9,10 +9,12 @@ class Component extends Model
     protected $fillable = [
         'name',
         'slug',
+        'settings',
         'properties',
     ];
 
     protected $casts = [
+        'settings' => 'array',
         'properties' => 'array',
     ];
 }

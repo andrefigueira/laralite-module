@@ -8,6 +8,7 @@
 
 $theme-border-color: rgba(0, 40, 100, 0.12);
 $theme-background-color: #f5f7fb;
+$light-border-color: #F1F1F1;
 
 @mixin theme-box-style() {
     background: #FFF;
@@ -166,16 +167,20 @@ div.table {
     .table-header {
         font-weight: bold;
         padding-bottom: 1rem;
-        border-bottom: 1px solid #DDD;
+        border-bottom: 1px solid $light-border-color;
     }
     .table-row {
         padding-top: .7rem;
         padding-bottom: .3rem;
-        border-bottom: 1px solid #CCC;
+        border-bottom: 1px solid $light-border-color;
         a {
             //color: #333!important;
         }
     }
+}
+
+.table-link {
+    color: #777;
 }
 
 .page-section {
@@ -249,4 +254,19 @@ ul.pagination {
             }
         }
     }
+}
+
+.hr {
+    border-top: 1px solid #F1F1F1;
+}
+
+.dashboard-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.dashboard-subtitle {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #BBB;
 }

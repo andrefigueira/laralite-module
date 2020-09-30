@@ -16,8 +16,8 @@
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
                 <td>
-                    <b-button @click="confirmDelete(user)" variant="danger" size="sm" class="float-right">Delete</b-button>
-                    <a :href="'/admin/users/edit/' + user.id" class="btn btn-sm btn-primary float-right mr-1">Edit</a>
+                    <b-button @click="confirmDelete(user)" variant="default" size="sm" class="float-right"><i class="far fa-trash-alt"></i></b-button>
+                    <a :href="'/admin/users/edit/' + user.id" class="btn btn-sm btn-default float-right mr-1"><i class="far fa-edit"></i></a>
                 </td>
             </tr>
         </table>
