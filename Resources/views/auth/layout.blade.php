@@ -11,7 +11,9 @@
 
 <body class="bg-light">
 <div id="app" v-cloak>
-    @yield('content')
+    <div class="container">
+        @yield('content')
+    </div>
 </div><!-- End app -->
 
 <script src="/js/admin.js"></script>

@@ -69,7 +69,6 @@
                             </div><!-- End row -->
                         </tab-content>
                         <tab-content title="Pricing & Variants" icon="fas fa-dollar-sign">
-                            <h3>Product Variants</h3>
                             <p>Define the options of your item, create variants, and track stock levels.
                                 Each row in the table below represents a variant on this product. You
                                 can add additional options to those variants by adding columns. Subscription
@@ -85,9 +84,9 @@
                                     <th>Dimensions</th>
                                     <th></th>
                                 </tr>
-                                <tr>
+                                <tr v-for="variant in form.variants">
                                     <td><img src="http://placehold.it/40x40" alt=""></td>
-                                    <td>ASD349203</td>
+                                    <td>{{ variant.sku }}</td>
                                     <td>$0.00</td>
                                     <td>1</td>
                                     <td>0lb</td>
@@ -99,34 +98,36 @@
                             <b-button v-b-tooltip.hover title="Click to add a new product variant" @click="" variant="default" size="sm"><i class="fas fa-plus"></i></b-button>
                         </tab-content>
                         <tab-content title="SEO" icon="fas fa-globe-europe">
-                            <h3>Product SEO</h3>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b-form-group id="product-seo-title-group" label="Product name" label-for="product-seo-title">
+                                        <b-form-input
+                                            id="product-seo-title-input"
+                                            required
+                                            v-model="form.meta.title"
+                                            placeholder="Enter SEO title"
+                                        ></b-form-input>
+                                    </b-form-group>
 
-                            <b-form-group id="product-seo-title-group" label="Product name" label-for="product-seo-title">
-                                <b-form-input
-                                    id="product-seo-title-input"
-                                    required
-                                    v-model="form.meta.title"
-                                    placeholder="Enter SEO title"
-                                ></b-form-input>
-                            </b-form-group>
+                                    <b-form-group id="product-seo-keywords-group" label="Product name" label-for="product-seo-keywords">
+                                        <b-form-input
+                                            id="product-seo-keywords-input"
+                                            required
+                                            v-model="form.meta.keywords"
+                                            placeholder="Enter SEO keywords"
+                                        ></b-form-input>
+                                    </b-form-group>
 
-                            <b-form-group id="product-seo-keywords-group" label="Product name" label-for="product-seo-keywords">
-                                <b-form-input
-                                    id="product-seo-keywords-input"
-                                    required
-                                    v-model="form.meta.keywords"
-                                    placeholder="Enter SEO keywords"
-                                ></b-form-input>
-                            </b-form-group>
-
-                            <b-form-group id="product-seo-description-group" label="Product name" label-for="product-seo-description">
-                                <b-form-textarea
-                                    id="product-seo-description-input"
-                                    required
-                                    v-model="form.meta.description"
-                                    placeholder="Enter SEO description"
-                                ></b-form-textarea>
-                            </b-form-group>
+                                    <b-form-group id="product-seo-description-group" label="Product name" label-for="product-seo-description">
+                                        <b-form-textarea
+                                            id="product-seo-description-input"
+                                            required
+                                            v-model="form.meta.description"
+                                            placeholder="Enter SEO description"
+                                        ></b-form-textarea>
+                                    </b-form-group>
+                                </div><!-- End col -->
+                            </div><!-- End row -->
                         </tab-content>
                         <tab-content title="Summary" icon="fas fa-clipboard-check">
                             Summary of all information added and a create button
@@ -200,6 +201,22 @@
                         keywords: '',
                         description: ''
                     },
+                    variants: [
+                        {
+                            sku: 'WZ12345',
+                            image: '',
+                            pricing: {
+                                price: '0.00',
+                                sale_price: '0.00',
+                            },
+                            stock: '1',
+                            weight: {
+                                weight: 0,
+                                unit: 'lb'
+                            },
+                            dimensions: {}
+                        }
+                    ],
                     images: []
                 },
                 config: {
