@@ -35,13 +35,17 @@ class ProductController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'slug' => 'required',
         ]);
 
         try {
             $product = Product::create([
                 'name' => $request->get('name'),
-                'description' => $request->get('description '),
-                'price' => $request->get('price'),
+                'slug' => $request->get('slug'),
+                'description' => $request->get('description'),
+                'meta' => $request->get('meta'),
+                'images' => $request->get('images'),
+                'variants' => $request->get('variants'),
                 'category_id' => $request->get('category_id'),
             ]);
 
@@ -76,6 +80,7 @@ class ProductController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'slug' => 'required',
         ]);
 
         try {
@@ -83,8 +88,11 @@ class ProductController extends Controller
 
             $product->update([
                 'name' => $request->get('name'),
+                'slug' => $request->get('slug'),
                 'description' => $request->get('description'),
-                'price' => $request->get('price'),
+                'meta' => $request->get('meta'),
+                'images' => $request->get('images'),
+                'variants' => $request->get('variants'),
                 'category_id' => $request->get('category_id'),
             ]);
 

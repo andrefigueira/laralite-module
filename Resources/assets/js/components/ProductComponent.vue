@@ -8,16 +8,22 @@
 
         <table class="table" v-show="showResults">
             <tr>
-                <th width="25%">Name</th>
+                <th width="5%"></th>
+                <th width="30%">Name</th>
+                <th width="25%">URL</th>
                 <th>Category</th>
                 <th>Price</th>
                 <th></th>
             </tr>
             <tr v-for="product in products">
-                <td><a class="table-link" :href="'/admin/product/edit/' + product.id">{{ product.name }}</a></td>
-                <td>{{ product.category.name }}</td>
-                <td>{{ product.price }}</td>
-                <td>
+                <td class="align-middle">
+                    <a href="#" :style="{'background-image': 'url(' + product.variants[0].image + ')'}" class="variant-image-placeholder dark-link"></a>
+                </td>
+                <td class="align-middle"><a class="table-link" :href="'/admin/product/edit/' + product.id">{{ product.name }}</a></td>
+                <td class="align-middle">/{{ product.slug }}</td>
+                <td class="align-middle">{{ product.category !== null ? product.category.name : 'Uncategorised' }}</td>
+                <td class="align-middle">${{ product.variants[0].pricing.price }}</td>
+                <td class="align-middle">
                     <b-button @click="confirmDelete(product)" variant="default" size="sm" class="float-right"><i class="far fa-trash-alt"></i></b-button>
                     <a :href="'/admin/product/edit/' + product.id" class="btn btn-sm btn-default float-right mr-1"><i class="far fa-edit"></i></a>
                 </td>
@@ -77,3 +83,18 @@
         }
     }
 </script>
+
+<style lang="scss">
+    .variant-image-placeholder {
+        display: block;
+        padding: 0.9rem 0;
+        border: 1px solid #D9D9D9;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 1px;
+        background-size: cover;
+        background-position: center;
+    }
+</style>

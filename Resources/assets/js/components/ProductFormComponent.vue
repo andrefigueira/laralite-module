@@ -47,8 +47,8 @@
                                                 <b-form-input
                                                     id="product-url-input"
                                                     required
-                                                    v-model="form.url"
-                                                    :state="validateState('url')"
+                                                    v-model="form.slug"
+                                                    :state="validateState('slug')"
                                                     placeholder="Enter product url"
                                                 ></b-form-input>
                                                 <b-form-invalid-feedback>Enter a valid url with more than 3 characters</b-form-invalid-feedback>
@@ -72,6 +72,19 @@
                                 Each row in the table below represents a variant on this product. You
                                 can add additional options to those variants by adding columns.</p>
 
+                            <b-modal id="image-select" ref="image-select" title="Select Variant Image" :hide-footer="true">
+                                <div class="variant-image-selector">
+                                    <div class="row">
+                                        <image-upload-component :show-preview="false" class="col-6 mb-1" @image-removed="removeUploadedVariantImage" @image-uploaded="setUploadedVariantImage"></image-upload-component>
+
+                                        <div class="col-6 mb-1" v-for="(uploadedImage, imageIndex) in form.images">
+                                            <div :style="{'background-image': 'url(' + uploadedImage + ')'}" class="uploaded-image-preview" :class="{'active': selectedVariantImage.index === imageIndex && selectedVariantImage.path !== ''}" @click="selectVariantImage(uploadedImage, imageIndex)"></div><!-- End uploaded image preview -->
+                                        </div>
+                                    </div><!-- End row -->
+                                </div>
+                                <button class="btn btn-theme w-100 mt-1" @click="applyVariantImage()">Apply</button>
+                            </b-modal>
+
                             <table class="table border-bottom">
                                 <tr>
                                     <th width="10%">Image</th>
@@ -83,7 +96,11 @@
                                     <th></th>
                                 </tr>
                                 <tr v-for="(variant, index) in form.variants">
-                                    <td class="align-middle"><a href="#" class="variant-image-placeholder dark-link"><i class="far fa-image"></i></a></td>
+                                    <td class="align-middle">
+                                        <a href="#" :style="{'background-image': 'url(' + variant.image + ')'}" class="variant-image-placeholder dark-link" @click="showImageSelectModal(index)">
+                                            <i v-if="variant.image === ''" class="far fa-image"></i>
+                                        </a>
+                                    </td>
                                     <td class="align-middle">
                                         <a href="#" class="dark-link" v-b-tooltip.hover title="Click to edit" v-if="editingSku !== index" @click="editingSku=index">{{ variant.sku }}</a>
 
@@ -213,9 +230,7 @@
                             </div><!-- End row -->
                         </tab-content>
                         <tab-content title="Summary" icon="fas fa-clipboard-check">
-                            Summary of all information added and a create button
-
-                            trigger @save with the finish button
+                            Finished adding all product detail, you can go back and check or press the save & publish below to finish.
                         </tab-content>
                         <template slot="footer" slot-scope="props">
                             <div class="wizard-footer-left">
@@ -278,7 +293,7 @@
                 form: {
                     id: '',
                     name: '',
-                    price: '',
+                    category_id: '',
                     meta: {
                         title: '',
                         keywords: '',
@@ -311,7 +326,7 @@
                         'searchreplace visualblocks code fullscreen',
                         'insertdatetime media table paste code help wordcount'
                     ],
-                    menubar: 'edit view insert format tools table help',
+                    menubar: '',
                     toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
                     content_css: '/css/contents.css',
                     quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
@@ -332,7 +347,12 @@
                 },
                 editingSku: false,
                 editingWeight: false,
-                editingDimensions: false
+                editingDimensions: false,
+                selectedVariantImage: {
+                    index: 0,
+                    path: ''
+                },
+                selectedVariantIndex: 0
             }
         },
         validations: {
@@ -341,7 +361,7 @@
                     required,
                     minLength: minLength(3)
                 },
-                url: {
+                slug: {
                     required,
                     minLength: minLength(3)
                 },
@@ -409,8 +429,11 @@
                     this.form.id = this.product.id;
                     this.category_id = this.category.id;
                     this.form.name = this.product.name;
+                    this.form.slug = this.product.slug;
                     this.form.description = this.product.description;
-                    this.form.price = this.product.price;
+                    this.form.meta = this.product.meta;
+                    this.form.images = this.product.images;
+                    this.form.variants = this.product.variants;
                 }
 
                 let defaultProductCategoryValue = {
@@ -423,24 +446,14 @@
             save() {
                 this.$v.form.$touch();
 
-                if (this.$v.form.$anyError) {
-                    return;
-                }
-
                 this.saving = true;
+
+                this.form.category_id = this.category.id;
 
                 axios({
                     method: this.formMethod,
                     url: this.formEndpoint,
-                    data:  {
-                        name: this.form.name,
-                        description: this.form.description,
-                        category_id: this.category.id,
-                        price: this.form.price,
-                        variants: [],
-                        meta: {},
-                        images: []
-                    }
+                    data: this.form
                 }).then(response => {
                     this.saving = false;
 
@@ -552,6 +565,29 @@
                 let index = this.form.variants.indexOf(variant);
 
                 this.form.variants.splice(index, 1);
+            },
+            setUploadedVariantImage(path) {
+                this.form.images.push(path);
+                this.form.variants.image = path;
+                this.$v.form['images'].$touch();
+            },
+            removeUploadedVariantImage() {
+                // this.form.images = [];
+                this.$v.form['images'].$touch();
+            },
+            selectVariantImage(path, index) {
+                this.selectedVariantImage = {
+                    index: index,
+                    path: path
+                }
+            },
+            applyVariantImage() {
+                this.form.variants[this.selectedVariantIndex].image = this.selectedVariantImage.path;
+                this.$refs['image-select'].hide();
+            },
+            showImageSelectModal(index) {
+                this.selectedVariantIndex = index;
+                this.$refs['image-select'].show();
             }
         }
     }
@@ -611,9 +647,12 @@
         padding: 0.9rem 0;
         border: 1px solid #D9D9D9;
         width: 50px;
+        height: 50px;
         text-align: center;
         vertical-align: middle;
         border-radius: 1px;
+        background-size: cover;
+        background-position: center;
         i {
             vertical-align: middle;
             font-size: 1.3rem;
@@ -631,6 +670,36 @@
         }
         .description {
 
+        }
+    }
+
+    .popover {
+        max-width: 400px;
+    }
+
+    .variant-image-selector {
+        max-height: 460px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        padding-right: 0.5rem;
+        .image-upload-wrapper {
+            padding: 4.5rem 0;
+        }
+    }
+
+    .uploaded-image-preview {
+        width: 100%;
+        padding-bottom: 100%;
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+        border: 3px solid #333;
+        img {
+            width: 100%;
+            height: auto;
+        }
+        &.active {
+            border: 3px solid #3853d8;
         }
     }
 </style>

@@ -17,10 +17,11 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->integer('category_id')->unsigned()->nullable();
             $table->string('name');
-            $table->string('description');
+            $table->string('slug');
+            $table->string('description')->nullable();
             $table->json('meta')->nullable();
             $table->json('images')->nullable();
-            $table->integer('price');
+            $table->json('variants');
             $table->timestamps();
         });
     }

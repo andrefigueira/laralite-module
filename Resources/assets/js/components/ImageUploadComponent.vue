@@ -1,12 +1,12 @@
 <template>
     <div>
         <p v-if="uploadError !== ''" class="alert alert-danger">{{ uploadError }}</p>
-        <div v-if="imagePreview === ''" class="image-upload-wrapper" @click="$refs.file.click()">
+        <div v-if="imagePreview === '' || showPreview === false" class="image-upload-wrapper" @click="$refs.file.click()">
             <i class="icon far fa-arrow-alt-circle-up"></i>
 
             <span class="label">Upload image...</span>
         </div><!-- End image upload wrapper -->
-        <div class="uploaded-image" v-if="imagePreview !== ''">
+        <div class="uploaded-image" v-if="imagePreview !== '' && showPreview">
             <div class="image-options">
                 <b-button variant="default" @click="removeImage()"><i class="far fa-trash-alt"></i></b-button>
             </div><!-- End image options -->
@@ -19,6 +19,12 @@
 
 <script>
     export default {
+        props: {
+            showPreview: {
+                type: Boolean,
+                default: true
+            }
+        },
         data() {
             return {
                 file: '',
@@ -97,6 +103,10 @@
 
     .uploaded-image {
         position: relative;
+        padding: 4rem 0;
+        background: #333;
+        overflow: hidden;
+        vertical-align: middle;
         .image-options {
             position: absolute;
             background: #FFF;
