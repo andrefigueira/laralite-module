@@ -18,8 +18,6 @@
 </template>
 
 <script>
-    import { bus } from '../admin'
-
     export default {
         data() {
             return {
@@ -69,6 +67,8 @@
             },
             removeImage() {
                 this.imagePreview = '';
+                this.file = '';
+                this.$refs.file.value = '';
                 this.$emit('image-removed');
             }
         }

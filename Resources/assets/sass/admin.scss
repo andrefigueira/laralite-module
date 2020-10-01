@@ -76,7 +76,7 @@ ul.errors {
                 background: #E9E9E9;
             }
             &.active {
-                background: #E9E9E9;
+                background: #F1F1F1;
             }
         }
     }
@@ -150,6 +150,15 @@ ul.errors {
 
 .form-control {
     border: 1px solid rgba(0, 40, 100, 0.12);
+    border-radius: 0!important;
+}
+
+.btn {
+    border-radius: 0!important;
+}
+
+.vs__dropdown-toggle {
+    border-radius: 0!important;
 }
 
 .form-control-dark {
@@ -283,4 +292,42 @@ ul.pagination {
     text-align: center;
     color: #333;
     padding: 1rem 0 0 0;
+}
+
+.accordion {
+    .card {
+        border-right: none;
+        border-left: none;
+        &:first-child {
+            border-top: none;
+        }
+    }
+    .card-header {
+        a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+    }
+
+    .card-body {
+        padding: 0;
+        .nav {
+            display: block;
+            margin-top: 1px;
+            .nav-item {
+                display: block;
+            }
+        }
+    }
+}
+
+.dark-link {
+    color: #333;
+}
+
+.strikethrough {
+    text-decoration: line-through;
 }

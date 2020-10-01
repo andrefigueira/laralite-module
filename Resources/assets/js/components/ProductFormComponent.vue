@@ -4,8 +4,7 @@
             <div class="col-md-12">
                 <div class="admin-title-section">
                   <h2 class="admin-title">
-                      {{ type === 'create' ? 'Create new product' : 'Edit product ' }}
-                      <strong v-show="type === 'edit'">{{ product.name }}</strong>
+                      {{ type === 'create' ? 'Create new product' + (form.name !== '' ? ' &rarr; ' + form.name : '') : 'Edit product &rarr; ' + product.name }}
                   </h2>
                 </div><!-- End admin title section -->
 
@@ -71,36 +70,109 @@
                         <tab-content title="Pricing & Variants" icon="fas fa-dollar-sign">
                             <p>Define the options of your item, create variants, and track stock levels.
                                 Each row in the table below represents a variant on this product. You
-                                can add additional options to those variants by adding columns. Subscription
-                                products do not have stock levels.</p>
+                                can add additional options to those variants by adding columns.</p>
 
-                            <table class="table">
+                            <table class="table border-bottom">
                                 <tr>
-                                    <th>Image</th>
-                                    <th>SKU</th>
-                                    <th>Pricing</th>
-                                    <th>Stock</th>
-                                    <th>Weight</th>
-                                    <th>Dimensions</th>
+                                    <th width="10%">Image</th>
+                                    <th width="15%">SKU</th>
+                                    <th width="15%">Pricing</th>
+                                    <th width="15%">Stock</th>
+                                    <th width="15%">Weight <i v-b-tooltip.hover title="Dimensions in pounds, used for calculating shipping cost" class="fas fa-info-circle"></i></th>
+                                    <th width="15%">Dimensions <i v-b-tooltip.hover title="Dimensions in inches, used for calculating shipping cost" class="fas fa-info-circle"></i></th>
                                     <th></th>
                                 </tr>
-                                <tr v-for="variant in form.variants">
-                                    <td><img src="http://placehold.it/40x40" alt=""></td>
-                                    <td>{{ variant.sku }}</td>
-                                    <td>$0.00</td>
-                                    <td>1</td>
-                                    <td>0lb</td>
-                                    <td>-</td>
-                                    <td><b-button @click="confirmDelete()" variant="default" size="sm" class="float-right"><i class="far fa-trash-alt"></i></b-button></td>
+                                <tr v-for="(variant, index) in form.variants">
+                                    <td class="align-middle"><a href="#" class="variant-image-placeholder dark-link"><i class="far fa-image"></i></a></td>
+                                    <td class="align-middle">
+                                        <a href="#" class="dark-link" v-b-tooltip.hover title="Click to edit" v-if="editingSku !== index" @click="editingSku=index">{{ variant.sku }}</a>
+
+                                        <b-form-group class="position-relative mb-0" v-if="editingSku === index">
+                                            <b-form-input minlength="1" maxlength="15" style="max-width: 100%;" class="pr-2" v-model="variant.sku"></b-form-input>
+                                            <a href="#" class="inline-edit-tick" @click="stopEditingSku(variant.sku)"><i class="fas fa-check"></i></a>
+                                        </b-form-group>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="#" :id="'pricing-edit-' + index" class="dark-link">
+                                            <span :class="{'strikethrough': variant.pricing.on_sale }">${{ variant.pricing.price }}</span>
+                                            <span>{{ variant.pricing.on_sale ? '$' + variant.pricing.sale_price : '' }}</span>
+                                        </a>
+
+                                        <b-popover :target="'pricing-edit-' + index" triggers="hover" placement="bottom">
+                                            <b-form-group label="Price">
+                                                <b-form-input min="0" type="number" v-model="variant.pricing.price"></b-form-input>
+                                            </b-form-group>
+                                            <b-form-group label="Sale Price">
+                                                <b-form-input min="0" type="number" v-model="variant.pricing.sale_price"></b-form-input>
+                                            </b-form-group>
+                                            <b-form-group>
+                                                <b-form-checkbox
+                                                    v-model="variant.pricing.on_sale"
+                                                    :value="true"
+                                                    :unchecked-value="false">
+                                                    On Sale
+                                                </b-form-checkbox>
+                                            </b-form-group>
+                                        </b-popover>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="#" :id="'stock-edit-' + index" class="dark-link">
+                                            <span>{{ variant.stock < 0 ? '&infin;' : variant.stock }} {{ variant.stock === '' ? 0 : '' }}</span>
+                                        </a>
+
+                                        <b-popover :target="'stock-edit-' + index" triggers="hover" placement="bottom">
+                                            <b-form-group label="Stock">
+                                                <b-form-input min="0" type="number" pattern="[0-9\.\-]*" v-model="variant.stock" required></b-form-input>
+                                            </b-form-group>
+                                            <b-form-group>
+                                                <b-form-checkbox
+                                                    v-model="variant.stock"
+                                                    :value="-1"
+                                                    :unchecked-value="1">
+                                                    Unlimited
+                                                </b-form-checkbox>
+                                            </b-form-group>
+                                        </b-popover>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="#" class="dark-link" v-b-tooltip.hover title="Click to edit" v-if="editingWeight !== index" @click="editingWeight=index">{{ variant.weight }}lb</a>
+
+                                        <b-form-group class="position-relative mb-0" v-if="editingWeight === index">
+                                            <b-form-input minlength="1" maxlength="15" style="max-width: 100%;" class="pr-2" v-model="variant.weight" pattern="[0-9\.\-]*"></b-form-input>
+                                            <a href="#" class="inline-edit-tick" @click="stopEditingWeight(variant.weight)"><i class="fas fa-check"></i></a>
+                                        </b-form-group>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="#" :id="'dimensions-edit-' + index" class="dark-link">
+                                            <span>{{ variant.dimensions.length === 0 && variant.dimensions.height === 0 && variant.dimensions.width === 0 ? '-' : variant.dimensions.length + '&times;' + variant.dimensions.width + '&times;' + variant.dimensions.height }}</span>
+                                        </a>
+
+                                        <b-popover :target="'dimensions-edit-' + index" triggers="hover" placement="bottom">
+                                            <b-form-group label="Length">
+                                                <b-form-input min="0" type="number" v-model="variant.dimensions.length" pattern="[0-9\.\-]*"></b-form-input>
+                                            </b-form-group>
+                                            <b-form-group label="Width">
+                                                <b-form-input min="0" type="number" v-model="variant.dimensions.width" pattern="[0-9\.\-]*"></b-form-input>
+                                            </b-form-group>
+                                            <b-form-group label="Height">
+                                                <b-form-input min="0" type="number" v-model="variant.dimensions.height" pattern="[0-9\.\-]*"></b-form-input>
+                                            </b-form-group>
+                                        </b-popover>
+                                    </td>
+                                    <td class="align-middle"><b-button v-if="form.variants.length > 1" @click="removeVariant(variant)" variant="default" size="sm" class="float-right"><i class="far fa-trash-alt"></i></b-button></td>
                                 </tr>
                             </table>
 
-                            <b-button v-b-tooltip.hover title="Click to add a new product variant" @click="" variant="default" size="sm"><i class="fas fa-plus"></i></b-button>
+                            <b-button v-b-tooltip.hover title="Click to add a new product variant" @click="addNewVariant()" variant="default" size="sm"><i class="fas fa-plus"></i></b-button>
                         </tab-content>
                         <tab-content title="SEO" icon="fas fa-globe-europe">
                             <div class="row">
+                                <div class="col-12">
+                                    <p>Search engine optimization (SEO) allows you to improve your ranking in search results. Use these features to make it easier for users to find this item when they search for it.</p>
+                                    <div class="hr mb-3"></div>
+                                </div>
                                 <div class="col-6">
-                                    <b-form-group id="product-seo-title-group" label="Product name" label-for="product-seo-title">
+                                    <b-form-group id="product-seo-title-group" label="SEO Title" label-for="product-seo-title">
                                         <b-form-input
                                             id="product-seo-title-input"
                                             required
@@ -109,7 +181,7 @@
                                         ></b-form-input>
                                     </b-form-group>
 
-                                    <b-form-group id="product-seo-keywords-group" label="Product name" label-for="product-seo-keywords">
+                                    <b-form-group id="product-seo-keywords-group" label="SEO Keywords" label-for="product-seo-keywords">
                                         <b-form-input
                                             id="product-seo-keywords-input"
                                             required
@@ -118,7 +190,7 @@
                                         ></b-form-input>
                                     </b-form-group>
 
-                                    <b-form-group id="product-seo-description-group" label="Product name" label-for="product-seo-description">
+                                    <b-form-group id="product-seo-description-group" label="SEO Description" label-for="product-seo-description">
                                         <b-form-textarea
                                             id="product-seo-description-input"
                                             required
@@ -126,6 +198,17 @@
                                             placeholder="Enter SEO description"
                                         ></b-form-textarea>
                                     </b-form-group>
+                                </div><!-- End col -->
+                                <div class="col-6">
+                                    <h6>Search Result Preview</h6>
+
+                                    <div class="search-result-preview mb-3">
+                                        <div class="title">{{ form.meta.title ? form.meta.title : 'Example Page Title - Website' }}</div>
+                                        <div class="url">https://website.com/{{ form.url }}</div>
+                                        <div class="description">{{ form.meta.description ? form.meta.description : 'Lorem ipsum dolor sit amet...' }}</div>
+                                    </div><!-- End search result preview -->
+
+                                    <p>Search results typically show your SEO title and description. Your title is also the browser window title, and matches your title formats. Depending on the search engine, descriptions displayed can be 50 to 300 characters long. If you don’t add a title or description, search engines will use this item's title and content.</p>
                                 </div><!-- End col -->
                             </div><!-- End row -->
                         </tab-content>
@@ -208,13 +291,15 @@
                             pricing: {
                                 price: '0.00',
                                 sale_price: '0.00',
+                                on_sale: false
                             },
-                            stock: '1',
-                            weight: {
-                                weight: 0,
-                                unit: 'lb'
-                            },
-                            dimensions: {}
+                            stock: 0,
+                            weight: 0,
+                            dimensions: {
+                                length: 0,
+                                width: 0,
+                                height: 0
+                            }
                         }
                     ],
                     images: []
@@ -244,7 +329,10 @@
                     },
                     font_formats: 'Oswold=Oswald,san-serif;ProximaNova=Lato,san-serif;Arial=arial,helvetica,sans-serif;',
                     fontsize_formats: '11px 12px 14px 16px 18px 24px 36px 48px'
-                }
+                },
+                editingSku: false,
+                editingWeight: false,
+                editingDimensions: false
             }
         },
         validations: {
@@ -431,6 +519,39 @@
                             resolve(true);
                     }
                 })
+            },
+            stopEditingSku(sku) {
+                if (sku.length < 1) {
+                    return false;
+                }
+
+                this.editingSku = false;
+            },
+            stopEditingWeight(weight) {
+                this.editingWeight = false;
+            },
+            addNewVariant() {
+                this.form.variants.push({
+                    sku: 'WZ12345',
+                    image: '',
+                    pricing: {
+                        price: '0.00',
+                        sale_price: '0.00',
+                        on_sale: false
+                    },
+                    stock: 0,
+                    weight: 0,
+                    dimensions: {
+                        length: 0,
+                        width: 0,
+                        height: 0
+                    }
+                });
+            },
+            removeVariant(variant) {
+                let index = this.form.variants.indexOf(variant);
+
+                this.form.variants.splice(index, 1);
             }
         }
     }
@@ -474,6 +595,42 @@
                     }
                 }
             }
+        }
+    }
+
+    .inline-edit-tick {
+        position: absolute;
+        right: 8px;
+        top: 7px;
+        color: #333;
+        z-index: 999;
+    }
+
+    .variant-image-placeholder {
+        display: block;
+        padding: 0.9rem 0;
+        border: 1px solid #D9D9D9;
+        width: 50px;
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 1px;
+        i {
+            vertical-align: middle;
+            font-size: 1.3rem;
+        }
+    }
+
+    .search-result-preview {
+        border: 1px solid #CCC;
+        padding: 0.6rem;
+        .title {
+            color: #1A0DAB;
+        }
+        .url {
+            color: #006621;
+        }
+        .description {
+
         }
     }
 </style>
