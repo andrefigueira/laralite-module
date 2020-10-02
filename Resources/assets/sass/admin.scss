@@ -142,15 +142,21 @@ ul.errors {
     }
     border: 1px solid $theme-border-color;
     .form-control {
+        font-size: 0.8rem;
         padding: .75rem 1rem;
         border-width: 0;
         border-radius: 0;
     }
 }
 
+.wizard-btn {
+    border-radius: 0!important;
+}
+
 .form-control {
     border: 1px solid rgba(0, 40, 100, 0.12);
     border-radius: 0!important;
+    font-size: 0.8rem;
 }
 
 .btn {
@@ -330,4 +336,14 @@ ul.pagination {
 
 .strikethrough {
     text-decoration: line-through;
+}
+
+.wizard-tab-content {
+    .wizard-tab-container {
+        animation: fadein 0.4s;
+    }
+}
+
+.vs__open-indicator {
+    display: none;
 }

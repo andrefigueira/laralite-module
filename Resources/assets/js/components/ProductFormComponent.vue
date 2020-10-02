@@ -234,10 +234,10 @@
                         </tab-content>
                         <template slot="footer" slot-scope="props">
                             <div class="wizard-footer-left">
-                                <wizard-button v-if="props.activeTabIndex > 0 && !props.isLastStep" @click.native="props.prevTab()" :style="props.fillButtonStyle">Previous</wizard-button>
+                                <wizard-button v-if="props.activeTabIndex > 0 && !props.isLastStep" @click.native="props.prevTab()" :style="props.fillButtonStyle"><i class="fas fa-arrow-left"></i> Previous</wizard-button>
                             </div>
                             <div class="wizard-footer-right">
-                                <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab()" class="wizard-footer-right" :style="props.fillButtonStyle">Next</wizard-button>
+                                <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab()" class="wizard-footer-right" :style="props.fillButtonStyle">Next <i class="fas fa-arrow-right"></i></wizard-button>
 
                                 <wizard-button v-else @click.native="save()" class="wizard-footer-right finish-button" :style="props.fillButtonStyle">{{props.isLastStep ? 'Save & Publish' : 'Next'}}</wizard-button>
                             </div>
@@ -675,6 +675,9 @@
 
     .popover {
         max-width: 400px;
+        .form-control {
+            font-size: 0.8rem;
+        }
     }
 
     .variant-image-selector {

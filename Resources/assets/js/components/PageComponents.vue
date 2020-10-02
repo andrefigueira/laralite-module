@@ -120,6 +120,7 @@
                     name: componentName,
                     section: this.section.slug,
                     frontendName: name,
+                    frontendComponentName: name + 'Component',
                     properties: component.properties
                 });
 

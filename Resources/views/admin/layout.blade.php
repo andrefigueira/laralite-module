@@ -7,6 +7,7 @@
     <meta name="author" content="">
     <title>{{ env('APP_NAME') }} CMS</title>
     <link href="/css/admin.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/font-awesome-line-awesome/css/all.min.css">
 </head>
 
 <body class="admin">
