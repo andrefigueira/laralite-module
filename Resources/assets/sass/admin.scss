@@ -65,12 +65,12 @@ ul.errors {
     @include theme-box-style;
     .nav-item {
         .nav-link {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #555;
             .fas {
                 margin-right: .3rem;
-                width: 1.3rem;
                 color: #999;
+                font-size: 1.3rem;
             }
             &:hover {
                 background: #E9E9E9;
@@ -217,6 +217,7 @@ div.table {
     border: none!important;
     box-shadow: none!important;
     font-size: 0.8rem;
+    border-radius: 0!important;
     .progress {
         margin-top: 1rem;
     }
@@ -229,6 +230,7 @@ div.table {
 ul.nav-pills {
     .nav-link {
         color: #333;
+        border-radius: 0;
         &:hover {
             color: #666;
         }
@@ -346,4 +348,8 @@ ul.pagination {
 
 .vs__open-indicator {
     display: none;
+}
+
+.badge {
+    border-radius: 0!important;
 }

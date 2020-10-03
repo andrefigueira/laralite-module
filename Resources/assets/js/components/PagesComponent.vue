@@ -9,7 +9,7 @@
         <div class="table table-top-border-0" v-show="showResults">
             <div class="row table-header">
                 <div class="col-md-3">Name</div>
-                <div class="col-md-3">Slug</div>
+                <div class="col-md-3">URL</div>
                 <div class="col-md-2">Type</div>
                 <div class="col-md-2">Template</div>
                 <div class="col-md-2"></div>

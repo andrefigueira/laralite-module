@@ -11,8 +11,8 @@
                     <div class="col-md-2"><b-badge :variant="page.primary === 1 ? 'primary' : 'secondary'">{{ page.primary === 1 ? 'Primary' : 'Standard' }}</b-badge></div>
                     <div class="col-md-2"><b-badge variant="primary">{{ getTemplateName(page) }}</b-badge></div>
                     <div class="col-md-2">
-                        <b-button @click="confirmDelete(page)" variant="default" size="sm" class="float-right row-button"><i class="far fa-trash-alt"></i></b-button>
-                        <a :href="'/admin/pages/edit/' + page.id" class="btn btn-sm btn-default float-right mr-1 row-button"><i class="far fa-edit"></i></a>
+                        <b-button @click="confirmDelete(page)" variant="default" class="float-right row-button"><i class="far fa-trash-alt"></i></b-button>
+                        <a :href="'/admin/pages/edit/' + page.id" class="btn btn-default float-right mr-1 row-button"><i class="far fa-edit"></i></a>
                     </div>
                 </div>
             </div>

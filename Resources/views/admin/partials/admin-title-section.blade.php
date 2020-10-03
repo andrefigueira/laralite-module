@@ -1,7 +1,7 @@
 <div class="admin-title-section d-flex justify-content-between flex-wrap flex-md-nowrap">
     <h1 class="admin-title">{{ $title }}</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group mr-2">
+        <div class="btn-group">
             @if(!empty($buttons))
                 @foreach($buttons as $button)
                     <a href="{{ $button['href'] }}" class="btn btn-sm btn-outline-secondary">{{ $button['label'] }}</a>

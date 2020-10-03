@@ -31,6 +31,21 @@ class ProductController extends Controller
         }
     }
 
+    public function getByUrl($url)
+    {
+        try {
+            return Product::where('slug', '=', $url)->firstOrFail();
+        } catch (\Throwable $exception) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Failed to get product',
+                'errors' => [
+                    $exception->getMessage(),
+                ],
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function create(Request $request)
     {
         $this->validate($request, [

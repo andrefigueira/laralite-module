@@ -20,70 +20,77 @@ return [
             'name' => 'Carousel',
             'slug' => 'carousel',
             'settings' => [
-                'icon' => '',
+                'icon' => 'fa-border-all',
             ],
         ],
         [
             'name' => 'Accordion',
             'slug' => 'accordion',
             'settings' => [
-                'icon' => '',
+                'icon' => 'fa-bars',
             ],
         ],
         [
             'name' => 'Location',
             'slug' => 'location',
             'settings' => [
-                'icon' => '',
+                'icon' => 'fa-map-marker',
             ],
         ],
         [
             'name' => 'Contact',
             'slug' => 'contact',
             'settings' => [
-                'icon' => '',
+                'icon' => 'fa-envelope',
             ],
         ],
         [
             'name' => 'Login',
             'slug' => 'login',
             'settings' => [
-                'icon' => '',
+                'icon' => 'fa-user-shield',
             ],
         ],
         [
             'name' => 'Signup',
             'slug' => 'signup',
             'settings' => [
-                'icon' => '',
+                'icon' => 'fa-user',
             ],
         ],
         [
             'name' => 'ResetPassword',
             'slug' => 'reset-password',
             'settings' => [
-                'icon' => '',
+                'icon' => 'fa-key',
             ],
         ],
         [
             'name' => 'ResetPasswordForm',
             'slug' => 'reset-password-form',
             'settings' => [
-                'icon' => '',
-            ],
-        ],
-        [
-            'name' => 'EditPersonalDetails',
-            'slug' => 'edit-personal-details',
-            'settings' => [
-                'icon' => '',
+                'icon' => 'fa-key',
             ],
         ],
         [
             'name' => 'Homepage',
             'slug' => 'homepage',
             'settings' => [
-                'icon' => '',
+                'icon' => 'fa-file',
+            ],
+        ],
+        [
+            'name' => 'Shop',
+            'slug' => 'shop',
+            'settings' => [
+                'icon' => 'fa-shopping-cart',
+            ],
+        ],
+        [
+            'name' => 'Shop Product',
+            'slug' => 'shop-product',
+            'settings' => [
+                'icon' => 'fa-shopping-cart',
             ],
         ],
     ],

@@ -14,3 +14,4 @@ if (mix.inProduction()) {
 
 mix.js(__dirname + '/Resources/assets/js/admin.js', 'js/admin.js');
 mix.sass(__dirname + '/Resources/assets/sass/admin.scss', 'css/admin.css');
+mix.sass(__dirname + '/Resources/assets/sass/contents.scss', 'css/contents.css');

@@ -23,12 +23,11 @@
                                     required
                                     v-model="name"
                                     placeholder="Enter page name"
-                                    @keyup="generateSlug()"
                                 ></b-form-input>
                             </b-form-group>
                         </div><!-- End col -->
                         <div class="col-md-6">
-                            <b-form-group id="page-slug-group" label="Page slug" label-for="page-slug">
+                            <b-form-group id="page-slug-group" label="Page URL" label-for="page-slug">
                                 <b-form-input
                                     id="page-slug-input"
                                     required
@@ -88,6 +87,19 @@
                                             </b-form-group>
                                         </b-card-text>
                                     </b-tab>
+
+                                    <b-tab title="Advanced">
+                                        <b-card-text>
+                                            <b-form-checkbox
+                                                id="dynamic-url"
+                                                v-model="dynamicUrl"
+                                                name="dynamic-url"
+                                                :value="true"
+                                                :unchecked-value="false">
+                                                Dynamic URL
+                                            </b-form-checkbox>
+                                        </b-card-text>
+                                    </b-tab>
                                 </b-tabs>
                             </b-card>
                         </div><!-- End page section -->
@@ -108,7 +120,7 @@
                     <label for="template">Template</label>
                     <v-select class="mb-3" id="template" label="name" v-model="template" :options="templates" :clearable="false"></v-select>
 
-                    <b-button variant="success" :disabled="saving" @click="save()">{{ button }}</b-button>
+                    <button class="btn btn-theme" :disabled="saving" @click="save()">{{ button }}</button>
                 </div><!-- End content sidebar -->
             </div><!-- End col -->
         </div><!-- End row -->
@@ -176,6 +188,8 @@
                 parent: {},
                 name: '',
                 slug: '',
+                dynamicUrl: false,
+                dynamicUrlPattern: '',
                 components: {},
                 meta: {
                     title: '',
@@ -212,14 +226,6 @@
                 return method;
             }
         },
-        watch: {
-            slug() {
-                if (this.slug !== '') {
-                    let lastPart = this.slug.split("/").pop();
-                    this.slug = '/' + lastPart;
-                }
-            }
-        },
         methods: {
             loadParentOptions(defaultOption) {
                 axios.get('/api/page').then(response => {
@@ -254,6 +260,7 @@
                     this.slug = this.page.slug;
                     this.components = this.page.components;
                     this.meta = this.page.meta;
+                    this.dynamicUrl = this.page.settings.dynamic_url;
                 }
             },
             loadTemplateOptions() {
@@ -281,11 +288,6 @@
                 this.loadTemplateOptions();
                 this.loadDefaultFormValues(defaultParentValue);
             },
-            generateSlug() {
-                this.slug = '/' + this.name.toLowerCase()
-                    .replace(/[^\w ]+/g,'')
-                    .replace(/ +/g,'-');
-            },
             save() {
                 this.saving = true;
 
@@ -299,6 +301,9 @@
                         template_id: this.template.id,
                         name: this.name,
                         slug: this.slug,
+                        settings: {
+                            dynamic_url: this.dynamicUrl,
+                        },
                         components: this.components,
                         meta: this.meta
                     }

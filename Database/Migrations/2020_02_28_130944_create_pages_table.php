@@ -22,6 +22,7 @@ class CreatePagesTable extends Migration
             $table->string('name');
             $table->string('slug')->nullable();
             $table->json('meta')->nullable();
+            $table->json('settings')->nullable();
             $table->json('components')->nullable();
             $table->timestamps();
         });

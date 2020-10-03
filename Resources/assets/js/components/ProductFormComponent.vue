@@ -59,7 +59,7 @@
                                     <b-form-group id="product-description-group" label="Product description" label-for="product-description">
                                         <editor
                                             api-key="1zv9du0onoyl619egrfevih7r7p4p8vawafvqhi5hzzfutmf"
-                                            :value="form.description"
+                                            v-model="form.description"
                                             :init="config"
                                         />
                                         <b-form-invalid-feedback>Enter a valid description</b-form-invalid-feedback>
@@ -293,6 +293,7 @@
                 form: {
                     id: '',
                     name: '',
+                    description: '',
                     category_id: '',
                     meta: {
                         title: '',

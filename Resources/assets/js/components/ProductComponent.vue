@@ -24,8 +24,8 @@
                 <td class="align-middle">{{ product.category !== null ? product.category.name : 'Uncategorised' }}</td>
                 <td class="align-middle">${{ product.variants[0].pricing.price }}</td>
                 <td class="align-middle">
-                    <b-button @click="confirmDelete(product)" variant="default" size="sm" class="float-right"><i class="far fa-trash-alt"></i></b-button>
-                    <a :href="'/admin/product/edit/' + product.id" class="btn btn-sm btn-default float-right mr-1"><i class="far fa-edit"></i></a>
+                    <b-button @click="confirmDelete(product)" variant="default" class="float-right"><i class="far fa-trash-alt"></i></b-button>
+                    <a :href="'/admin/product/edit/' + product.id" class="btn btn-default float-right mr-1"><i class="far fa-edit"></i></a>
                 </td>
             </tr>
         </table>

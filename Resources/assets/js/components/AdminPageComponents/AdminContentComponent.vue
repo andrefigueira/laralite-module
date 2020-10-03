@@ -10,8 +10,6 @@
 </template>
 
 <script>
-    import { bus } from '../../admin';
-    import helpers from '../../helpers'
     import Editor from '@tinymce/tinymce-vue'
 
     export default {

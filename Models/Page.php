@@ -14,6 +14,7 @@ class Page extends Model
         'name',
         'slug',
         'meta',
+        'settings',
         'content',
         'components',
     ];
@@ -22,6 +23,7 @@ class Page extends Model
         'meta' => 'object',
         'content' => 'array',
         'components' => 'array',
+        'settings' => 'object',
     ];
 
     public function children()

@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::post('/product', 'Api\ProductController@create');
     Route::get('/product', 'Api\ProductController@get');
     Route::get('/product/{id}', 'Api\ProductController@getOne');
+    Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
     Route::delete('/product/{id}', 'Api\ProductController@delete');
     Route::patch('/product/{id}', 'Api\ProductController@update');
 
@@ -58,6 +59,8 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::patch('/component/{id}', 'Api\ComponentController@update');
 
     Route::post('/image/upload','Api\FileController@imageUpload');
+
+    Route::get('/module', 'Api\ModuleController@get');
 
 //    Route::post('/form', 'Api\FormController@submit');
 });

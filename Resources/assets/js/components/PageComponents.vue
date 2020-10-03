@@ -120,7 +120,7 @@
                     name: componentName,
                     section: this.section.slug,
                     frontendName: name,
-                    frontendComponentName: name + 'Component',
+                    frontendComponentName: name.replace(/\s/g, '') + 'Component',
                     properties: component.properties
                 });
 
