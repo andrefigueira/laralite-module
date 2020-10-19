@@ -1,0 +1,13 @@
+{
+    "name": "Laralite",
+    "alias": "laralite",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Modules\\Laralite\\Providers\\LaraliteServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

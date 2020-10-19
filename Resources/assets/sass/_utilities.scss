@@ -1,0 +1,60 @@
+$sizes: 20;
+
+@mixin m-list {
+    @for $i from 6 through $sizes {
+        .mt-#{$i} {
+            $size: $i - 2 + 'rem';
+            margin-top: #{$size};
+        }
+
+        .mb-#{$i} {
+            $size: $i - 2 + 'rem';
+            margin-bottom: #{$size};
+        }
+    }
+}
+
+@mixin p-list {
+    @for $i from 6 through $sizes {
+        .p-#{$i} {
+            $size: $i - 2 + 'rem';
+            padding: #{$size};
+        }
+        .pt-#{$i} {
+            $size: $i - 2 + 'rem';
+            padding-top: #{$size};
+        }
+
+        .pb-#{$i} {
+            $size: $i - 2 + 'rem';
+            padding-bottom: #{$size};
+        }
+
+        .pr-#{$i} {
+            $size: $i - 2 + 'rem';
+            padding-right: #{$size};
+        }
+
+        .pl-#{$i} {
+            $size: $i - 2 + 'rem';
+            padding-left: #{$size};
+        }
+    }
+}
+
+@include m-list;
+
+@include p-list;
+
+.text-small {
+    font-size: 0.7rem;
+}
+
+.text-medium {
+    font-size: 0.9rem;
+}
+
+.btn-theme {
+    background: #2a61ff !important;
+    color: #FFF!important;
+}

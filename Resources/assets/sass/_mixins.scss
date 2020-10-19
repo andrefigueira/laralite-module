@@ -1,0 +1,72 @@
+
+@mixin font-gabriela () {
+  font-family: 'Gabriela', serif!important;
+}
+
+@mixin font-pt-sans () {
+  font-family: 'PT Sans', sans-serif!important;
+}
+
+@mixin theme-h1-heading () {
+  @include font-gabriela;
+  font-size: 3.25rem;
+}
+
+@mixin theme-p-heading () {
+  @include font-pt-sans;
+  font-size: 2rem;
+}
+
+@mixin theme-h2-heading () {
+  @include font-gabriela;
+  font-size: 2.5rem;
+}
+
+@mixin theme-h3-heading () {
+  @include font-pt-sans;
+  font-size: 1.25rem;
+}
+
+@mixin theme-h4-heading () {
+  @include font-gabriela;
+  font-size: 1.5rem;
+}
+
+@mixin theme-h3-heading-type-2 () {
+  @include font-gabriela;
+  font-size: 1.25rem;
+}
+
+@mixin theme-p () {
+  @include font-pt-sans;
+  font-size: 1.125rem;
+}
+
+@mixin theme-p-size-2 () {
+  @include font-pt-sans;
+  font-size: 1.125rem;
+}
+
+@mixin theme-label () {
+  @include font-pt-sans;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+@mixin theme-error () {
+  @include font-pt-sans;
+  font-size: 1rem;
+  font-weight: bold;
+  color: $theme-color-peach;
+}
+
+// Animations
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

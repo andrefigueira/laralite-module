@@ -1,0 +1,19 @@
+{
+    "name": "andrefigueira/laralite-module",
+    "type": "laravel-module",
+    "description": "The Laralite CMS module.",
+    "license": "MIT",
+    "require": {
+        "php": "^7.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Laralite\\": "./"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}
