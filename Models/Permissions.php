@@ -1,6 +1,6 @@
 <?php
 
-namespace Wovosoft\LaravelPermissions\Models;
+namespace Modules\Laralite\Models;
 
 use Spatie\Permission\Models\Permission;
 

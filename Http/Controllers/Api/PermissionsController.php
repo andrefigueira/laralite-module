@@ -5,26 +5,26 @@ namespace Modules\Laralite\Http\Controllers\Api;
 use Log;
 use Hash;
 use App\Http\Controllers\Controller;
-use Modules\Laralite\Models\Roles;
+use Modules\Laralite\Models\Permissions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RolesController extends Controller
+class PermissionsController extends Controller
 {
     public function get(Request $request)
     {
-        return Roles::paginate();
+        return Permissions::paginate();
     }
 
     public function getOne($id)
     {
         try {
-            return Roles::where('id', '=', $id)->firstOrFail();
+            return Permissions::where('id', '=', $id)->firstOrFail();
         } catch (\Throwable $exception) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Failed to get role',
+                'message' => 'Failed to get permission',
                 'errors' => [
                     $exception->getMessage(),
                 ],
@@ -40,31 +40,31 @@ class RolesController extends Controller
         ]);
 
         try {
-            $role = Roles::create([
+            $permission = Permissions::create([
                 'name' => $request->get('name'),
                 'guard_name' => $request->get('guard_name')
             ]);
 
-            Log::info('Created role', [
+            Log::info('Created permission', [
                 'request' => $request->all(),
-                'role' => $role,
+                'permission' => $permission,
             ]);
 
             return new JsonResponse([
                 'success' => true,
-                'message' => 'Created new role',
+                'message' => 'Created new permission',
                 'data' => [
-                    'role' => $role,
+                    'role' => $permission,
                 ],
             ], Response::HTTP_CREATED);
         } catch (\Throwable $exception) {
-            Log::error('Failed to create role', [
+            Log::error('Failed to create permission', [
                 'message' => $exception->getMessage(),
             ]);
 
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Failed to create role',
+                'message' => 'Failed to create permission',
                 'errors' => [
                     $exception->getMessage(),
                 ],
@@ -76,31 +76,31 @@ class RolesController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'guard_name' => 'required',
+            'guard_name' => 'guard_name',
         ]);
 
         try {
-            $role = Roles::where('id', '=', $id)->firstOrFail();
+            $permission = Permissions::where('id', '=', $id)->firstOrFail();
 
-            $role->update([
+            $permission->update([
                 'name' => $request->get('name'),
                 'guard_name' => $request->get('guard_name'),
             ]);
 
-            Log::info('Updated role', [
+            Log::info('Updated permission', [
                 'request' => $request->all(),
-                'role' => $role,
+                'permission' => $permission,
             ]);
 
-            return $role;
+            return $permission;
         } catch (\Throwable $exception) {
-            Log::error('Failed to update role', [
+            Log::error('Failed to update permission', [
                 'message' => $exception->getMessage(),
             ]);
 
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Failed to update role',
+                'message' => 'Failed to update permission',
                 'errors' => [
                     $exception->getMessage(),
                 ],
@@ -111,15 +111,15 @@ class RolesController extends Controller
     public function delete($id)
     {
         try {
-            $role = Roles::where('id', '=', $id)->firstOrFail();
+            $permission = Permissions::where('id', '=', $id)->firstOrFail();
 
-            $role->delete();
+            $permission->delete();
 
             return new JsonResponse([], Response::HTTP_NO_CONTENT);
         } catch (\Throwable $exception) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Failed to delete role',
+                'message' => 'Failed to delete permission',
                 'errors' => [
                     $exception->getMessage(),
                 ],
