@@ -3,8 +3,8 @@
         <div class="row">
             <div class="col-md-12">
                 <h2 class="admin-title">
-                    {{ type === 'create' ? 'Create new user' : 'Edit user ' }}
-                    <strong v-show="type === 'edit'">{{ user.name }}</strong>
+                    {{ type === 'create' ? 'Create new role' : 'Edit role ' }}
+                    <strong v-show="type === 'edit'">{{ role.name }}</strong>
                 </h2>
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
@@ -15,62 +15,30 @@
                 <div class="page-section p-4 mb-4">
                     <div class="row">
                         <div class="col-md-6">
-                            <b-form-group id="user-name-group" label="User name" label-for="user-name">
+                            <b-form-group id="role-name-group" label="Role name" label-for="role-name-input">
                                 <b-form-input
-                                    id="user-name-input"
+                                    id="role-name-input"
                                     required
                                     v-model="form.name"
                                     :state="validateState('name')"
-                                    placeholder="Enter user name"
+                                    placeholder="Enter role name"
                                 ></b-form-input>
                                 <b-form-invalid-feedback>Enter a valid name with more than 3 characters</b-form-invalid-feedback>
                             </b-form-group>
                         </div><!-- End col -->
                         <div class="col-md-6">
-                            <b-form-group id="user-email-group" label="User email" label-for="user-email">
+                            <b-form-group id="role-guard-group" label="Role guard name" label-for="role-guard-name-input">
                                 <b-form-input
-                                    type="email"
-                                    id="user-email-input"
+                                    id="role-guard-name-input"
                                     required
-                                    v-model="form.email"
-                                    :state="validateState('email')"
-                                    placeholder="Enter user email"
+                                    v-model="form.guard_name"
+                                    :state="validateState('guard_name')"
+                                    placeholder="Enter role guard name"
                                     autocapitalize="none"
                                 ></b-form-input>
-                                <b-form-invalid-feedback>Enter a valid email address</b-form-invalid-feedback>
+                                <b-form-invalid-feedback>Enter a valid guard name</b-form-invalid-feedback>
                             </b-form-group>
                         </div><!-- End col -->
-                        <div class="col-md-6">
-                            <b-form-group id="user-password-group" label="Password" label-for="user-password">
-                                <b-form-input
-                                    type="password"
-                                    id="user-password-input"
-                                    required
-                                    v-model="form.password"
-                                    :state="validateState('password')"
-                                    placeholder="Enter user password"
-                                ></b-form-input>
-                                <b-form-invalid-feedback>Enter a valid password</b-form-invalid-feedback>
-                            </b-form-group>
-                        </div><!-- End col -->
-                        <div class="col-md-6">
-                            <b-form-group id="user-confirm-password-group" label="Confirm password" label-for="user-confirm-password">
-                                <b-form-input
-                                    type="password"
-                                    id="user-confirm-password-input"
-                                    required
-                                    v-model="form.confirmPassword"
-                                    :state="validateState('confirmPassword')"
-                                    placeholder="Confirm password"
-                                ></b-form-input>
-                                <b-form-invalid-feedback>Passwords must match</b-form-invalid-feedback>
-                            </b-form-group>
-                        </div><!-- End col -->
-                        <div class="col-md-6">
-                         <b-form-group id="user-role-group" label="Role" label-for="user-role">
-                                
-                            </b-form-group>   
-                        </div>
                         <div class="col-md-12">
                             <b-button class="mt-2" variant="success" :disabled="saving" @click="save()">{{ button }}</b-button>
                         </div><!-- End col -->
@@ -99,7 +67,7 @@
                 type: String,
                 default: 'create'
             },
-            user: {
+            role: {
                 type: Object,
                 default: {}
             }
@@ -113,9 +81,7 @@
                 form: {
                     id: '',
                     name: '',
-                    email: '',
-                    password: '',
-                    confirmPassword: ''
+                    guard_name: ''
                 }
             }
         },
@@ -125,24 +91,13 @@
                     required,
                     minLength: minLength(3)
                 },
-                email: {
+                guard_name: {
                     required,
-                    email
-                },
-                password: {
-                    required: requiredIf('noUserDefined'),
-                    minLength: minLength(6)
-                },
-                confirmPassword: {
-                    confirmPassword: sameAs('password')
+                    minLength: minLength(3)
                 }
             }
         },
         computed: {
-            noUserDefined() {
-                debugger;
-                return this.user.id !== undefined;
-            },
             button() {
                 if (this.type === 'create') {
                     return 'Create';
@@ -151,10 +106,10 @@
                 return 'Save changes'
             },
             formEndpoint() {
-                let endpoint = '/api/user';
+                let endpoint = '/api/roles';
 
                 if (this.type === 'edit') {
-                    endpoint = '/api/user/' + this.user.id;
+                    endpoint = '/api/roles/' + this.role.id;
                 }
 
                 return endpoint;
@@ -175,10 +130,10 @@
                 return $dirty ? !$error : null;
             },
             load() {
-                if (this.user.id !== undefined) {
-                    this.form.id = this.user.id;
-                    this.form.name = this.user.name;
-                    this.form.email = this.user.email;
+                if (this.role.id !== undefined) {
+                    this.form.id = this.role.id;
+                    this.form.name = this.role.name;
+                    this.form.guard_name = this.role.guard_name;
                 }
             },
             save() {
@@ -195,31 +150,30 @@
                     url: this.formEndpoint,
                     data:  {
                         name: this.form.name,
-                        email: this.form.email,
-                        password: this.form.password
+                        guard_name: this.form.guard_name
                     }
                 }).then(response => {
                     this.saving = false;
 
-                    bus.$emit('user-created', response.data.data);
+                    bus.$emit('role-created', response.data.data);
 
                     if (this.type === 'create') {
-                        window.location.replace('/admin/users');
+                        window.location.replace('/admin/roles');
                     }
 
                     this.alertShow = true;
-                    this.alertMessage = 'Saved changes to user';
+                    this.alertMessage = 'Saved changes to role';
                     this.alertType = 'success';
                 }).catch(error => {
                     this.saving = false;
 
                     // 409 status code: conflict, i.e. already exists in system
                     if (error.response.status === 409) {
-                        console.log('User already exists in system');
+                        console.log('Role already exists in system');
 
                         this.alertShow = true;
                         this.alertType = 'danger';
-                        this.alertMessage = 'User already exists!';
+                        this.alertMessage = 'Role already exists!';
 
                         return;
                     }
@@ -238,13 +192,8 @@
 
                     this.alertShow = true;
                     this.alertType = 'danger';
-                    this.alertMessage = 'Failed to create user try again later';
+                    this.alertMessage = 'Failed to create role try again later';
                 });
-            },
-            generateSlug() {
-                this.sectionSlug = this.sectionName.toLowerCase()
-                    .replace(/[^\w ]+/g,'')
-                    .replace(/ +/g,'-');
             }
         }
     }

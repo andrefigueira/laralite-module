@@ -42,6 +42,18 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::patch('/user/{id}', 'Api\UserController@update');
     Route::patch('/user/authed', 'Api\UserController@getAuthed');
 
+    Route::post('/roles', 'Api\RolesController@create');
+    Route::get('/roles', 'Api\RolesController@get');
+    Route::get('/roles/{id}', 'Api\RolesController@getOne');
+    Route::delete('/roles/{id}', 'Api\RolesController@delete');
+    Route::patch('/roles/{id}', 'Api\RolesController@update');
+
+    Route::post('/permissions', 'Api\PermissionsController@create');
+    Route::get('/permissions', 'Api\PermissionsController@get');
+    Route::get('/permissions/{id}', 'Api\PermissionsController@getOne');
+    Route::delete('/permissions/{id}', 'Api\PermissionsController@delete');
+    Route::patch('/permissions/{id}', 'Api\PermissionsController@update');
+
     Route::get('/component', 'Api\ComponentController@get');
     Route::patch('/component/{id}', 'Api\ComponentController@update');
 
