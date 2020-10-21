@@ -130,10 +130,10 @@
                 return $dirty ? !$error : null;
             },
             load() {
-                if (this.role.id !== undefined) {
-                    this.form.id = this.role.id;
-                    this.form.name = this.role.name;
-                    this.form.guard_name = this.role.guard_name;
+                if (this.permission.id !== undefined) {
+                    this.form.id = this.permission.id;
+                    this.form.name = this.permission.name;
+                    this.form.guard_name = this.permission.guard_name;
                 }
             },
             save() {

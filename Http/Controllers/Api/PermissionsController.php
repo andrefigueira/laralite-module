@@ -54,7 +54,7 @@ class PermissionsController extends Controller
                 'success' => true,
                 'message' => 'Created new permission',
                 'data' => [
-                    'role' => $permission,
+                    'permission' => $permission,
                 ],
             ], Response::HTTP_CREATED);
         } catch (\Throwable $exception) {
@@ -76,7 +76,7 @@ class PermissionsController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'guard_name' => 'guard_name',
+            'guard_name' => 'required',
         ]);
 
         try {

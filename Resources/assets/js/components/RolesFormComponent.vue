@@ -39,6 +39,16 @@
                                 <b-form-invalid-feedback>Enter a valid guard name</b-form-invalid-feedback>
                             </b-form-group>
                         </div><!-- End col -->
+                         <div class="col-md-6">
+                            <b-form-group id="role-permissions-group" label="Role permissions" label-for="role-permissions-name-input">
+                                <b-form-checkbox-group
+                                    id="role-permissions-name-input"
+                                    v-model="form.permissions"
+                                    :options="permissions"
+                                ></b-form-checkbox-group>
+                                <b-form-invalid-feedback>Enter a valid guard name</b-form-invalid-feedback>
+                            </b-form-group>
+                        </div><!-- End col -->
                         <div class="col-md-12">
                             <b-button class="mt-2" variant="success" :disabled="saving" @click="save()">{{ button }}</b-button>
                         </div><!-- End col -->
@@ -60,6 +70,17 @@
         mounted() {
             console.log('Component mounted.');
 
+            axios.post(this.data_url, {
+                permissions: this.permissions.length <= 0 ? ["id", "name"] : false,
+            }).then(res => {
+                if (res.data.permissions) {
+                    this.permissions = (res.data.permissions || []).map(item => item.name);
+                }
+            }).catch(err => {
+                console.log(err.response);
+                this.$emit("error", err.response);
+            });
+
             this.load();
         },
         props: {
@@ -70,7 +91,15 @@
             role: {
                 type: Object,
                 default: {}
-            }
+            },
+            rolepermissions: {
+                type: [Array, Object],
+                default: []
+            },
+            data_url: {
+                type: String,
+                default: "/api/user/data"
+            },
         },
         data() {
             return {
@@ -78,10 +107,12 @@
                 alertShow: false,
                 alertType: 'primary',
                 alertMessage: '',
+                permissions: [],
                 form: {
                     id: '',
                     name: '',
-                    guard_name: ''
+                    guard_name: '',
+                    permissions: [],
                 }
             }
         },
@@ -134,6 +165,7 @@
                     this.form.id = this.role.id;
                     this.form.name = this.role.name;
                     this.form.guard_name = this.role.guard_name;
+                    this.form.permissions = Object.keys(this.rolepermissions).map(key => {return this.rolepermissions[key]; });
                 }
             },
             save() {
@@ -150,7 +182,8 @@
                     url: this.formEndpoint,
                     data:  {
                         name: this.form.name,
-                        guard_name: this.form.guard_name
+                        guard_name: this.form.guard_name,
+                        permissions: this.form.permissions
                     }
                 }).then(response => {
                     this.saving = false;

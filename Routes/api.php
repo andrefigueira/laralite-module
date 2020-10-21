@@ -40,7 +40,7 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::get('/user/{id}', 'Api\UserController@getOne');
     Route::delete('/user/{id}', 'Api\UserController@delete');
     Route::patch('/user/{id}', 'Api\UserController@update');
-    Route::patch('/user/authed', 'Api\UserController@getAuthed');
+    Route::post('/user/data', 'Api\UserController@data');
 
     Route::post('/roles', 'Api\RolesController@create');
     Route::get('/roles', 'Api\RolesController@get');

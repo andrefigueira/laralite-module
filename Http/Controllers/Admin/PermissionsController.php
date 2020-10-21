@@ -14,8 +14,6 @@ class PermissionsController extends Controller
 
     public function create()
     {
-        $roles = Permissions::pluck('name','name')->all();
-
         return view('laralite::admin.permissions.form', [
             'type' => 'create',
         ]);
@@ -24,10 +22,10 @@ class PermissionsController extends Controller
     public function edit($id)
     {
         $permission = Permissions::where('id', '=', $id)->firstOrFail();
-
+        
         return view('laralite::admin.permissions.form', [
             'type' => 'edit',
-            'role' => $permission,
+            'permission' => $permission,
         ]);
     }
 }

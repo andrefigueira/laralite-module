@@ -23,7 +23,7 @@
                 <td>{{ permission.updated_at }}</td>
                 <td>
                     <b-button @click="confirmDelete(permission)" variant="danger" size="sm" class="float-right">Delete</b-button>
-                    <a :href="'/admin/permission/edit/' + permission.id" class="btn btn-sm btn-primary float-right mr-1">Edit</a>
+                    <a :href="'/admin/permissions/edit/' + permission.id" class="btn btn-sm btn-primary float-right mr-1">Edit</a>
                 </td>
             </tr>
         </table>

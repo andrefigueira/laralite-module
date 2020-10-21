@@ -5,6 +5,8 @@ namespace Modules\Laralite\Http\Controllers\Api;
 use Log;
 use Hash;
 use App\Http\Controllers\Controller;
+use Modules\Laralite\Models\Roles;
+use Modules\Laralite\Models\Permissions;
 use Modules\Laralite\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,6 +40,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required',
             'password' => 'required',
+            'roles' => 'required'
         ]);
 
         try {
@@ -46,6 +49,10 @@ class UserController extends Controller
                 'email' => $request->get('email'),
                 'password' => Hash::make($request->get('password')),
             ]);
+
+            if ($request->has("roles") && $request->post("roles")) {
+                $user->assignRole($request->post("roles"));
+            }
 
             Log::info('Created user', [
                 'request' => $request->all(),
@@ -79,6 +86,7 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required',
+            'roles' => 'required',
         ]);
 
         try {
@@ -88,6 +96,11 @@ class UserController extends Controller
                 'name' => $request->get('name'),
                 'email' => $request->get('email'),
             ]);
+
+            
+            if ($request->has("roles") && $request->post("roles")) {
+                $user->syncRoles($request->post("roles"));
+            }
 
             if ($request->get('password') !== '') {
                 $user->update([
@@ -133,5 +146,18 @@ class UserController extends Controller
                 ],
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+    }
+
+    public function data(Request $request)
+    {
+        $output = [];
+        if ($request->has("roles") && $request->post("roles")) {
+            $output["roles"] = Roles::select($request->post("roles"))->get();
+        }
+        if ($request->has("permissions") && $request->post("permissions")) {
+            $output["permissions"] = Permissions::select($request->post("permissions"))->get();
+        }
+
+        return response()->json($output);
     }
 }

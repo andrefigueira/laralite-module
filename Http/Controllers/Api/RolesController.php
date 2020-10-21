@@ -87,6 +87,10 @@ class RolesController extends Controller
                 'guard_name' => $request->get('guard_name'),
             ]);
 
+            if ($request->has("permissions") && $request->post("permissions")) {
+                $role->syncPermissions($request->post("permissions"));
+            }
+
             Log::info('Updated role', [
                 'request' => $request->all(),
                 'role' => $role,
