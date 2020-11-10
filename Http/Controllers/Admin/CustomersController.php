@@ -3,8 +3,8 @@
 namespace Modules\Laralite\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Modules\CradleMoney\Models\Customers;
 use Illuminate\Http\Request;
+use Modules\Laralite\Models\Customer;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomersController extends Controller
@@ -16,7 +16,7 @@ class CustomersController extends Controller
 
     public function view(string $uniqueId)
     {
-        $customer = Customers::where('unique_id', '=', $uniqueId)->get();
+        $customer = Customer::where('unique_id', '=', $uniqueId)->get();
 
         if ($customer === null) {
             throw new NotFoundHttpException('Customer not found');
@@ -29,7 +29,7 @@ class CustomersController extends Controller
 
     public function edit($id)
     {
-        $customer = Customers::where('id', '=', $id)->firstOrFail();
+        $customer = Customer::where('id', '=', $id)->firstOrFail();
 
         return view('laralite::admin.customers.form', [
             'type' => 'edit',

@@ -7,7 +7,8 @@
         "php": "^7.3",
         "sopamo/laravel-filepond": "^0.5.0",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "league/flysystem-cached-adapter": "^1.1"
+        "league/flysystem-cached-adapter": "^1.1",
+        "stripe/stripe-php": "^7.62"
     },
     "autoload": {
         "psr-4": {

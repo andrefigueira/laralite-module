@@ -46,7 +46,7 @@
             <div class="card-header" id="headingTwo">
                 <a href="#" data-toggle="collapse" data-target="#collapseTwo">Commerce</a>
             </div><!-- End card header -->
-            <div id="collapseTwo" class="collapse {{ request()->is('admin/product', 'admin/product/edit/*', 'admin/product/create', 'admin/product-category*', 'admin/customers*') ? 'show' : '' }}" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div id="collapseTwo" class="collapse {{ request()->is('admin/product', 'admin/product/edit/*', 'admin/product/create', 'admin/product-category*', 'admin/customers*', 'admin/orders*', 'admin/discounts*', 'admin/reporting*', 'admin/scanner*') ? 'show' : '' }}" aria-labelledby="headingTwo" data-parent="#accordion">
                 <div class="card-body">
                     <ul class="nav">
                         <li class="nav-item">
@@ -83,6 +83,12 @@
                             <a class="nav-link {{ request()->is('admin/customers*') ? 'active' : '' }}" href="/admin/customers">
                                 <i class="fas fa-user-friends"></i>
                                 Customers
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->is('admin/scanner*') ? 'active' : '' }}" href="/admin/scanner">
+                                <i class="fas fa-qrcode"></i>
+                                Scanner
                             </a>
                         </li>
                     </ul>

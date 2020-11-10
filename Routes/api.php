@@ -43,9 +43,8 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::patch('/user/authed', 'Api\UserController@getAuthed');
 
     Route::post('/product', 'Api\ProductController@create');
-    Route::get('/product', 'Api\ProductController@get');
+
     Route::get('/product/{id}', 'Api\ProductController@getOne');
-    Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
     Route::delete('/product/{id}', 'Api\ProductController@delete');
     Route::patch('/product/{id}', 'Api\ProductController@update');
 
@@ -62,5 +61,15 @@ Route::group(['middleware' => 'auth:api'], static function () {
 
     Route::get('/module', 'Api\ModuleController@get');
 
+    Route::get('/customer', 'Api\CustomerController@get');
+    Route::get('/customer/{id}', 'Api\CustomerController@getOne');
+
+    Route::get('/order', 'Api\OrderController@get');
+    Route::get('/order/{id}', 'Api\OrderController@getOne');
+
 //    Route::post('/form', 'Api\FormController@submit');
 });
+
+Route::get('/product', 'Api\ProductController@get');
+Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
+Route::post('/process-payment', 'Api\PaymentController@processPayment');

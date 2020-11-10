@@ -19,6 +19,11 @@
                     <v-select class="mb-3" id="currency-option" label="title" v-model="currency" :options="currencyOptions" :clearable="false"></v-select>
                 </div><!-- End page section -->
             </div><!-- End col -->
+            <div class="col-3">
+                <div class="page-section p-4 mt-2">
+                    CONNECT WITH STRIPE
+                </div><!-- End page section -->
+            </div><!-- End col -->
             <div class="col-12 mt-2">
                 <div class="page-section p-4">
                     <button class="btn btn-success">Save Changes</button>

@@ -59,7 +59,6 @@
 
                     self.uploadError = error.response.data.message;
                 });
-
             },
             showImagePreview() {
                 let reader = new FileReader();

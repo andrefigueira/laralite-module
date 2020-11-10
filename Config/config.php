@@ -93,5 +93,12 @@ return [
                 'icon' => 'fa-shopping-cart',
             ],
         ],
+        [
+            'name' => 'Shop Checkout',
+            'slug' => 'shop-checkout',
+            'settings' => [
+                'icon' => 'fa-shopping-cart',
+            ],
+        ],
     ],
 ];

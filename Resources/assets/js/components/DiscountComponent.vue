@@ -27,18 +27,14 @@
                     :per-page="perPage"
                     :current-page="currentPage"
                     :filter="filter">
-                    <template v-slot:cell(verified)="data">
-                        <b-badge v-if="data.item.verification_guid === ''" variant="success"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
-                        <b-badge v-if="data.item.verification_guid !== ''" variant="danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
-                    </template>
                     <template v-slot:cell(status)="data">
                         <b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge>
                     </template>
-                    <template v-slot:cell(registered)="data">
+                    <template v-slot:cell(date_created)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
                     <template v-slot:cell(actions)="data">
-                        <a :href="'/admin/customers/view/' + data.item.unique_id" class="btn btn-sm btn-success float-right mr-1">View</a>
+                        <a :href="'/admin/discount/edit/' + data.item.id" class="btn btn-sm btn-success float-right mr-1">View</a>
                     </template>
                 </b-table>
 
@@ -73,11 +69,8 @@
 
                 // Table settings
                 fields: [
-                    { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
-                    { key: 'email', label: 'Email', sortable: true, sortDirection: 'desc' },
-                    { key: 'verified', label: 'Verified'},
-                    { key: 'status', label: 'Status'},
-                    { key: 'registered', label: 'Registered'},
+                    { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
+                    { key: 'date_created', label: 'Order Date'},
                     { key: 'actions', label: '' }
                 ],
                 totalRows: 1,
@@ -102,7 +95,7 @@
                 this.isBusy = true;
 
                 const promise = axios.get(
-                    '/api/customer?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
+                    '/api/order?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
                 );
 
                 return promise.then((data) => {

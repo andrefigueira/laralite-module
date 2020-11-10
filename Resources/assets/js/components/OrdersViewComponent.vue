@@ -1,7 +1,7 @@
 <template>
     <div class="customer-details">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h1 class="h2">Customer &rarr; <strong>{{ customer.name }}</strong></h1>
+            <h1 class="h2">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group mr-2">
 
@@ -17,22 +17,32 @@
             <div class="col-6">
                 <b-card>
                     <b-card-text>
-                        <h5 class="heading-style"><i class="fas fa-user"></i> Customer Details</h5>
+                        <h5 class="heading-style"><i class="fas fa-user"></i> Order Details</h5>
                         <table class="table table-striped">
                             <tr>
                                 <td width="40%"><strong>ID</strong></td>
-                                <td>{{ customer.unique_id }}</td>
+                                <td>{{ order.unique_id }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Status</strong></td>
-                                <td><b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge></td>
+                                <td><b-badge variant="success"><i class="fas fa-check-circle"></i> Accepted</b-badge></td>
+                            </tr>
+                        </table>
+                    </b-card-text>
+                </b-card>
+            </div><!-- End col -->
+            <div class="col-6">
+                <b-card>
+                    <b-card-text>
+                        <h5 class="heading-style"><i class="fas fa-user"></i> Order Basket</h5>
+                        <table class="table table-striped">
+                            <tr>
+                                <td width="40%"><strong>ID</strong></td>
+                                <td>{{ order.unique_id }}</td>
                             </tr>
                             <tr>
-                                <td><strong>Verified</strong></td>
-                                <td>
-                                    <b-badge v-if="customer.verification_guid === ''" variant="success"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
-                                    <b-badge v-if="customer.verification_guid !== ''" variant="danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
-                                </td>
+                                <td><strong>Status</strong></td>
+                                <td><b-badge variant="success"><i class="fas fa-check-circle"></i> Accepted</b-badge></td>
                             </tr>
                         </table>
                     </b-card-text>
@@ -41,9 +51,9 @@
             <div class="col-12 mt-2">
                 <b-card>
                     <b-card-text>
-                        <h5 class="heading-style"><i class="fas fa-user"></i> Customer Orders</h5>
+                        <h5 class="heading-style"><i class="fas fa-user"></i> Payment Details</h5>
 
-                        Customer orders to be listed here...
+                        Payment details to appear here
                     </b-card-text>
                 </b-card>
             </div><!-- End col -->
@@ -59,7 +69,7 @@
             this.loading = false;
         },
         props: {
-            customer: {
+            order: {
                 type: Object
             }
         },

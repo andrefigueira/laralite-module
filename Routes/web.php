@@ -49,9 +49,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/admin/customers/edit/{id}', 'Admin\CustomersController@edit');
     Route::get('/admin/customers/view/{id}', 'Admin\CustomersController@view');
 
+    Route::get('/admin/orders', 'Admin\OrdersController@index');
+    Route::get('/admin/orders/view/{id}', 'Admin\OrdersController@view');
+
     Route::get('/admin/product', 'Admin\ProductController@index');
     Route::get('/admin/product/create', 'Admin\ProductController@create');
     Route::get('/admin/product/edit/{id}', 'Admin\ProductController@edit');
+
+    Route::get('/admin/discounts', 'Admin\DiscountController@index');
+    Route::get('/admin/discounts/create', 'Admin\DiscountController@create');
+    Route::get('/admin/discounts/edit/{id}', 'Admin\DiscountController@edit');
 
     Route::get('/admin/product-category', 'Admin\ProductCategoriesController@index');
     Route::get('/admin/product-category/create', 'Admin\ProductCategoriesController@create');
@@ -60,6 +67,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/admin/variables', 'Admin\VariableController@index');
     Route::get('/admin/authentication', 'Admin\AuthenticationController@index');
     Route::get('/admin/settings', 'Admin\SettingsController@index');
+
+    Route::get('/admin/scanner', 'Admin\ScannerController@scanner');
 
 //    Route::get('/home', 'HomeController@index')->name('home');
 });
