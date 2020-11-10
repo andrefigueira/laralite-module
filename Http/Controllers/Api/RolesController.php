@@ -6,27 +6,25 @@ use Log;
 use Hash;
 use App\Http\Controllers\Controller;
 use Modules\Laralite\Models\Roles;
-use Modules\Laralite\Models\Permissions;
-use Modules\Laralite\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class UserController extends Controller
+class RolesController extends Controller
 {
     public function get(Request $request)
     {
-        return User::paginate();
+        return Roles::paginate();
     }
 
     public function getOne($id)
     {
         try {
-            return User::where('id', '=', $id)->firstOrFail();
+            return Roles::where('id', '=', $id)->firstOrFail();
         } catch (\Throwable $exception) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Failed to get user',
+                'message' => 'Failed to get role',
                 'errors' => [
                     $exception->getMessage(),
                 ],
@@ -38,42 +36,35 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'roles' => 'required'
+            'guard_name' => 'required',
         ]);
 
         try {
-            $user = User::create([
+            $role = Roles::create([
                 'name' => $request->get('name'),
-                'email' => $request->get('email'),
-                'password' => Hash::make($request->get('password')),
+                'guard_name' => $request->get('guard_name')
             ]);
 
-            if ($request->has("roles") && $request->post("roles")) {
-                $user->assignRole($request->post("roles"));
-            }
-
-            Log::info('Created user', [
+            Log::info('Created role', [
                 'request' => $request->all(),
-                'user' => $user,
+                'role' => $role,
             ]);
 
             return new JsonResponse([
                 'success' => true,
-                'message' => 'Created new user',
+                'message' => 'Created new role',
                 'data' => [
-                    'user' => $user,
+                    'role' => $role,
                 ],
             ], Response::HTTP_CREATED);
         } catch (\Throwable $exception) {
-            Log::error('Failed to create user', [
+            Log::error('Failed to create role', [
                 'message' => $exception->getMessage(),
             ]);
 
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Failed to create user',
+                'message' => 'Failed to create role',
                 'errors' => [
                     $exception->getMessage(),
                 ],
@@ -85,43 +76,35 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'email' => 'required',
-            'roles' => 'required',
+            'guard_name' => 'required',
         ]);
 
         try {
-            $user = User::where('id', '=', $id)->firstOrFail();
+            $role = Roles::where('id', '=', $id)->firstOrFail();
 
-            $user->update([
+            $role->update([
                 'name' => $request->get('name'),
-                'email' => $request->get('email'),
+                'guard_name' => $request->get('guard_name'),
             ]);
 
-            
-            if ($request->has("roles") && $request->post("roles")) {
-                $user->syncRoles($request->post("roles"));
+            if ($request->has("permissions") && $request->post("permissions")) {
+                $role->syncPermissions($request->post("permissions"));
             }
 
-            if ($request->get('password') !== '') {
-                $user->update([
-                    'password' => Hash::make($request->get('password')),
-                ]);
-            }
-
-            Log::info('Updated user', [
+            Log::info('Updated role', [
                 'request' => $request->all(),
-                'user' => $user,
+                'role' => $role,
             ]);
 
-            return $user;
+            return $role;
         } catch (\Throwable $exception) {
-            Log::error('Failed to update user', [
+            Log::error('Failed to update role', [
                 'message' => $exception->getMessage(),
             ]);
 
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Failed to update user',
+                'message' => 'Failed to update role',
                 'errors' => [
                     $exception->getMessage(),
                 ],
@@ -132,32 +115,19 @@ class UserController extends Controller
     public function delete($id)
     {
         try {
-            $user = User::where('id', '=', $id)->firstOrFail();
+            $role = Roles::where('id', '=', $id)->firstOrFail();
 
-            $user->delete();
+            $role->delete();
 
             return new JsonResponse([], Response::HTTP_NO_CONTENT);
         } catch (\Throwable $exception) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Failed to delete user',
+                'message' => 'Failed to delete role',
                 'errors' => [
                     $exception->getMessage(),
                 ],
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-    }
-
-    public function data(Request $request)
-    {
-        $output = [];
-        if ($request->has("roles") && $request->post("roles")) {
-            $output["roles"] = Roles::select($request->post("roles"))->get();
-        }
-        if ($request->has("permissions") && $request->post("permissions")) {
-            $output["permissions"] = Permissions::select($request->post("permissions"))->get();
-        }
-
-        return response()->json($output);
     }
 }
