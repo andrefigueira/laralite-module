@@ -68,6 +68,39 @@
                                 <b-form-invalid-feedback>Passwords must match</b-form-invalid-feedback>
                             </b-form-group>
                         </div><!-- End col -->
+                        <div class="col-md-6">
+                            <b-form-group label="Roles *">
+                                <b-form-select
+                                    :required="true"
+                                    :options="roles"
+                                    v-model="temp_role"
+                                    class="role-select"
+                                    @input="(role)=>{
+                                        if (role && form.roles.indexOf(role) < 0) {
+                                            form.roles.push(role);
+                                        }
+                                    }"
+                                >
+                                    <b-form-select-option :value="null">Please select an option</b-form-select-option>
+                                </b-form-select>
+
+                                <b-button 
+                                    size="sm" 
+                                    class="m-1"
+                                    title="Click to Remove"
+                                    v-for="(role,key) in form.roles" :key="key"
+                                    @click="()=>{
+                                        if (temp_role == form.roles[key]) {
+                                            temp_role = null;
+                                        }
+                                        form.roles.splice(key, 1);
+                                    }"
+                                >
+                                    <b-icon-x />
+                                    {{role}}
+                                </b-button>
+                            </b-form-group>
+                        </div>
                         <div class="col-md-12">
                             <b-button class="mt-2" variant="success" :disabled="saving" @click="save()">{{ button }}</b-button>
                         </div><!-- End col -->
@@ -87,6 +120,21 @@
     export default {
         mixins: [validationMixin],
         mounted() {
+            axios.post(this.data_url, {
+                roles: this.roles.length <= 0 ? ["id", "name"] : false,
+                permissions: this.permissions.length <= 0 ? ["id", "name"] : false,
+            }).then(res => {
+                if (res.data.roles) {
+                    this.roles = (res.data.roles || []).map(item => item.name);
+                }
+                if (res.data.permissions) {
+                    this.permissions = (res.data.permissions || []).map(item => item.name);
+                }
+            }).catch(err => {
+                console.log(err.response);
+                this.$emit("error", err.response);
+            });
+
             console.log('Component mounted.');
 
             this.load();
@@ -99,7 +147,15 @@
             user: {
                 type: Object,
                 default: {}
-            }
+            },
+            userroles: {
+                type: [Array, Object],
+                default: []
+            },
+            data_url: {
+                type: String,
+                default: "/api/user/data"
+            },
         },
         data() {
             return {
@@ -107,12 +163,17 @@
                 alertShow: false,
                 alertType: 'primary',
                 alertMessage: '',
+                temp_role: null,
+                roles: [],
+                permissions: [],
                 form: {
                     id: '',
                     name: '',
                     email: '',
                     password: '',
-                    confirmPassword: ''
+                    confirmPassword: '',
+                    roles: [],
+                    permissions: [],
                 }
             }
         },
@@ -132,6 +193,9 @@
                 },
                 confirmPassword: {
                     confirmPassword: sameAs('password')
+                },
+                roles: {
+                    required
                 }
             }
         },
@@ -176,6 +240,7 @@
                     this.form.id = this.user.id;
                     this.form.name = this.user.name;
                     this.form.email = this.user.email;
+                    this.form.roles = Object.keys(this.userroles).map(key => {return this.userroles[key]; })
                 }
             },
             save() {
@@ -193,7 +258,8 @@
                     data:  {
                         name: this.form.name,
                         email: this.form.email,
-                        password: this.form.password
+                        password: this.form.password,
+                        roles: this.form.roles
                     }
                 }).then(response => {
                     this.saving = false;
@@ -246,3 +312,7 @@
         }
     }
 </script>
+
+<style type="text/css">
+.role-select{ margin-bottom: 5px; }
+</style>

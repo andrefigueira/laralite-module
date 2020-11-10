@@ -5,6 +5,7 @@ namespace Modules\Laralite\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Modules\Laralite\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UsersController extends Controller
 {
@@ -15,6 +16,7 @@ class UsersController extends Controller
 
     public function create()
     {
+        $roles = Role::pluck('name','name')->all();
         return view('laralite::admin.users.form', [
             'type' => 'create',
         ]);
@@ -23,10 +25,12 @@ class UsersController extends Controller
     public function edit($id)
     {
         $user = User::where('id', '=', $id)->firstOrFail();
+        $userRoles = $user->roles->pluck('name','name')->all();
 
         return view('laralite::admin.users.form', [
             'type' => 'edit',
             'user' => $user,
+            'userRoles' => json_encode($userRoles),
         ]);
     }
 }

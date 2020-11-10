@@ -21,6 +21,18 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {{ request()->is('admin/roles*') ? 'active' : '' }}" href="/admin/roles">
+                                <i class="fas fa-user-circle"></i>
+                                Roles
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->is('admin/permissions*') ? 'active' : '' }}" href="/admin/permissions">
+                                <i class="fas fa-lock"></i>
+                                Permissions
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{ request()->is('admin/pages*') ? 'active' : '' }}" href="/admin/pages">
                                 <i class="fas fa-stream"></i>
                                 Pages
