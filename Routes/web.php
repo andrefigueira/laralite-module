@@ -81,6 +81,8 @@ Route::group(['middleware' => 'auth'], function () {
 //    Route::get('/home', 'HomeController@index')->name('home');
 });
 
+Route::get('/ticket/{uuid}', 'TicketController@generateTicket');
+
 /**
  * CMS catch-all route
  *
