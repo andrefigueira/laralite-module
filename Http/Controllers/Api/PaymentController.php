@@ -146,6 +146,7 @@ class PaymentController extends Controller
                     $generatedTicket = $this->generateTicket($order, $index);
 
                     $generatedTickets[] = Ticket::create([
+                        'unique_id' => Uuid::uuid4(),
                         'customer_id' => $customer->id,
                         'order_id' => $order->id,
                         'ticket' => [

@@ -15,6 +15,7 @@ class CreateTicketsTable extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
+            $table->uuid('unique_id');
             $table->integer('order_id')->unsigned()->nullable();
             $table->integer('customer_id')->unsigned()->nullable();
             $table->json('ticket');

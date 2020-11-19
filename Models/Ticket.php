@@ -9,6 +9,7 @@ use Modules\Laralite\Models\Order;
 class Ticket extends Model
 {
     protected $fillable = [
+        'unique_id',
         'customer_id',
         'order_id',
         'ticket',
