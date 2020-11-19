@@ -27,14 +27,12 @@
                     :per-page="perPage"
                     :current-page="currentPage"
                     :filter="filter">
-                    <template v-slot:cell(status)="data">
-                        <b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge>
-                    </template>
                     <template v-slot:cell(date_created)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
                     <template v-slot:cell(actions)="data">
-                        <a :href="'/admin/discount/edit/' + data.item.id" class="btn btn-sm btn-success float-right mr-1">View</a>
+                        <b-button @click="confirmDelete(data.item)" variant="danger" size="sm" class="float-right">Delete</b-button>
+                        <a :href="'/admin/discounts/edit/' + data.item.id" class="btn btn-sm btn-success float-right mr-1">Edit</a>
                     </template>
                 </b-table>
 
@@ -69,8 +67,10 @@
 
                 // Table settings
                 fields: [
-                    { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
-                    { key: 'date_created', label: 'Order Date'},
+                    { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+                    { key: 'type', label: 'Discount Type', sortable: true, sortDirection: 'desc' },
+                    { key: 'value', label: 'Discount Value', sortable: true, sortDirection: 'desc' },
+                    { key: 'date_created', label: 'Created'},
                     { key: 'actions', label: '' }
                 ],
                 totalRows: 1,
@@ -95,7 +95,7 @@
                 this.isBusy = true;
 
                 const promise = axios.get(
-                    '/api/order?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
+                    '/api/discount?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
                 );
 
                 return promise.then((data) => {
@@ -111,6 +111,21 @@
 
                     return [];
                 })
+            },
+            confirmDelete(discount) {
+                this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
+                    if (value) {
+                        let self = this;
+
+                        axios.delete('/api/discount/' + discount.id).then(response => {
+                            self.$refs.table.refresh();
+                        }).catch(error => {
+                            // handle error
+                        });
+                    }
+                }).catch(error => {
+                    // An error occurred
+                });
             }
         }
     }

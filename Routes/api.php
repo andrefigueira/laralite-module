@@ -79,6 +79,12 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::get('/order', 'Api\OrderController@get');
     Route::get('/order/{id}', 'Api\OrderController@getOne');
 
+    Route::get('/discount', 'Api\DiscountController@get');
+    Route::post('/discount', 'Api\DiscountController@create');
+    Route::get('/discount/{id}', 'Api\DiscountController@getOne');
+    Route::delete('/discount/{id}', 'Api\DiscountController@delete');
+    Route::patch('/discount/{id}', 'Api\DiscountController@update');
+
 //    Route::post('/form', 'Api\FormController@submit');
 });
 

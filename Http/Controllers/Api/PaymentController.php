@@ -3,15 +3,19 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Endroid\QrCode\QrCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Log;
+use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Product;
+use Modules\Laralite\Models\Ticket;
 use Ramsey\Uuid\Uuid;
 use Stripe\StripeClient;
 use Symfony\Component\HttpFoundation\Response;
+use Mail;
 
 class PaymentController extends Controller
 {
@@ -66,8 +70,13 @@ class PaymentController extends Controller
             'status' => 1,
         ]);
 
-        // @todo Send email with order summary
-        // @todo Generate the ticket and QR and send it to client
+        $orderAssets = $this->generateOrderAssets($order, $basket, $fetchedCustomer);
+
+        Mail::to('andre.figueira@me.com')->send(new OrderConfirmation([
+            'order' => $order,
+            'customer' => $fetchedCustomer,
+            'orderAssets' => $orderAssets,
+        ]));
 
         return (new JsonResponse([
             'success' => true,
@@ -113,5 +122,42 @@ class PaymentController extends Controller
         }
 
         return $basketTotal;
+    }
+
+    private function generateTicket($order, $index)
+    {
+        $qrCode = new QrCode($order->unique_id . '_index_' . $index);
+        $qrCode->setSize(300);
+        $qrCode->setMargin(10);
+
+        return $qrCode;
+    }
+
+    private function generateOrderAssets($order, $basket, $customer)
+    {
+        $generatedTickets = [];
+
+        foreach ($basket['products'] as $index => $product) {
+            if ($product['sku'] === 'TRAPMUSICTICKET') {
+                $quantityGenerated = 0;
+                $quantityToGenerate = $product['quantity'];
+
+                while ($quantityGenerated < $quantityToGenerate) {
+                    $generatedTicket = $this->generateTicket($order, $index);
+
+                    $generatedTickets[] = Ticket::create([
+                        'customer_id' => $customer->id,
+                        'order_id' => $order->id,
+                        'ticket' => [
+                            'image' => $generatedTicket->writeDataUri(),
+                        ],
+                    ]);
+
+                    $quantityGenerated++;
+                }
+            }
+        }
+
+        return $generatedTickets;
     }
 }
