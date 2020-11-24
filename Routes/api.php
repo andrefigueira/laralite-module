@@ -91,3 +91,4 @@ Route::group(['middleware' => 'auth:api'], static function () {
 Route::get('/product', 'Api\ProductController@get');
 Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
 Route::post('/process-payment', 'Api\PaymentController@processPayment');
+Route::get('/discount/verify/{code}', 'Api\DiscountController@verify');

@@ -24,6 +24,10 @@ class PaymentController extends Controller
         $token = $request->get('token');
         $basket = $request->get('basket');
         $customer = $request->get('customer');
+        $discount = $request->get('discount');
+
+        // @todo: Fetch DB stored discount, and confirm value, and apply the discount to the stripe payment request
+        // @todo: Add a commission charge to the stripe payment of 5%
 
         Log::info('Processing payment for basket', [
             'token' => $token['id'],
@@ -33,12 +37,14 @@ class PaymentController extends Controller
 
         $customerEmail = $customer['email'];
 
+        // @todo: Load stripe key from .env
         $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
 
         $stripe = new StripeClient($stripeKey);
 
         $basketTotal = $this->getBasketTotal($basket);
 
+        // @todo: Load from settings
         $paymentDescription = 'TrapMusicMuseum Payment';
         $currency = 'usd';
 
@@ -72,6 +78,7 @@ class PaymentController extends Controller
 
         $orderAssets = $this->generateOrderAssets($order, $basket, $fetchedCustomer);
 
+        // @todo: load from settings
         Mail::to('andre.figueira@me.com')->send(new OrderConfirmation([
             'order' => $order,
             'customer' => $fetchedCustomer,

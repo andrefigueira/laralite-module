@@ -19,9 +19,11 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "currency.js": "^2.0.3",
         "filepond": "^4.20.1",
         "filepond-plugin-file-validate-type": "^1.2.5",
         "filepond-plugin-image-preview": "^4.6.4",
+        "vue-currency-filter": "^5.2.0",
         "vue-filepond": "^6.0.3",
         "vue-form-wizard": "^0.8.4",
         "vue2-dropzone": "^3.6.0"

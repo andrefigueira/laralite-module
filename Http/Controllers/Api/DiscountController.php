@@ -3,6 +3,7 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Laralite\Models\Discount;
@@ -32,6 +33,29 @@ class DiscountController extends Controller
         }
 
         return $discounts->paginate($perPage);
+    }
+
+    public function verify($code)
+    {
+        try {
+            return Discount::where('code', '=', $code)->firstOrFail();
+        } catch (ModelNotFoundException $exception) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Failed to verify discount',
+                'errors' => [
+                    $exception->getMessage(),
+                ],
+            ], Response::HTTP_NOT_FOUND);
+        } catch (\Throwable $exception) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Failed to verify discount',
+                'errors' => [
+                    $exception->getMessage(),
+                ],
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function getOne($id)
