@@ -79,7 +79,7 @@ class PaymentController extends Controller
         $orderAssets = $this->generateOrderAssets($order, $basket, $fetchedCustomer);
 
         // @todo: load from settings
-        Mail::to('andre.figueira@me.com')->send(new OrderConfirmation([
+        Mail::to($customerEmail)->send(new OrderConfirmation([
             'order' => $order,
             'customer' => $fetchedCustomer,
             'orderAssets' => $orderAssets,
