@@ -9,6 +9,7 @@ use Modules\Laralite\Models\Ticket;
 use Modules\Laralite\Models\Order;
 use Symfony\Component\HttpFoundation\Response;
 use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Options as Options;
 
 class TicketController extends Controller
 {
@@ -39,13 +40,13 @@ class TicketController extends Controller
         }
 
         $pdf = PDF::loadView('trapmusicmuseum::ticket', 
-        compact(
-            'ticketUuid',
-            'ticketQrCode',
-            'ticketPrice'
-        ));
-
-        
-        return $pdf->stream('result.pdf');
+            compact(
+                'ticketUuid',
+                'ticketQrCode',
+                'ticketPrice'
+            )
+        );
+    
+        return $pdf->stream();
     }
 }
