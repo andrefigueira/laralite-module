@@ -4,12 +4,8 @@ namespace Modules\Laralite\Http\Controllers;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Routing\Controller;
-use Illuminate\Http\JsonResponse;
 use Modules\Laralite\Models\Ticket;
-use Modules\Laralite\Models\Order;
-use Symfony\Component\HttpFoundation\Response;
 use Barryvdh\DomPDF\Facade as PDF;
-use Barryvdh\DomPDF\Options as Options;
 
 class TicketController extends Controller
 {
@@ -39,14 +35,28 @@ class TicketController extends Controller
             }
         }
 
-        $pdf = PDF::loadView('trapmusicmuseum::ticket', 
+        // For Testing
+        // For some reason SSL was messing with my Image requests....
+        $context = stream_context_create(
+        [
+            'ssl' => [
+                'verify_peer' => FALSE,
+                'verify_peer_name' => FALSE,
+                'allow_self_signed'=> TRUE,
+            ]
+        ]);
+
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->getDomPDF()->setHttpContext($context);
+
+        $pdf->loadView('trapmusicmuseum::ticket', 
             compact(
                 'ticketUuid',
                 'ticketQrCode',
                 'ticketPrice'
             )
         );
-    
+        
         return $pdf->stream();
     }
 }
