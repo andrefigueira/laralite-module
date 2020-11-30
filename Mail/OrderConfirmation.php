@@ -26,8 +26,16 @@ class OrderConfirmation extends Mailable
         $this->form = $form;
         $this->from('noreply@trapmusicmuseum.us');
         $this->replyTo($form['customer']->email);
-
         $this->subject('Trap Music Museum - Order Confirmation');
+
+        if (!empty($form['orderAssets'])) {
+            foreach ($form['orderAssets'] as $ticket) {
+                $this->attach(url('/') . '/ticket/' . $ticket['unique_id'], [
+                    'as' => 'ticket-' . $ticket['unique_id'] . '.pdf',
+                    'mime' => 'application/pdf',
+                ]);
+            }
+        }
     }
 
     /**

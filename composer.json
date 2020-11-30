@@ -10,7 +10,8 @@
         "league/flysystem-cached-adapter": "^1.1",
         "stripe/stripe-php": "^7.62",
         "guzzlehttp/guzzle": "^7.2",
-        "endroid/qr-code": "^3.9"
+        "endroid/qr-code": "^3.9",
+        "barryvdh/laravel-dompdf": "^0.8.7"
     },
     "autoload": {
         "psr-4": {
