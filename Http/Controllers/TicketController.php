@@ -24,6 +24,7 @@ class TicketController extends Controller
 
         $ticketUuid = $ticket->unique_id;
         $ticketQrCode = $ticket->ticket->image;
+        $ticketAdmitQuantity = $ticket->admit_quantity ?? 1;
 
         $products = $ticket->order->basket->products;
         $ticketPrice = 0;
@@ -53,7 +54,8 @@ class TicketController extends Controller
             compact(
                 'ticketUuid',
                 'ticketQrCode',
-                'ticketPrice'
+                'ticketPrice',
+                'ticketAdmitQuantity',
             )
         );
         

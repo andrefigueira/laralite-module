@@ -20,7 +20,7 @@ class CreateTicketsTable extends Migration
             $table->integer('customer_id')->unsigned()->nullable();
             $table->json('ticket');
             $table->boolean('validated')->nullable()->default(false);
-
+            $table->integer('admit_quantity')->unsigned()->nullable();
             $table->timestamps();
         });
     }

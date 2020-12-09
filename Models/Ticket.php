@@ -14,6 +14,7 @@ class Ticket extends Model
         'order_id',
         'ticket',
         'validated',
+        'admit_quantity',
     ];
 
     protected $casts = [

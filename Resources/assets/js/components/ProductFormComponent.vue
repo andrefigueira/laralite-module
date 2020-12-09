@@ -93,6 +93,7 @@
                                     <th width="15%">Stock</th>
                                     <th width="15%">Weight <i v-b-tooltip.hover title="Dimensions in pounds, used for calculating shipping cost" class="fas fa-info-circle"></i></th>
                                     <th width="15%">Dimensions <i v-b-tooltip.hover title="Dimensions in inches, used for calculating shipping cost" class="fas fa-info-circle"></i></th>
+                                    <th width="15%">Groupable</th>
                                     <th></th>
                                 </tr>
                                 <tr v-for="(variant, index) in form.variants">
@@ -175,6 +176,14 @@
                                                 <b-form-input min="0" type="number" v-model="variant.dimensions.height" pattern="[0-9\.\-]*"></b-form-input>
                                             </b-form-group>
                                         </b-popover>
+                                    </td>
+                                    <td class="align-middle">
+                                       <a href="#" class="dark-link" v-b-tooltip.hover title="Click to edit" v-if="editingGroupable !== index" @click="editingGroupable=index">{{ variant.groupable === false ? 'No' : 'Yes' }}</a>
+
+                                        <b-form-group class="position-relative mb-0" v-if="editingGroupable === index">
+                                            <b-form-select v-model="variant.groupable" :options="groupableOptions"></b-form-select>
+                                            <a href="#" class="inline-edit-tick" style="right: 25px;" @click="stopEditingGroupable(variant.groupable)"><i class="fas fa-check"></i></a>
+                                        </b-form-group>                           
                                     </td>
                                     <td class="align-middle"><b-button v-if="form.variants.length > 1" @click="removeVariant(variant)" variant="default" size="sm" class="float-right"><i class="far fa-trash-alt"></i></b-button></td>
                                 </tr>
@@ -315,7 +324,8 @@
                                 length: 0,
                                 width: 0,
                                 height: 0
-                            }
+                            },
+                            groupable: false,
                         }
                     ],
                     images: []
@@ -349,11 +359,16 @@
                 editingSku: false,
                 editingWeight: false,
                 editingDimensions: false,
+                editingGroupable: false,
                 selectedVariantImage: {
                     index: 0,
                     path: ''
                 },
-                selectedVariantIndex: 0
+                selectedVariantIndex: 0,
+                groupableOptions: [
+                    { value: true, text: 'Yes' },
+                    { value: false, text: 'No' },
+                ],
             }
         },
         validations: {
@@ -544,6 +559,9 @@
             stopEditingWeight(weight) {
                 this.editingWeight = false;
             },
+            stopEditingGroupable(groupable) {
+                this.editingGroupable = false;
+            },
             addNewVariant() {
                 this.form.variants.push({
                     sku: 'WZ12345',
@@ -559,7 +577,8 @@
                         length: 0,
                         width: 0,
                         height: 0
-                    }
+                    },
+                    groupable: false,
                 });
             },
             removeVariant(variant) {
