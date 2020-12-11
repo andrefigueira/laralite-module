@@ -6,19 +6,22 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Routing\Controller;
 use Modules\Laralite\Models\Ticket;
 use Barryvdh\DomPDF\Facade as PDF;
+use Log;
 
 class TicketController extends Controller
 {
     /**
      * If UUID is valid, generate a ticket for display
-     * @param int $uuid
+     * @param string $uuid
      * @return Renderable
      */
-    public function generateTicket ($uuid)
+    public function generateTicket(string $uuid)
     {
         try {
             $ticket = Ticket::where('unique_id', '=', $uuid)->firstOrFail();
         } catch (\Throwable $exception) {
+            Log::critical('Failed to generate ticket');
+
             return abort(404);
         }
 
@@ -38,12 +41,11 @@ class TicketController extends Controller
 
         // For Testing
         // For some reason SSL was messing with my Image requests....
-        $context = stream_context_create(
-        [
+        $context = stream_context_create([
             'ssl' => [
-                'verify_peer' => FALSE,
-                'verify_peer_name' => FALSE,
-                'allow_self_signed'=> TRUE,
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed'=> true,
             ]
         ]);
 
