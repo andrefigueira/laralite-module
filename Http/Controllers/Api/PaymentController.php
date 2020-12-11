@@ -146,40 +146,47 @@ class PaymentController extends Controller
 
         foreach ($basket['products'] as $index => $product) {
             if ($product['sku'] === 'TRAPMUSICTICKET') {
-                $quantityGenerated = 0;
-                $quantityToGenerate = $product['quantity'];
+                $generatedTickets = $this->getGeneratedTickets($index, $product, $order, $customer);
+            }
+        }
 
-                // If product varient is `groupable` create just one ticket for the group
-                if ($product['groupable'] === true) {
-                    $generatedTicket = $this->generateTicket($order, $index);
+        return $generatedTickets;
+    }
 
-                    $generatedTickets[] = Ticket::create([
-                        'unique_id' => Uuid::uuid4(),
-                        'customer_id' => $customer->id,
-                        'order_id' => $order->id,
-                        'ticket' => [
-                            'image' => $generatedTicket->writeDataUri(),
-                        ],
-                        'admit_quantity' => $quantityToGenerate,
-                    ]);
-                // else create each individual ticket
-                } else {
-                    while ($quantityGenerated < $quantityToGenerate) {
-                        $generatedTicket = $this->generateTicket($order, $index);
-    
-                        $generatedTickets[] = Ticket::create([
-                            'unique_id' => Uuid::uuid4(),
-                            'customer_id' => $customer->id,
-                            'order_id' => $order->id,
-                            'ticket' => [
-                                'image' => $generatedTicket->writeDataUri(),
-                            ],
-                            'admit_quantity' => 1,
-                        ]);
-    
-                        $quantityGenerated++;
-                    }
-                }
+    private function getGeneratedTickets($index, $product, $order, $customer)
+    {
+        $quantityGenerated = 0;
+        $quantityToGenerate = $product['quantity'];
+
+        // If product variant is `groupable` create just one ticket for the group
+        if ($product['groupable'] === true) {
+            $generatedTicket = $this->generateTicket($order, $index);
+
+            $generatedTickets[] = Ticket::create([
+                'unique_id' => Uuid::uuid4(),
+                'customer_id' => $customer->id,
+                'order_id' => $order->id,
+                'ticket' => [
+                    'image' => $generatedTicket->writeDataUri(),
+                ],
+                'admit_quantity' => $quantityToGenerate,
+            ]);
+        // else create each individual ticket
+        } else {
+            while ($quantityGenerated < $quantityToGenerate) {
+                $generatedTicket = $this->generateTicket($order, $index);
+
+                $generatedTickets[] = Ticket::create([
+                    'unique_id' => Uuid::uuid4(),
+                    'customer_id' => $customer->id,
+                    'order_id' => $order->id,
+                    'ticket' => [
+                        'image' => $generatedTicket->writeDataUri(),
+                    ],
+                    'admit_quantity' => 1,
+                ]);
+
+                $quantityGenerated++;
             }
         }
 
