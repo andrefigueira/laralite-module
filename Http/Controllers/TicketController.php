@@ -27,6 +27,7 @@ class TicketController extends Controller
 
         $ticketUuid = $ticket->unique_id;
         $ticketQrCode = $ticket->ticket->image;
+        $ticketAdmitQuantity = $ticket->admit_quantity ?? 1;
 
         $products = $ticket->order->basket->products;
         $ticketPrice = 0;
@@ -51,9 +52,13 @@ class TicketController extends Controller
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->getDomPDF()->setHttpContext($context);
 
-        $pdf->loadView(
-            'trapmusicmuseum::ticket',
-            compact('ticketUuid', 'ticketQrCode', 'ticketPrice')
+        $pdf->loadView('trapmusicmuseum::ticket', 
+            compact(
+                'ticketUuid',
+                'ticketQrCode',
+                'ticketPrice',
+                'ticketAdmitQuantity',
+            )
         );
         
         return $pdf->stream();
