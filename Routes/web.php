@@ -83,6 +83,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::get('/ticket/{uuid}', 'TicketController@generateTicket');
 
+Route::get('/parallax', 'LaraliteController@parallax');
+
 /**
  * CMS catch-all route
  *
