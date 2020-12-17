@@ -76,4 +76,9 @@ class LaraliteController extends Controller
     {
         //
     }
+
+    public function parallax()
+    {
+        return view('laralite::parallax');
+    }
 }
