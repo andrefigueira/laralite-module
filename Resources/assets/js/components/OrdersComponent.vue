@@ -30,6 +30,9 @@
                     <template v-slot:cell(status)="data">
                         <b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge>
                     </template>
+                    <template v-slot:cell(customer_email)="data">
+                        {{ data.item.payment_processor_result.receipt_email }}
+                    </template>
                     <template v-slot:cell(date_created)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
@@ -70,6 +73,7 @@
                 // Table settings
                 fields: [
                     { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
+                    { key: 'customer_email', label: 'Customer Email' },
                     { key: 'date_created', label: 'Order Date'},
                     { key: 'actions', label: '' }
                 ],
