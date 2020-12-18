@@ -8,6 +8,7 @@ class Order extends Model
 {
     protected $fillable = [
         'unique_id',
+        'customer_id',
         'basket',
         'payment_processor_result',
         'status',

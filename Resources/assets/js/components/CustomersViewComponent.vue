@@ -24,6 +24,10 @@
                                 <td>{{ customer.unique_id }}</td>
                             </tr>
                             <tr>
+                                <td width="40%"><strong>Email</strong></td>
+                                <td>{{ customer.email }}</td>
+                            </tr>
+                            <tr>
                                 <td><strong>Status</strong></td>
                                 <td><b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge></td>
                             </tr>
@@ -42,8 +46,18 @@
                 <b-card>
                     <b-card-text>
                         <h5 class="heading-style"><i class="fas fa-user"></i> Customer Orders</h5>
-
-                        Customer orders to be listed here...
+                        
+                        <b-table striped :fields="orderFields" :items="customer.orders" responsive="sm">
+                            <template #cell(unique_id)="data">
+                                 {{ data.item.unique_id }}
+                            </template>
+                            <template v-slot:cell(date_created)="data">
+                                {{ timeFormat(data.item.created_at) }}
+                            </template>
+                            <template v-slot:cell(actions)="data">
+                                <a :href="'/admin/orders/view/' + data.item.unique_id" class="btn btn-sm btn-success float-right mr-1">View</a>
+                            </template>
+                        </b-table>
                     </b-card-text>
                 </b-card>
             </div><!-- End col -->
@@ -52,6 +66,8 @@
 </template>
 
 <script>
+    import * as moment from "moment";
+    
     export default {
         mounted() {
             console.log('Component mounted.');
@@ -66,11 +82,18 @@
         data() {
             return {
                 loading: true,
-                showResults: false
+                showResults: false,
+                orderFields: [
+                    { key: 'unique_id', label: 'Order ID' },
+                    { key: 'date_created', label: 'Order Date'},
+                    { key: 'actions', label: '' }
+                ],
             }
         },
         methods: {
-
+            timeFormat(time) {
+                return moment(time).fromNow();
+            },
         }
     }
 </script>
