@@ -2,11 +2,11 @@
 
 @section('content')
     <div class="row">
-        <div class="offset-5 col-2">
+        <div class="offset-4 col-4">
             <div class="page-section p-4 mt-10">
                 <form class="form-signin" method="POST" action="{{ route('login') }}">
                     @csrf
-                    <h1 class="text-center h3 mb-3 font-weight-normal">{{ env('APP_NAME') }}</h1>
+                    <h1 class="login-title">Login to {{ env('APP_NAME') }}</h1>
 
                     <label for="inputEmail" class="sr-only">Email address</label>
                     <input id="email" type="email" placeholder="Email address" class="form-control mb-2 @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
@@ -24,7 +24,7 @@
                     <button type="submit" class="btn btn-theme btn-block">Login</button>
 
                     @if (Route::has('password.request'))
-                        <a class="d-block mt-2 text-center text-medium" href="{{ route('password.request') }}">Reset password</a>
+                        <a class="reset-password-link" href="{{ route('password.request') }}">Reset password</a>
                     @endif
                 </form>
             </div><!-- End page section -->

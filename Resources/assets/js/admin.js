@@ -36,6 +36,19 @@ import 'vue-form-wizard/dist/vue-form-wizard.min.css'
  */
 import Cleave from 'cleave.js';
 
+import VueCurrencyFilter from 'vue-currency-filter'
+
+Vue.use(VueCurrencyFilter,
+    {
+        symbol : '$',
+        thousandsSeparator: '.',
+        fractionCount: 2,
+        fractionSeparator: ',',
+        symbolPosition: 'front',
+        symbolSpacing: true,
+        avoidEmptyDecimals: undefined,
+    })
+
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 

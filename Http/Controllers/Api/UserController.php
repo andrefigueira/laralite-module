@@ -98,8 +98,9 @@ class UserController extends Controller
             ]);
 
             
-            if ($request->has("roles") && $request->post("roles")) {
-                $user->syncRoles($request->post("roles"));
+            if ($request->has('roles') && $request->post('roles')) {
+                $role = Roles::where('name', '=', $request->post('roles')[0])->firstOrFail();
+                $user->assignRole($role);
             }
 
             if ($request->get('password') !== '') {

@@ -4,7 +4,14 @@
     "description": "The Laralite CMS module.",
     "license": "MIT",
     "require": {
-        "php": "^7.3"
+        "php": "^7.3",
+        "sopamo/laravel-filepond": "^0.5.0",
+        "league/flysystem-aws-s3-v3": "^1.0",
+        "league/flysystem-cached-adapter": "^1.1",
+        "stripe/stripe-php": "^7.62",
+        "guzzlehttp/guzzle": "^7.2",
+        "endroid/qr-code": "^3.9",
+        "barryvdh/laravel-dompdf": "^0.8.7"
     },
     "autoload": {
         "psr-4": {

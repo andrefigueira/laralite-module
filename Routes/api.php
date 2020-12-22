@@ -54,8 +54,41 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::delete('/permissions/{id}', 'Api\PermissionsController@delete');
     Route::patch('/permissions/{id}', 'Api\PermissionsController@update');
 
+    Route::post('/product', 'Api\ProductController@create');
+
+    Route::get('/product/{id}', 'Api\ProductController@getOne');
+    Route::delete('/product/{id}', 'Api\ProductController@delete');
+    Route::patch('/product/{id}', 'Api\ProductController@update');
+
+    Route::post('/product-category', 'Api\ProductCategoryController@create');
+    Route::get('/product-category', 'Api\ProductCategoryController@get');
+    Route::get('/product-category/{id}', 'Api\ProductCategoryController@getOne');
+    Route::delete('/product-category/{id}', 'Api\ProductCategoryController@delete');
+    Route::patch('/product-category/{id}', 'Api\ProductCategoryController@update');
+
     Route::get('/component', 'Api\ComponentController@get');
     Route::patch('/component/{id}', 'Api\ComponentController@update');
 
-    Route::post('/form', 'Api\FormController@submit');
+    Route::post('/image/upload','Api\FileController@imageUpload');
+
+    Route::get('/module', 'Api\ModuleController@get');
+
+    Route::get('/customer', 'Api\CustomerController@get');
+    Route::get('/customer/{id}', 'Api\CustomerController@getOne');
+
+    Route::get('/order', 'Api\OrderController@get');
+    Route::get('/order/{id}', 'Api\OrderController@getOne');
+
+    Route::get('/discount', 'Api\DiscountController@get');
+    Route::post('/discount', 'Api\DiscountController@create');
+    Route::get('/discount/{id}', 'Api\DiscountController@getOne');
+    Route::delete('/discount/{id}', 'Api\DiscountController@delete');
+    Route::patch('/discount/{id}', 'Api\DiscountController@update');
+
+//    Route::post('/form', 'Api\FormController@submit');
 });
+
+Route::get('/product', 'Api\ProductController@get');
+Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
+Route::post('/process-payment', 'Api\PaymentController@processPayment');
+Route::get('/discount/verify/{code}', 'Api\DiscountController@verify');

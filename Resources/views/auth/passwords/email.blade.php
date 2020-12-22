@@ -3,14 +3,14 @@
 @section('content')
     <div class="row">
         <div class="offset-4 col-md-4">
-            <div class="page-section p-5">
+            <div class="page-section p-4 mt-10">
                 @if (session('status'))
                     <div class="alert alert-success" role="alert">
                         {{ session('status') }}
                     </div>
                 @endif
 
-                <h1 class="text-center h3 mb-3 font-weight-normal">Reset your password</h1>
+                <h1 class="login-title">Reset your password</h1>
 
                 <p class="text-muted">Fill and submit the form to receive a link to reset your password.</p>
 
@@ -27,7 +27,7 @@
                         @enderror
                     </div><!-- End form group -->
 
-                    <button type="submit" class="btn w-100 btn-primary">Send Password Reset Link</button>
+                    <button type="submit" class="btn w-100 btn-theme">Send Password Reset Link</button>
                 </form>
             </div>
         </div><!-- End col -->

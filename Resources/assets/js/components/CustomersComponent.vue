@@ -34,10 +34,6 @@
                     <template v-slot:cell(status)="data">
                         <b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge>
                     </template>
-                    <template v-slot:cell(externalAssociation)="data">
-                        <b-badge variant="danger" v-if="data.item.external_id === null"><i class="fas fa-times-circle"></i> No Association</b-badge>
-                        <b-badge variant="success" v-if="data.item.external_id !== null"><i class="fas fa-check-circle"></i> Associated</b-badge>
-                    </template>
                     <template v-slot:cell(registered)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
@@ -81,7 +77,6 @@
                     { key: 'email', label: 'Email', sortable: true, sortDirection: 'desc' },
                     { key: 'verified', label: 'Verified'},
                     { key: 'status', label: 'Status'},
-                    { key: 'externalAssociation', label: 'External Association'},
                     { key: 'registered', label: 'Registered'},
                     { key: 'actions', label: '' }
                 ],

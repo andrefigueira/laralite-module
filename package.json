@@ -11,7 +11,23 @@
     },
     "devDependencies": {
         "cross-env": "^7.0.2",
-        "laravel-mix": "^5.0.1",
-        "laravel-mix-merge-manifest": "^0.1.2"
+        "laravel-mix": "^5.0.5",
+        "laravel-mix-merge-manifest": "^0.1.2",
+        "resolve-url-loader": "^3.1.1",
+        "sass": "^1.26.10",
+        "sass-loader": "^8.0.2",
+        "vue-template-compiler": "^2.6.12"
+    },
+    "dependencies": {
+        "currency.js": "^2.0.3",
+        "filepond": "^4.20.1",
+        "filepond-plugin-file-validate-type": "^1.2.5",
+        "filepond-plugin-image-preview": "^4.6.4",
+        "qr-scanner": "^1.2.0",
+        "vue-currency-filter": "^5.2.0",
+        "vue-filepond": "^6.0.3",
+        "vue-form-wizard": "^0.8.4",
+        "vue-qrcode-reader": "^2.3.16",
+        "vue2-dropzone": "^3.6.0"
     }
 }

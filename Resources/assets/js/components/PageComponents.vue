@@ -1,41 +1,52 @@
 <template>
     <div>
-        <label for="components">Component</label>
-
         <div class="row">
-            <div class="col-md-5">
-                <v-select id="components" label="name" v-model="component" :options="options" :clearable="false"></v-select>
+            <div class="col-6">
+                <h5 class="float-left m-0">Page Features</h5>
             </div><!-- End col -->
-            <div class="col-md-5">
-                <v-select id="section" label="name" v-model="section" :options="sectionOptions" :clearable="false"></v-select>
+            <div class="col-6">
+                <b-button variant="default" size="sm" class="float-right" @click="toggleFeatureOptions()" v-b-tooltip.hover title="Click to add a new page feature">
+                    <i v-show="!showFeatureOptions" class="fas fa-plus"></i>
+                    <i v-show="showFeatureOptions" class="fas fa-minus"></i>
+                </b-button>
             </div><!-- End col -->
-            <div class="col-md-2">
-                <b-button variant="success" class="btn-sm w-100" @click="addComponent()">Add</b-button>
+            <div class="col-12" v-show="showFeatureOptions">
+                <div class="hr mt-2 mb-2"></div>
+                <label for="component-section">Page Placement</label>
+                <v-select id="component-section" label="name" v-model="section" :options="sectionOptions" :clearable="false"></v-select>
+
+                <div class="component-options">
+                    <div class="component-option-selector" v-for="component in options" @click="addComponent(component)">
+                        <i class="fas" :class="component.settings.icon"></i>
+                        <h6 class="title">{{ component.name }}</h6>
+                    </div><!-- Component option selector -->
+                </div><!-- End container options -->
             </div><!-- End col -->
         </div><!-- End row -->
 
-        <div class="hr mb-4 mt-4"></div>
-
         <div class="row">
             <div class="col-md-12">
-                    <div v-for="pageComponent in components">
-                        <b-card class="mb-2">
-                            <table class="table table-bordered" style="font-size: 0.8rem">
-                                <tr>
-                                    <th class="align-middle w-50">Frontend Name</th>
-                                    <td class="align-middle">{{ pageComponent.frontendName }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="align-middle">Section</th>
-                                    <td class="align-middle">{{ pageComponent.section }}</td>
-                                </tr>
-                            </table>
+                <div v-for="pageComponent in components">
+                    <b-card class="mb-2">
+                        <div class="row">
+                            <div class="col-6">
+                                <h4>{{ pageComponent.frontendName }}</h4>
+                            </div><!-- End col -->
+                            <div class="col-6">
+                                <b-btn @click="removeComponent(pageComponent)" variant="default" class="float-right" v-b-tooltip.hover title="Click to remove from page">&times;</b-btn>
+                            </div><!-- End col -->
+                        </div><!-- End row -->
 
-                            <component class="mb-2" :is="pageComponent.name" :id="pageComponent.id" v-model="pageComponent.properties"></component>
+                        <table class="table table-bordered" style="font-size: 0.8rem">
+                            <tr>
+                                <th width="50%" class="align-middle">Page Placement</th>
+                                <td class="align-middle">{{ pageComponent.section }}</td>
+                            </tr>
+                        </table>
 
-                            <b-btn @click="removeComponent(pageComponent)" variant="danger" class="btn-sm">Remove Component &times;</b-btn>
-                        </b-card>
-                    </div>
+                        <component class="mb-2" :is="pageComponent.name" :id="pageComponent.id" v-model="pageComponent.properties"></component>
+                    </b-card>
+                </div>
             </div><!-- End col -->
         </div><!-- End row -->
     </div>
@@ -58,7 +69,8 @@
                 sectionOptions: [],
                 component: {},
                 section: {},
-                components: []
+                components: [],
+                showFeatureOptions: false
             }
         },
         watch: {
@@ -80,7 +92,7 @@
                     this.options = response.data;
                     this.component = this.options[0];
                 }).catch(error => {
-                    // handle error
+                    alert('Failed to load component options');
                 });
             },
             removeComponent(component) {
@@ -91,28 +103,25 @@
                         this.components.splice(index, 1);
                     }
                 }).catch(error => {
-                    // An error occurred
+                    alert('Failed to remove component');
                 });
             },
-            addComponent() {
-                if (this.component.name === undefined) {
-                    alert('Select a component first!');
-
-                    return;
-                }
-
+            addComponent(component) {
                 let componentId = helpers.uuidv4();
-                let componentName = 'admin-' + this.component.slug + '-component';
-                debugger;
+                let componentName = 'admin-' + component.slug + '-component';
+                let name = component.name;
+
+                if (component.settings.name !== undefined) {
+                    name = component.settings.name;
+                }
 
                 let componentIndex = this.components.push({
                     id: componentId,
                     name: componentName,
                     section: this.section.slug,
-                    frontendName: this.component.name.replace(/([a-z])([A-Z])/g, "$1-$2")
-                        .replace(/\s+/g, '-')
-                        .toLowerCase() + '-component',
-                    properties: this.component.properties
+                    frontendName: name,
+                    frontendComponentName: name.replace(/\s/g, '') + 'Component',
+                    properties: component.properties
                 });
 
                 componentIndex -= 1;
@@ -121,7 +130,42 @@
                     this.components[componentIndex].properties = response.properties;
                     this.$emit('input', this.components);
                 });
+
+                this.toggleFeatureOptions();
+            },
+            toggleFeatureOptions() {
+                this.showFeatureOptions = !this.showFeatureOptions;
             }
         }
     }
 </script>
+
+<style lang="scss">
+    .component-options {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 1rem 0 0 0;
+        .component-option-selector {
+            flex-basis: 20%;
+            flex-grow: 1;
+            width: 25%;
+            padding: 1rem;
+            margin: 0.2rem;
+            text-align: center;
+            border: 1px solid #F1F1F1;
+            cursor: pointer;
+            transition: all ease-in-out 0.2s;
+            .fas {
+                font-size: 1.65rem;
+            }
+            .title {
+                font-weight: normal;
+                font-size: 0.8rem;
+                margin: 0.8rem 0 0 0;
+            }
+            &:hover {
+                box-shadow: 0 0 5px #D9D9D9;
+            }
+        }
+    }
+</style>

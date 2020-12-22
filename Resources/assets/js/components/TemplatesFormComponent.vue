@@ -2,10 +2,12 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-                <h2 class="admin-title">
-                    {{ type === 'create' ? 'Create new template' : 'Edit template ' }}
-                    <strong v-show="type === 'edit'">{{ template.name }}</strong>
-                </h2>
+              <div class="admin-title-section">
+                  <h2 class="admin-title">
+                      {{ type === 'create' ? 'Create new template' : 'Edit template ' }}
+                      <strong v-show="type === 'edit'">{{ template.name }}</strong>
+                  </h2>
+              </div>
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
             </div><!-- End col -->
@@ -14,7 +16,7 @@
             <div class="col-md-12">
                 <div class="page-section p-4 mb-4">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-6">
                             <b-form-group id="template-name-group" label="Template name" label-for="template-name">
                                 <b-form-input
                                     id="template-name-input"
@@ -23,6 +25,13 @@
                                     placeholder="Enter template name"
                                 ></b-form-input>
                             </b-form-group>
+                        </div><!-- End col -->
+                        <div class="col-6">
+                            <b-form-group id="template-module-name-group" label="Module" label-for="template-module-name">
+                                <v-select v-model="moduleItem" :options="moduleOptions"></v-select>
+                            </b-form-group>
+                        </div><!-- End col -->
+                        <div class="col-md-12">
                             <b-form-group id="template-description-group" label="Template description" label-for="template-description">
                                 <b-form-textarea id="template-name-input" v-model="description" required></b-form-textarea>
                             </b-form-group>
@@ -165,6 +174,8 @@
                 alertMessage: '',
                 id: '',
                 name: '',
+                moduleItem: '',
+                moduleOptions: [],
                 description: '',
                 sections: [],
                 sectionName: '',
@@ -214,6 +225,8 @@
 
                 this.loadHeaderNavigationOptions(defaultOption);
 
+                this.loadModuleOptions();
+
                 if (this.template.id !== undefined) {
                     this.id = this.template.id;
                     this.name = this.template.name;
@@ -245,6 +258,21 @@
                     // handle error
                 });
             },
+            loadModuleOptions() {
+                axios.get('/api/module').then(response => {
+                    this.moduleOptions = response.data.data.modules;
+
+                    if (this.template.module_name === undefined) {
+                        this.moduleItem = this.moduleOptions[0];
+                    } else {
+                        this.moduleItem = this.moduleOptions.filter((moduleItem) => {
+                            return moduleItem.label === this.template.module_name;
+                        })[0];
+                    }
+                }).catch(error => {
+                    // handle error
+                });
+            },
             save() {
                 this.saving = true;
 
@@ -264,6 +292,7 @@
                     url: this.formEndpoint,
                     data:  {
                         name: this.name,
+                        module_name: this.moduleItem.label,
                         description: this.description,
                         sections: this.sections,
                         header_navigation_id: headerNavigationId,

@@ -49,6 +49,7 @@ class PageController extends Controller
                 'slug' => $slug,
                 'components' => $request->get('components'),
                 'meta' => $request->get('meta'),
+                'settings' => $request->get('settings'),
             ]);
 
             Log::info('Created page', [
@@ -99,6 +100,7 @@ class PageController extends Controller
                 'slug' => $slug,
                 'components' => $request->get('components'),
                 'meta' => $request->get('meta'),
+                'settings' => $request->get('settings'),
             ]);
 
             Log::info('Updated page', [

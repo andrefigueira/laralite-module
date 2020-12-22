@@ -41,6 +41,7 @@ class TemplateController extends Controller
 
             $template = Template::create([
                 'name' => $request->get('name'),
+                'module_name' => $request->get('module_name'),
                 'description' => $request->get('description'),
                 'sections' => $request->get('sections'),
                 'header_navigation_id' => $request->get('header_navigation_id'),
@@ -86,6 +87,7 @@ class TemplateController extends Controller
 
             $template->update([
                 'name' => $request->get('name'),
+                'module_name' => $request->get('module_name'),
                 'description' => $request->get('description'),
                 'sections' => $request->get('sections'),
                 'header_navigation_id' => $request->get('header_navigation_id'),

@@ -28,8 +28,8 @@
                     :current-page="currentPage"
                     :filter="filter">
                     <template v-slot:cell(actions)="row">
-                        <b-button size="sm" class="float-right" @click="showSettingsForm(row.item, row.index, $event.target)">
-                            Edit Settings
+                        <b-button variant="default" size="sm" class="float-right" @click="showSettingsForm(row.item, row.index, $event.target)">
+                            <i class="far fa-edit"></i>
                         </b-button>
                     </template>
                 </b-table>

@@ -4,6 +4,7 @@ namespace Modules\Laralite\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Modules\Laralite\Models\Page;
 
 class RouteServiceProvider extends ServiceProvider
 {

@@ -8,6 +8,7 @@
 
 $theme-border-color: rgba(0, 40, 100, 0.12);
 $theme-background-color: #f5f7fb;
+$light-border-color: #F1F1F1;
 
 @mixin theme-box-style() {
     background: #FFF;
@@ -52,7 +53,7 @@ ul.errors {
     margin-bottom: 0.5rem;
     @include theme-box-style;
     .admin-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem!important;
         padding: 0;
         margin: 0.2rem 0 0 0;
     }
@@ -64,18 +65,18 @@ ul.errors {
     @include theme-box-style;
     .nav-item {
         .nav-link {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #555;
             .fas {
                 margin-right: .3rem;
-                width: 1.3rem;
                 color: #999;
+                font-size: 1.3rem;
             }
             &:hover {
                 background: #E9E9E9;
             }
             &.active {
-                background: #E9E9E9;
+                background: #F1F1F1;
             }
         }
     }
@@ -141,14 +142,29 @@ ul.errors {
     }
     border: 1px solid $theme-border-color;
     .form-control {
+        font-size: 0.8rem;
         padding: .75rem 1rem;
         border-width: 0;
         border-radius: 0;
     }
 }
 
+.wizard-btn {
+    border-radius: 0!important;
+}
+
 .form-control {
     border: 1px solid rgba(0, 40, 100, 0.12);
+    border-radius: 0!important;
+    font-size: 0.8rem;
+}
+
+.btn {
+    border-radius: 0!important;
+}
+
+.vs__dropdown-toggle {
+    border-radius: 0!important;
 }
 
 .form-control-dark {
@@ -166,20 +182,28 @@ div.table {
     .table-header {
         font-weight: bold;
         padding-bottom: 1rem;
-        border-bottom: 1px solid #DDD;
+        border-bottom: 1px solid $light-border-color;
     }
     .table-row {
         padding-top: .7rem;
         padding-bottom: .3rem;
-        border-bottom: 1px solid #CCC;
+        border-bottom: 1px solid $light-border-color;
         a {
             //color: #333!important;
         }
     }
 }
 
+.table-link {
+    color: #777;
+}
+
 .page-section {
     @include theme-box-style;
+    font-size: 0.9rem;
+    .form-control {
+        font-size: 0.9rem;
+    }
 }
 
 .draggable-list-group div:empty {
@@ -193,6 +217,7 @@ div.table {
     border: none!important;
     box-shadow: none!important;
     font-size: 0.8rem;
+    border-radius: 0!important;
     .progress {
         margin-top: 1rem;
     }
@@ -205,6 +230,7 @@ div.table {
 ul.nav-pills {
     .nav-link {
         color: #333;
+        border-radius: 0;
         &:hover {
             color: #666;
         }
@@ -245,4 +271,85 @@ ul.pagination {
             }
         }
     }
+}
+
+.hr {
+    border-top: 1px solid #F1F1F1;
+}
+
+.dashboard-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.dashboard-subtitle {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #BBB;
+}
+
+.login-title {
+    font-size: 1.2rem;
+    font-weight: normal;
+    text-align: center;
+    margin: 0 0 2rem 0;
+}
+
+.reset-password-link {
+    display: block;
+    text-align: center;
+    color: #333;
+    padding: 1rem 0 0 0;
+}
+
+.accordion {
+    .card {
+        border-right: none;
+        border-left: none;
+        &:first-child {
+            border-top: none;
+        }
+    }
+    .card-header {
+        a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+    }
+
+    .card-body {
+        padding: 0;
+        .nav {
+            display: block;
+            margin-top: 1px;
+            .nav-item {
+                display: block;
+            }
+        }
+    }
+}
+
+.dark-link {
+    color: #333;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.wizard-tab-content {
+    .wizard-tab-container {
+        animation: fadein 0.4s;
+    }
+}
+
+.vs__open-indicator {
+    display: none;
+}
+
+.badge {
+    border-radius: 0!important;
 }

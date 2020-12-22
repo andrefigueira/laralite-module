@@ -3,13 +3,11 @@
 namespace Modules\Laralite\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Modules\CradleMoney\Models\CustomerAccount;
 use Modules\Laralite\Models\Page;
 use Modules\Laralite\Models\User;
 use Illuminate\Http\Request;
 use Auth;
 use Log;
-use Cookie;
 
 class CmsController extends Controller
 {
@@ -24,10 +22,49 @@ class CmsController extends Controller
             'slug' => $pageSlug,
         ]);
 
+        // Check if we have any straight up matches to the page slug
         $page = Page::where('slug', '=', $pageSlug)
             ->with('template.headerNavigation')
             ->with('template.footerNavigation')
-            ->firstOrFail();
+            ->first();
+
+        if ($page === null) {
+            // We do not have a straight up match, let's get a list of pages with defined dynamic urls and try match it
+            $pagesWithDynamicUrl = Page::where('settings->dynamic_url', '=', 'true')
+                ->with('template.headerNavigation')
+                ->with('template.footerNavigation')
+                ->get();
+
+            $page = null;
+
+            foreach ($pagesWithDynamicUrl as $pageWithDynamicUrl) {
+                $dynamicUrlPattern = ltrim($pageWithDynamicUrl->slug, '/');
+                $dynamicUrlPatternParts = explode('/', $dynamicUrlPattern);
+
+                foreach ($dynamicUrlPatternParts as $index => $dynamicUrlPatternPart) {
+                    if (strpos($dynamicUrlPatternPart, '{') !== false) {
+                        if (!isset($requestSegments[$index])) {
+                            continue;
+                        }
+
+                        $dynamicUrlPatternParts[$index] = $requestSegments[$index];
+                    }
+                }
+
+                if ($requestSegments === $dynamicUrlPatternParts) {
+                    $page = $pageWithDynamicUrl;
+
+                    break;
+                }
+            }
+        }
+
+        if ($page === null) {
+            $page = Page::where('slug', '=', '/404')
+                ->with('template.headerNavigation')
+                ->with('template.footerNavigation')
+                ->first();
+        }
 
         if ($page->authentication && !Auth::guard('customers')->check()) {
             Log::debug('Authentication for customer failed, redirecting to login');
