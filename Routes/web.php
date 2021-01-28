@@ -75,6 +75,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/admin/variables', 'Admin\VariableController@index');
     Route::get('/admin/authentication', 'Admin\AuthenticationController@index');
     Route::get('/admin/settings', 'Admin\SettingsController@index');
+    Route::get('/admin/import', 'Admin\DataImportController@index');
+
 
     Route::get('/admin/scanner', 'Admin\ScannerController@scanner');
 

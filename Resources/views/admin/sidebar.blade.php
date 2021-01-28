@@ -145,6 +145,12 @@
                                     Settings
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('admin/import*') ? 'active' : '' }}" href="/admin/import">
+                                    <i class="fas fa-file-import"></i>
+                                    Data Import
+                                </a>
+                            </li>
                         </ul>
                     </div><!-- End card body -->
                 </div><!-- End collapse -->
