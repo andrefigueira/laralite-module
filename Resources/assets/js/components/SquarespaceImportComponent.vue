@@ -14,15 +14,12 @@
 <script>
     export default {
         props: {
-            uploadSuccess: {
-                type: Boolean,
-                default: false
-            }
+            
         },
         data() {
             return {
                 file: '',
-                uploadSuccess: '',
+                uploadSuccess: false,
                 uploadError: ''
             }
         },
@@ -46,7 +43,7 @@
                     self.uploadError = '';
 
                     self.$emit('csv-uploaded', true);
-                    self.$emit('total-rows', result.data.count);
+                    self.$emit('set-total-rows', result.data.count);
                     
                 }).catch(function (error) {
                     console.log('CSV Upload Failed', {

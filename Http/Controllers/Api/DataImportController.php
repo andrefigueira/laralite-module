@@ -5,9 +5,7 @@ namespace Modules\Laralite\Http\Controllers\Api;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Modules\Laralite\Models\TempCsvData;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
@@ -46,8 +44,8 @@ class DataImportController extends Controller
                 'email' => $csvArray[$i]['Email'],
                 'financial_status' => $csvArray[$i]['Financial Status'],
                 'paid_at' => $csvArray[$i]['Paid at'],
-                'fufillment_status' => $csvArray[$i]['Fulfillment Status'],
-                'fufilled_at' => $csvArray[$i]['Fulfilled at'],
+                'fulfillment_status' => $csvArray[$i]['Fulfillment Status'],
+                'fulfilled_at' => $csvArray[$i]['Fulfilled at'],
                 'currency' => $csvArray[$i]['Currency'],
                 'subtotal' => $csvArray[$i]['Subtotal'],
                 'shipping' => $csvArray[$i]['Shipping'],
@@ -65,7 +63,7 @@ class DataImportController extends Controller
                 'lineitem_variant' => $csvArray[$i]['Lineitem variant'],
                 'lineitem_requires_shipping' => $csvArray[$i]['Lineitem requires shipping'],
                 'lineitem_taxable' => $csvArray[$i]['Lineitem taxable'],
-                'lineitem_fufillment_status' => $csvArray[$i]['Lineitem fulfillment status'],
+                'lineitem_fulfillment_status' => $csvArray[$i]['Lineitem fulfillment status'],
                 'billing_name' => $csvArray[$i]['Billing Name'],
                 'billing_address_1' => $csvArray[$i]['Billing Address1'],
                 'billing_address_2' => $csvArray[$i]['Billing Address2'],

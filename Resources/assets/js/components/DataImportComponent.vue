@@ -4,7 +4,7 @@
             <div class="col-12">
                 <div v-if="uploadSuccess === false" class="page-section p-4">
                     <p>Upload an exported .csv file from SquareSpace here.</p>
-                    <squarespace-import-component @csv-uploaded="csvUploaded" @total-rows="totalRows"></squarespace-import-component>
+                    <squarespace-import-component @csv-uploaded="csvUploaded" @set-total-rows="setTotalRows"></squarespace-import-component>
                 </div>
             </div><!-- End col -->
             <div class="col-12 mt-2" v-if="uploadSuccess === true && importSuccess === false">
@@ -18,9 +18,11 @@
                 </div>
             </div>
             <div class="col-12 mt-2" v-if="importSuccess === true">
-                <h3>{{ importMessage }}</h3>
-                <p>There were {{ updatedOrders }} created orders.</p>
-                <p>There were {{ updatedCustomers }} created customers.</p>
+                <div class="page-section p-4">
+                    <h3>{{ importMessage }}</h3>
+                    <p>There were {{ updatedOrders }} created orders.</p>
+                    <p>There were {{ updatedCustomers }} created customers.</p>
+                </div>
             </div>
         </div><!-- End row -->
     </div>
@@ -29,14 +31,7 @@
 <script>
     export default {
         props: {
-            uploadSuccess: {
-                type: Boolean,
-                default: false
-            },
-            totalRows: {
-                type: Number,
-                default: 0
-            }
+            
         },
         mounted() {
             console.log('Component mounted.')
@@ -60,13 +55,15 @@
                 imporMessage: '',
                 updatedOrders: 0,
                 updatedCustomers: 0,
+                uploadSuccess: false,
+                totalRows: 0,
             }
         },
         methods: {
           csvUploaded: function (value) {
               this.uploadSuccess = value;
           },
-          totalRows: function (value) {
+          setTotalRows: function (value) {
               this.totalRows = value;
           },
           handleFileImport: function () {
