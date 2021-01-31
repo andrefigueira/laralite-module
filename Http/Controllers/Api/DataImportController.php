@@ -142,7 +142,7 @@ class DataImportController extends Controller
                     'name' => $tempRow->billing_name,
                     'email' => $tempRow->email,
                 ]);
-                $customer = $customer->first();
+                
                 $customers++;
             }
 
