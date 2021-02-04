@@ -2,6 +2,7 @@
 
 namespace Modules\Laralite\Http\Controllers\Api;
 
+use Log;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
@@ -16,6 +17,11 @@ use Ramsey\Uuid\Uuid;
 
 class DataImportController extends Controller
 {
+    public $skuMap = [
+       'TRPMUSEUMA' => 'TRAPMUSICTICKET',
+       'SQ4865302' => 'SQ4865302',
+    ];
+
     public function upload(Request $request)
     {
         $file = $request->file('file');
@@ -115,17 +121,12 @@ class DataImportController extends Controller
 
     public function import()
     {
-        // map the old skus to the new ones
-        $skuMap['TRPMUSEUMA'] = 'TRAPMUSICTICKET';
-        $skuMap['SQ4865302'] = 'SQ4865302';
-
         $tempRows = TempCsvData::all();
         $orders = 0;
         $customers = 0;
         $skipped = [];
 
-        if ($tempRows->isEmpty())
-        {
+        if ($tempRows->isEmpty()) {
             return new JsonResponse([
                 'success' => false,
                 'message' => 'No rows in temporary table. Please import a CSV file.',
@@ -142,12 +143,12 @@ class DataImportController extends Controller
                     'name' => $tempRow->billing_name,
                     'email' => $tempRow->email,
                 ]);
-                
+
                 $customers++;
             }
 
             // Find product relating to order
-            $newSku = $skuMap[$tempRow->lineitem_sku];
+            $newSku = $this->skuMap[$tempRow->lineitem_sku];
 
             try {
                 $fetchedProduct = Product::whereJsonContains('variants', ['sku' => $newSku])->firstOrFail();
@@ -155,6 +156,12 @@ class DataImportController extends Controller
                 // No product found ...
                 // Log and skip for now...
                 $skipped[] = $tempRow;
+
+                Log::info('Skipping CSV row import as no product found', [
+                    'requested_sku' => $newSku,
+                    'skipped_row' => $tempRow,
+                ]);
+
                 continue;
             }
 
