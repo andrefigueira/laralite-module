@@ -71,6 +71,9 @@ Route::group(['middleware' => 'auth:api'], static function () {
 
     Route::post('/image/upload','Api\FileController@imageUpload');
 
+    Route::post('/squarespace/upload','Api\DataImportController@upload');
+    Route::get('/squarespace/import','Api\DataImportController@import');
+
     Route::get('/module', 'Api\ModuleController@get');
 
     Route::get('/customer', 'Api\CustomerController@get');
