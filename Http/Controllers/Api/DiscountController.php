@@ -24,6 +24,7 @@ class DiscountController extends Controller
         if ($request->input('filter') !== 'null') {
             $discounts
                 ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+                ->where('code', 'LIKE', '%' . $request->input('filter') . '%')
                 ->orWhere('type', 'LIKE', '%' . $request->input('filter') . '%')
                 ->orWhere('value', 'LIKE', '%' . $request->input('filter') . '%');
         }
@@ -77,6 +78,7 @@ class DiscountController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'code' => 'required',
             'type' => 'required',
             'value' => 'required',
         ]);
@@ -84,6 +86,7 @@ class DiscountController extends Controller
         try {
             $discount = Discount::create([
                 'name' => $request->get('name'),
+                'code' => $request->get('code'),
                 'type' => $request->get('type'),
                 'value' => $request->get('value'),
             ]);
@@ -119,6 +122,7 @@ class DiscountController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'code' => 'required',
             'type' => 'required',
             'value' => 'required',
         ]);
@@ -128,6 +132,7 @@ class DiscountController extends Controller
 
             $discount->update([
                 'name' => $request->get('name'),
+                'code' => $request->get('code'),
                 'type' => $request->get('type'),
                 'value' => $request->get('value'),
             ]);

@@ -25,6 +25,14 @@
                                     placeholder="Enter discount name"
                                 ></b-form-input>
                             </b-form-group>
+                            <b-form-group id="discount-code-group" label="Discount code" label-for="discount-code">
+                                <b-form-input
+                                    id="discount-code-input"
+                                    required
+                                    v-model="code"
+                                    placeholder="Enter discount code"
+                                ></b-form-input>
+                            </b-form-group>
 
                             <b-form-group id="discount-type-group" label="Discount type" label-for="discount-type">
                                 <b-form-select v-model="discountType" :options="typeOptions"></b-form-select>
@@ -77,6 +85,7 @@ export default {
             alertMessage: '',
             id: '',
             name: '',
+            code: '',
             discountType: null,
             value: 0,
             typeOptions: [
@@ -127,6 +136,7 @@ export default {
             if (this.discount.id !== undefined) {
                 this.id = this.discount.id;
                 this.name = this.discount.name;
+                this.code = this.discount.code;
                 this.discountType = this.discount.type;
                 this.value = this.discount.value;
             }
@@ -139,6 +149,7 @@ export default {
                 url: this.formEndpoint,
                 data:  {
                     name: this.name,
+                    code: this.code,
                     type: this.discountType,
                     value: this.value
                 }
