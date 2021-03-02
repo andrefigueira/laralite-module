@@ -51,6 +51,7 @@ class PaymentController extends Controller
 
         // Fees
         $feeCollection = $this->isFeeCollectionActive();
+
         if ($feeCollection !== false) {
             // Fees are enabled, so send fee amount to connected Stripe Account
             // `feeAmount` is the amount set in the settings
@@ -217,15 +218,18 @@ class PaymentController extends Controller
     private function isFeeCollectionActive ()
     {
         try {
-            $feeActive = Settings::whereJsonContains('settings', ['feeActive' => true])->firstOrFail();
+            $settings = Settings::where('id', 1);
+            $settings = $settings->first();
+            $settings = json_decode($settings->settings);
+
             if (
-                $feeActive->settings['feeActive'] === true &&
-                !empty($feeActive->settings['feeAmount']) &&
-                !empty($feeActive->settings['connectedStripeAccount'])
+                $settings->feeActive === true &&
+                !empty($settings->feeAmount) &&
+                !empty($settings->connectedStripeAccount)
             ) {
                 return [
-                    'connectedStripeAccount' => $feeActive->settings['connectedStripeAccount'],
-                    'feeAmount' => $feeActive->settings['feeAmount'],
+                    'connectedStripeAccount' => $settings->connectedStripeAccount,
+                    'feeAmount' => $settings->feeAmount,
                 ];
             }
 
