@@ -19,8 +19,8 @@ class CreateTempCsvDataTable extends Migration
             $table->string('email');
             $table->string('financial_status');
             $table->string('paid_at');
-            $table->string('fufillment_status');
-            $table->string('fufilled_at');
+            $table->string('fulfillment_status');
+            $table->string('fulfilled_at');
             $table->string('currency');
             $table->string('subtotal');
             $table->string('shipping');
@@ -38,7 +38,7 @@ class CreateTempCsvDataTable extends Migration
             $table->string('lineitem_variant');
             $table->string('lineitem_requires_shipping');
             $table->string('lineitem_taxable');
-            $table->string('lineitem_fufillment_status');
+            $table->string('lineitem_fulfillment_status');
             $table->string('billing_name');
             $table->string('billing_address_1');
             $table->string('billing_address_2');

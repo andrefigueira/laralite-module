@@ -11,6 +11,7 @@ use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Product;
+use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 use Ramsey\Uuid\Uuid;
 use Stripe\StripeClient;
@@ -48,13 +49,33 @@ class PaymentController extends Controller
         $paymentDescription = 'TrapMusicMuseum Payment';
         $currency = 'usd';
 
-        $result = $stripe->charges->create([
-            'amount' => $basketTotal,
-            'currency' => $currency,
-            'source' => $token['id'],
-            'description' => $paymentDescription,
-            'receipt_email' => $customerEmail,
-        ]);
+        // Fees
+        $feeCollection = $this->isFeeCollectionActive();
+        if ($feeCollection !== false) {
+            // Fees are enabled, so send fee amount to connected Stripe Account
+            // `feeAmount` is the amount set in the settings
+            // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
+            $result = $stripe->paymentIntents->create([
+                'payment_method_types' => ['card'],
+                'amount' => $basketTotal,
+                'currency' => $currency,
+                'receipt_email' => $customerEmail,
+                'description' => $paymentDescription,
+                'application_fee_amount' => $feeCollection['feeAmount'],
+                'transfer_data' => [
+                  'destination' => $feeCollection['connectedStripeAccount'],
+                ],
+              ]);
+        } else {
+            // Fees not enabled, create standard stripe charge
+            $result = $stripe->charges->create([
+                'amount' => $basketTotal,
+                'currency' => $currency,
+                'source' => $token['id'],
+                'description' => $paymentDescription,
+                'receipt_email' => $customerEmail,
+            ]);
+        }
 
         $fetchedCustomer = Customer::where('email', '=', $customerEmail)->get();
 
@@ -159,7 +180,7 @@ class PaymentController extends Controller
         $quantityToGenerate = $product['quantity'];
 
         // If product variant is `groupable` create just one ticket for the group
-        if ($product['groupable'] === true) {
+        if (isset($product['groupable']) && $product['groupable'] === true) {
             $generatedTicket = $this->generateTicket($order, $index);
 
             $generatedTickets[] = Ticket::create([
@@ -191,5 +212,27 @@ class PaymentController extends Controller
         }
 
         return $generatedTickets;
+    }
+
+    private function isFeeCollectionActive ()
+    {
+        try {
+            $feeActive = Settings::whereJsonContains('settings', ['feeActive' => true])->firstOrFail();
+            if (
+                $feeActive->settings['feeActive'] === true &&
+                !empty($feeActive->settings['feeAmount']) &&
+                !empty($feeActive->settings['connectedStripeAccount'])
+            ) {
+                return [
+                    'connectedStripeAccount' => $feeActive->settings['connectedStripeAccount'],
+                    'feeAmount' => $feeActive->settings['feeAmount'],
+                ];
+            }
+
+        } catch (\Throwable $exception) {
+           return false;
+        }
+
+        return false;
     }
 }

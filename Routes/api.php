@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
  * Admin API Routes
  */
 Route::group(['middleware' => 'auth:api'], static function () {
+
     Route::post('/page', 'Api\PageController@create');
     Route::get('/page', 'Api\PageController@get');
     Route::get('/page/{id}', 'Api\PageController@getOne');
@@ -88,8 +89,14 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::delete('/discount/{id}', 'Api\DiscountController@delete');
     Route::patch('/discount/{id}', 'Api\DiscountController@update');
 
+    Route::patch('/settings', 'Api\SettingsController@update');
+
+
 //    Route::post('/form', 'Api\FormController@submit');
 });
+
+// need to figure out a way to protect this route
+Route::get('/stripe-connect', 'Api\SettingsController@stripeConnect');
 
 Route::get('/product', 'Api\ProductController@get');
 Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
