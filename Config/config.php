@@ -100,5 +100,20 @@ return [
                 'icon' => 'fa-shopping-cart',
             ],
         ],
+        [
+            'name' => 'Gallery',
+            'slug' => 'gallery',
+            'settings' => [
+                'icon' => 'fa-user',
+            ],
+            'properties' => [
+                'items' => [
+                    [
+                        'name' => '',
+                        'url' => ''
+                    ]
+                ],
+            ],
+        ],
     ],
 ];
