@@ -9,14 +9,14 @@
             </b-button>
             <b-img
                 :src="galleryItem.url"
-                class="image-preview ml-1">
+                class="image-preview mr-2 mb-2">
               </b-img>
           </a>
         </div>
         <div>
         </div>
       </div>
-      <b-button v-else v-b-modal.modal-lg variant="outline-secondary" class="plus-btn" @click.prevent.stop="showModal = true">
+      <b-button v-else v-b-modal.modal-lg variant="outline-secondary" class="plus-btn mr-2 mb-2" @click.prevent.stop="showModal = true">
         <b-icon icon="plus" font-scale="2"></b-icon>
       </b-button>
     </template>
@@ -70,7 +70,7 @@ name: "AdminGalleryComponent",
       if (this.item.name.length > 0) {
         return 'Enter at least 4 characters.'
       }
-      return 'Please enter something.'
+      return 'Please enter title of image.'
     },
     isDisabled: function(){
       return !this.item.url || !this.item.name;
@@ -100,16 +100,17 @@ name: "AdminGalleryComponent",
 
 <style scoped>
 .image-preview {
-  width:100px;
-  height: 100px
+  width:120px;
+  height: 120px;
+  object-fit: cover;
 }
 .plus-btn {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
 }
 .remove-btn {
   font-size: 15px;
-  right: 5px;
+  right: 8px;
   background-color: red;
   color: white;
 }
