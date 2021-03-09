@@ -59,10 +59,15 @@
     export default {
         mounted() {
             console.log('Component mounted.');
-
+            window.addEventListener('beforeunload', (event) => {
+              if (!this.isEditing) return
+              event.preventDefault()
+              // Chrome requires returnValue to be set.
+              event.returnValue = ""
+            })
             this.load();
         },
-        props: ['value', 'template'],
+        props: ['value', 'template', 'editing'],
         data() {
             return {
                 options: [],
@@ -70,7 +75,8 @@
                 component: {},
                 section: {},
                 components: [],
-                showFeatureOptions: false
+                showFeatureOptions: false,
+                isEditing: this.editing
             }
         },
         watch: {
@@ -84,6 +90,20 @@
                     this.section = this.template.sections[0];
                     this.sectionOptions = this.template.sections;
                 }
+            },
+            components: {
+              handler(newValue, oldValue) {
+                if(oldValue.length)
+                  this.isEditing = true
+              },
+              deep: true
+            },
+            editing (newValue, oldValue) {
+              this.isEditing = newValue
+            },
+            isEditing (newValue, oldValue) {
+              console.log('isEditing', newValue)
+              bus.$emit('pageEdited', newValue)
             }
         },
         methods: {
@@ -96,6 +116,7 @@
                 });
             },
             removeComponent(component) {
+                this.isEditing = true
                 this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
                     if (value) {
                         let index = this.components.indexOf(component);
@@ -107,7 +128,8 @@
                 });
             },
             addComponent(component) {
-                let componentId = helpers.uuidv4();
+              this.isEditing = true
+              let componentId = helpers.uuidv4();
                 let componentName = 'admin-' + component.slug + '-component';
                 let name = component.name;
 
