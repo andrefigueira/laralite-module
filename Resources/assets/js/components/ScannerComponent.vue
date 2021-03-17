@@ -6,7 +6,7 @@
 
                 <p v-if="result" class="decode-result">Last result: <b>{{ result }}</b></p>
 
-                <qrcode-stream @decode="onDecode" @init="onInit" />
+              <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit"></qrcode-stream>
             </div>
         </div>
     </div>
@@ -18,8 +18,10 @@ import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
 export default {
     data() {
         return {
-            result: '',
-            error: ''
+          camera: 'auto',
+          result: '',
+          error: '',
+          message: ''
         }
     },
     components: {
@@ -27,38 +29,38 @@ export default {
         QrcodeDropZone,
         QrcodeCapture
     },
+    watch: {
+      result (newValue, oldValue) {
+        if (newValue != null)
+        {
+          this.result = newValue;
+          this.verifyTicket(this.result);
+        }
+
+      },
+    },
     methods: {
-        onDecode (result) {
-            this.result = result
+        async onDecode (result) {
+            this.result = result,
             this.error = '';
         },
-
-        async onInit (promise) {
-            try {
-                await promise
-            } catch (error) {
-                if (error.name === 'NotAllowedError') {
-                    this.error = "ERROR: you need to grant camera access permission"
-                } else if (error.name === 'NotFoundError') {
-                    this.error = "ERROR: no camera on this device"
-                } else if (error.name === 'NotSupportedError') {
-                    this.error = "ERROR: secure context required (HTTPS, localhost)"
-                } else if (error.name === 'NotReadableError') {
-                    this.error = "ERROR: is the camera already in use?"
-                } else if (error.name === 'OverconstrainedError') {
-                    this.error = "ERROR: installed cameras are not suitable"
-                } else if (error.name === 'StreamApiNotSupportedError') {
-                    this.error = "ERROR: Stream API is not supported in this browser"
-                } else if (error.name === 'InsecureContextError') {
-                    this.error = "ERROR: MUST BE ACCESSED OVER HTTPS!"
-                }
-
-                if (this.error === '') {
-                    this.error = 'Failed due to error';
-                }
-            }
-        }
-    }
+        verifyTicket(result) {
+          axios.get('/api/scan/ticket/' + this.result)
+          .then((response) => {
+            console.log(response)
+          }).catch(error => {
+            console.log(error.response.data.message)
+            alert(error.response.data.message)
+              });
+        },
+      onInit (promise) {
+        promise
+            .catch(console.error)
+      },
+      turnCameraOff () {
+        this.camera = 'off'
+      },
+    },
 }
 </script>
 
