@@ -153,9 +153,9 @@ class PaymentController extends Controller
         return $basketTotal;
     }
 
-    private function generateTicket($order, $index)
+    private function generateTicket($ticketUuid)
     {
-        $qrCode = new QrCode($order->unique_id . '_index_' . $index);
+        $qrCode = new QrCode($ticketUuid);
         $qrCode->setSize(300);
         $qrCode->setMargin(10);
 
@@ -182,10 +182,12 @@ class PaymentController extends Controller
 
         // If product variant is `groupable` create just one ticket for the group
         if (isset($product['groupable']) && $product['groupable'] === true) {
-            $generatedTicket = $this->generateTicket($order, $index);
+
+            $ticketUuid = Uuid::uuid4();
+            $generatedTicket = $this->generateTicket($ticketUuid);
 
             $generatedTickets[] = Ticket::create([
-                'unique_id' => Uuid::uuid4(),
+                'unique_id' => $ticketUuid,
                 'customer_id' => $customer->id,
                 'order_id' => $order->id,
                 'ticket' => [
@@ -196,10 +198,11 @@ class PaymentController extends Controller
         // else create each individual ticket
         } else {
             while ($quantityGenerated < $quantityToGenerate) {
-                $generatedTicket = $this->generateTicket($order, $index);
+                $ticketUuid = Uuid::uuid4();
+                $generatedTicket = $this->generateTicket($ticketUuid);
 
                 $generatedTickets[] = Ticket::create([
-                    'unique_id' => Uuid::uuid4(),
+                    'unique_id' => $ticketUuid,
                     'customer_id' => $customer->id,
                     'order_id' => $order->id,
                     'ticket' => [
