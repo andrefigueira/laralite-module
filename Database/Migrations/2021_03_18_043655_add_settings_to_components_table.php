@@ -26,7 +26,7 @@ class AddSettingsToComponentsTable extends Migration
     public function down()
     {
         Schema::table('components', function (Blueprint $table) {
-            //
+            $table->dropColumn('settings');
         });
     }
 }
