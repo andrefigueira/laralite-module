@@ -15,7 +15,7 @@ import {BootstrapVue, IconsPlugin} from 'bootstrap-vue'
 /**
  * CKEditor used in one of the components
  */
-import CKEditor from '@ckeditor/ckeditor5-vue';
+import CKEditor from '@ckeditor/ckeditor5-vue2';
 /**
  * Used for validation in Vue
  */
