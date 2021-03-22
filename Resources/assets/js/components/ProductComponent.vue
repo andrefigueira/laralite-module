@@ -5,7 +5,7 @@
         <div v-show="loading" class="text-center">
             <b-spinner label="Spinning"></b-spinner>
         </div>
-
+        <div class="table-responsive-sm">
         <table class="table" v-show="showResults">
             <tr>
                 <th width="5%"></th>
@@ -29,6 +29,7 @@
                 </td>
             </tr>
         </table>
+        </div>
     </div>
 </template>
 
