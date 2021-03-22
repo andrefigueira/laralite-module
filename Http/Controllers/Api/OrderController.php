@@ -55,19 +55,13 @@ class OrderController extends Controller
         $ticket = Ticket::where('unique_id', '=', $uuid)->first();
 
         if($ticket) {
-            if(!$ticket->validated) {
                 $ticket->validated = '1';
+                $ticket->visited_counts = $ticket->visited_counts + 1;
                 $ticket->save();
                 return response()->json([
                     'success' => 'true',
-                    'message' => "Tickets table updated successfully"
-                ]);
-            } else {
-                return response()->json([
-                    'success' => 'false',
-                    'message' => "Error: Ticket is already scanned"
-                ], 400);
-            }
+                    'message' => "Tickets table updated successfully",
+                    'ticket'  => $ticket]);
         } else{
             return response()->json([
                 'success' => 'false',
