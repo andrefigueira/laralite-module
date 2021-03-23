@@ -21,16 +21,16 @@
                         </template>
                         <tab-content title="Product Information" icon="fas fa-file" :before-change="()=>validateProductInformation()">
                             <div class="row">
-                                <div class="col-3">
+                                <div class="col-md-3">
                                     <p class="alert alert-danger" v-if="$v.form.images.$error"><i class="fas fa-exclamation-circle"></i> Must upload an image</p>
                                     <image-upload-component @image-removed="removeUploadedImage" @image-uploaded="setUploadedImage"></image-upload-component>
 
                                     <label class="mt-3" for="primary-option">Product category</label>
                                     <v-select class="mb-3" id="primary-option" label="name" v-model="category" :options="categoryOptions" :clearable="false"></v-select>
                                 </div><!-- End col -->
-                                <div class="col-9">
+                                <div class="col-md-9">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-md-6 col-sm-12">
                                             <b-form-group id="product-name-group" label="Product name" label-for="product-name">
                                                 <b-form-input
                                                     id="product-name-input"
@@ -42,7 +42,7 @@
                                                 <b-form-invalid-feedback>Enter a valid name with more than 3 characters</b-form-invalid-feedback>
                                             </b-form-group>
                                         </div><!-- End col -->
-                                        <div class="col-6">
+                                        <div class="col-md-6 col-sm-12">
                                             <b-form-group id="product-url-group" label="Product URL" label-for="product-url">
                                                 <b-form-input
                                                     id="product-url-input"
@@ -56,6 +56,8 @@
                                         </div><!-- End col -->
                                     </div><!-- End row -->
 
+                                  <div class="row">
+                                    <div class="col-sm-12">
                                     <b-form-group id="product-description-group" label="Product description" label-for="product-description">
                                         <ckeditor
                                             :editor="editor"
@@ -64,6 +66,8 @@
                                         ></ckeditor>
                                         <b-form-invalid-feedback>Enter a valid description</b-form-invalid-feedback>
                                     </b-form-group>
+                                    </div>
+                                  </div>
                                 </div><!-- End col -->
                             </div><!-- End row -->
                         </tab-content>

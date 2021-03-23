@@ -1,4 +1,4 @@
-<nav class="col-md-2 d-block pr-0">
+<nav class="col-lg-2 col-md-3 col-sm-2 d-block pr-0">
     <div id="accordion" class="mt-4 sidebar accordion">
         @if (Auth::user()->hasRole('admin'))
             <div class="card">
