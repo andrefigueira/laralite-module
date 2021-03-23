@@ -2,11 +2,8 @@
     <div>
         <div class="row">
             <div class="col-12">
-<!--                <p class="alert alert-danger" v-if="error !== ''">{{ error }}</p>-->
-<!--              <p class="decode-result">Ticket ID: <b>{{ result }}</b></p>-->
-<!--              <b-alert :variant="variant" show>{{ message }}</b-alert>-->
               <p class="alert" :class="{ 'alert-danger': this.error, 'alert-success': !this.error }" v-if="message !== ''">
-                <b>TICKET ID: </b>{{ ticket_id }} <b>Visits: </b> {{ count }} <br/>{{ message }}</p>
+                <b>TICKET ID: </b>{{ ticket_id }} <b v-if="!this.error">Visits: </b> {{ count }} <br/>{{ message }}</p>
               <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit"></qrcode-stream>
             </div>
         </div>
@@ -70,8 +67,8 @@ export default {
             this.message = error.response.data.message
             this.error = true
             this.result = ''
-            this.count = 'NULL'
-            this.ticket_id = 'NULL'
+            this.count = ''
+            this.ticket_id = result
           });
         },
       onInit (promise) {
