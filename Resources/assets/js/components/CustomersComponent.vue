@@ -17,6 +17,7 @@
                     </b-input-group-append>
                 </b-input-group>
 
+                <div class="table-responsive-sm">
                 <b-table
                     hover
                     show-empty
@@ -41,6 +42,7 @@
                         <a :href="'/admin/customers/view/' + data.item.unique_id" class="btn btn-sm btn-success float-right mr-1">View</a>
                     </template>
                 </b-table>
+                </div>
 
                 <hr class="pagination-rem">
 

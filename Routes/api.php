@@ -83,6 +83,8 @@ Route::group(['middleware' => 'auth:api'], static function () {
     Route::get('/order', 'Api\OrderController@get');
     Route::get('/order/{id}', 'Api\OrderController@getOne');
 
+    Route::get('/scan/ticket/{uuid}', 'Api\OrderController@scanTicket');
+
     Route::get('/discount', 'Api\DiscountController@get');
     Route::post('/discount', 'Api\DiscountController@create');
     Route::get('/discount/{id}', 'Api\DiscountController@getOne');

@@ -28,7 +28,7 @@
                     <label for="connected-stripe-account" class="mt-3">Connected Stripe Account</label>
                     <b-form-input id="connected-stripe-account" v-model="settings.connectedStripeAccount" placeholder="Connected Stripe Account ID"></b-form-input>
                     <b-button @click="connectStripeAccount()" variant="outline-secondary" style="width:100%;"><i class="fas fa-external-link-alt"></i> CONNECT STRIPE ACCOUNT</b-button>
-                    
+
                     <div class="mt-4" v-if="settings.connectedStripeAccount !== ''">
                         <b-form-checkbox
                             id="feeActive"
@@ -37,7 +37,7 @@
                             :value="true"
                             :unchecked-value="false">
                             Activate fee take
-                        </b-form-checkbox>             
+                        </b-form-checkbox>
 
                         <label class="mt-3">Fee Amount</label>
                         <b-form-input v-model="settings.feeAmount" placeholder="100"></b-form-input>
@@ -55,8 +55,6 @@
 </template>
 
 <script>
-    import VueRouter from 'vue-router'
-
     export default {
         mounted() {
             console.log('Component mounted.');

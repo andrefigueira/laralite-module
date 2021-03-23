@@ -18,6 +18,7 @@
                 <b-card>
                     <b-card-text>
                         <h5 class="heading-style"><i class="fas fa-user"></i> Order Details</h5>
+                      <div class="table-responsive-sm">
                         <table class="table table-striped">
                             <tr>
                                 <td width="40%"><strong>ID</strong></td>
@@ -36,6 +37,7 @@
                                 <td>{{ order.created_at }}</td>
                             </tr>
                         </table>
+                      </div>
                     </b-card-text>
                 </b-card>
             </div><!-- End col -->
@@ -67,6 +69,7 @@
                 <b-card>
                     <b-card-text>
                         <h5 class="heading-style"><i class="fas fa-user"></i> Payment Details</h5>
+                      <div class="table-responsive-sm">
                         <table class="table table-striped">
                             <tr>
                                 <td><strong>ID</strong></td>
@@ -93,6 +96,7 @@
                                 <td>{{ order.payment_processor_result.balance_transaction }}</td>
                             </tr>
                         </table>
+                      </div>
                     </b-card-text>
                 </b-card>
             </div><!-- End col -->
@@ -100,6 +104,7 @@
                 <b-card>
                     <b-card-text>
                         <h5 class="heading-style"><i class="fas fa-user"></i> Payment Method</h5>
+                      <div class="table-responsive-sm">
                         <table class="table table-striped">
                             <tr>
                                 <td width="40%"><strong>ID</strong></td>
@@ -142,6 +147,7 @@
                                 <td>{{ order.payment_processor_result.payment_method_details.card.checks.address_postal_code_check }}</td>
                             </tr>
                         </table>
+                      </div>
                     </b-card-text>
                 </b-card>
             </div><!-- End col -->

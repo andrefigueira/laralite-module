@@ -17,6 +17,7 @@
                     </b-input-group-append>
                 </b-input-group>
 
+                <div class="table-responsive-sm">
                 <b-table
                     hover
                     show-empty
@@ -33,6 +34,7 @@
                         </b-button>
                     </template>
                 </b-table>
+            </div>
 
                 <hr class="pagination-hr">
 

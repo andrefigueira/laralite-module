@@ -5,7 +5,7 @@
         <div v-show="loading" class="text-center">
             <b-spinner label="Spinning"></b-spinner>
         </div>
-
+        <div class="table-responsive-sm">
         <div class="table table-top-border-0" v-show="showResults">
             <div class="row table-header">
                 <div class="col-md-3">Name</div>
@@ -17,6 +17,7 @@
 
             <recursive-table-row :data="pages"></recursive-table-row>
         </div>
+    </div>
     </div>
 </template>
 

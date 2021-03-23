@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateComponentsTable extends Migration
+class AddVisitedCountToTicketsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateComponentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('components', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('slug');
-            $table->json('properties')->nullable();
-            $table->timestamps();
+        Schema::table('tickets', function (Blueprint $table) {
+            $table->integer('visited_counts')->nullable();
         });
     }
 
@@ -29,6 +25,8 @@ class CreateComponentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('components');
+        Schema::table('tickets', function (Blueprint $table) {
+            $table->dropColumn('visited_counts');
+        });
     }
 }
