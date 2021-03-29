@@ -94,6 +94,7 @@ Route::group(['middleware' => 'auth:api'], static function () {
 
     Route::patch('/settings', 'Api\SettingsController@update');
 
+    Route::post('/intent-secret', 'Api\PaymentController@intentSecret');
 
 //    Route::post('/form', 'Api\FormController@submit');
 });
