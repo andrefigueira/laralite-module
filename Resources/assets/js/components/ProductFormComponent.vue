@@ -89,7 +89,7 @@
                                 <button class="btn btn-theme w-100 mt-1" @click="applyVariantImage()">Apply</button>
                             </b-modal>
 
-                            <table class="table border-bottom">
+                            <table class="table table-responsive-sm border-bottom">
                                 <tr>
                                     <th width="10%">Image</th>
                                     <th width="15%">SKU</th>
@@ -201,7 +201,7 @@
                                     <p>Search engine optimization (SEO) allows you to improve your ranking in search results. Use these features to make it easier for users to find this item when they search for it.</p>
                                     <div class="hr mb-3"></div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-6 col-sm-12">
                                     <b-form-group id="product-seo-title-group" label="SEO Title" label-for="product-seo-title">
                                         <b-form-input
                                             id="product-seo-title-input"
@@ -229,7 +229,7 @@
                                         ></b-form-textarea>
                                     </b-form-group>
                                 </div><!-- End col -->
-                                <div class="col-6">
+                                <div class="col-md-6 col-sm-12">
                                     <h6>Search Result Preview</h6>
 
                                     <div class="search-result-preview mb-3">
