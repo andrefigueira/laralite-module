@@ -16,7 +16,7 @@
     {{--@include('laralite::admin.sidebar')--}}
     @include('laralite::admin.header')
 
-    <div class="container-fluid sticky-top-correction">
+    <div class="container-fluid">
         <div class="row">
                 @include('laralite::admin.content')
         </div><!-- End row -->
