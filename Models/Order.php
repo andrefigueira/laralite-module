@@ -18,4 +18,9 @@ class Order extends Model
         'basket' => 'object',
         'payment_processor_result' => 'object',
     ];
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'order_id', 'id');
+    }
 }

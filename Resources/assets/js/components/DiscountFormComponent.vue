@@ -16,7 +16,7 @@
             <div class="col-md-12">
                 <div class="page-section p-4 mb-4">
                     <div class="row">
-                        <div class="col-3">
+                        <div class="col-md-6">
                             <b-form-group id="discount-name-group" label="Discount name" label-for="discount-name">
                                 <b-form-input
                                     id="discount-name-input"
@@ -25,6 +25,8 @@
                                     placeholder="Enter discount name"
                                 ></b-form-input>
                             </b-form-group>
+                          </div>
+                          <div class="col-md-6">
                             <b-form-group id="discount-code-group" label="Discount code" label-for="discount-code">
                                 <b-form-input
                                     id="discount-code-input"
@@ -33,11 +35,13 @@
                                     placeholder="Enter discount code"
                                 ></b-form-input>
                             </b-form-group>
-
+                            </div>
+                      <div class="col-md-6">
                             <b-form-group id="discount-type-group" label="Discount type" label-for="discount-type">
                                 <b-form-select v-model="discountType" :options="typeOptions"></b-form-select>
                             </b-form-group>
-
+                        </div>
+                      <div class="col-md-6">
                             <b-form-group id="discount-value-group" label="Discount value" label-for="discount-value">
                                 <b-form-input
                                     id="discount-value-input"
@@ -47,14 +51,15 @@
                                     placeholder="Enter discount value"
                                 ></b-form-input>
                             </b-form-group>
-
+                              </div>
+                      <div class="col-md-12">
                             <button class="btn btn-theme" :disabled="saving" @click="save()">{{ button }}</button>
+                      </div>
                         </div><!-- End col -->
                     </div><!-- End row -->
                 </div><!-- End row -->
             </div><!-- End col -->
         </div><!-- End row -->
-    </div>
 </template>
 
 <script>

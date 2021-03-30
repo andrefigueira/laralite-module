@@ -11,7 +11,6 @@
               <div class="card-header" id="headingOne">
                 <a href="#" data-toggle="collapse" data-target="#collapseOne">Site Management</a>
               </div><!-- End card header -->
-
               <div id="collapseOne" class="collapse" :class="{ 'show': request.match('admin/pages*') || request.match('admin/pages*') || request.match('admin/users*') || request.match('admin/templates*') || request.match('admin/permissions*') || request.match('admin/navigation*') || request.match('admin/roles*') }" aria-labelledby="headingOne" data-parent="#accordion">
                 <!--              ['admin/', 'admin/pages*', 'admin/home', 'admin/users*', 'admin/templates*', 'admin/navigation*', 'admin/permissions*', 'admin/roles*'].indexOf(request)-->
                 <div class="card-body">
@@ -161,6 +160,7 @@
               <div class="card-header" id="headingFour">
                 <a href="#" data-toggle="collapse" data-target="#collapseFour">Account</a>
               </div><!-- End card header -->
+
               <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/logout') }" aria-labelledby="headingThree" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav">

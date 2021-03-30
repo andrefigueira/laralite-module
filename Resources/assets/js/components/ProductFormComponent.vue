@@ -21,16 +21,16 @@
                         </template>
                         <tab-content title="Product Information" icon="fas fa-file" :before-change="()=>validateProductInformation()">
                             <div class="row">
-                                <div class="col-3">
+                                <div class="col-md-3">
                                     <p class="alert alert-danger" v-if="$v.form.images.$error"><i class="fas fa-exclamation-circle"></i> Must upload an image</p>
                                     <image-upload-component @image-removed="removeUploadedImage" @image-uploaded="setUploadedImage"></image-upload-component>
 
                                     <label class="mt-3" for="primary-option">Product category</label>
                                     <v-select class="mb-3" id="primary-option" label="name" v-model="category" :options="categoryOptions" :clearable="false"></v-select>
                                 </div><!-- End col -->
-                                <div class="col-9">
+                                <div class="col-md-9">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-md-6 col-sm-12">
                                             <b-form-group id="product-name-group" label="Product name" label-for="product-name">
                                                 <b-form-input
                                                     id="product-name-input"
@@ -42,7 +42,7 @@
                                                 <b-form-invalid-feedback>Enter a valid name with more than 3 characters</b-form-invalid-feedback>
                                             </b-form-group>
                                         </div><!-- End col -->
-                                        <div class="col-6">
+                                        <div class="col-md-6 col-sm-12">
                                             <b-form-group id="product-url-group" label="Product URL" label-for="product-url">
                                                 <b-form-input
                                                     id="product-url-input"
@@ -56,14 +56,18 @@
                                         </div><!-- End col -->
                                     </div><!-- End row -->
 
+                                  <div class="row">
+                                    <div class="col-sm-12">
                                     <b-form-group id="product-description-group" label="Product description" label-for="product-description">
-                                        <editor
-                                            api-key="1zv9du0onoyl619egrfevih7r7p4p8vawafvqhi5hzzfutmf"
+                                        <ckeditor
+                                            :editor="editor"
                                             v-model="form.description"
-                                            :init="config"
-                                        />
+                                            :config="editorConfig"
+                                        ></ckeditor>
                                         <b-form-invalid-feedback>Enter a valid description</b-form-invalid-feedback>
                                     </b-form-group>
+                                    </div>
+                                  </div>
                                 </div><!-- End col -->
                             </div><!-- End row -->
                         </tab-content>
@@ -183,7 +187,7 @@
                                         <b-form-group class="position-relative mb-0" v-if="editingGroupable === index">
                                             <b-form-select v-model="variant.groupable" :options="groupableOptions"></b-form-select>
                                             <a href="#" class="inline-edit-tick" style="right: 25px;" @click="stopEditingGroupable(variant.groupable)"><i class="fas fa-check"></i></a>
-                                        </b-form-group>                           
+                                        </b-form-group>
                                     </td>
                                     <td class="align-middle"><b-button v-if="form.variants.length > 1" @click="removeVariant(variant)" variant="default" size="sm" class="float-right"><i class="far fa-trash-alt"></i></b-button></td>
                                 </tr>
@@ -265,18 +269,16 @@
     import helpers from '../helpers'
     import { validationMixin } from 'vuelidate'
     import { required, minLength } from 'vuelidate/lib/validators'
-    import Editor from '@tinymce/tinymce-vue'
+    import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
     export default {
         mixins: [validationMixin],
         components: {
-            Editor,
             FormWizard,
             TabContent
         },
         mounted() {
             console.log('Component mounted.');
-
             this.load();
         },
         props: {
@@ -302,7 +304,7 @@
                 form: {
                     id: '',
                     name: '',
-                    description: '',
+                    description: this.product.description,
                     category_id: '',
                     meta: {
                         title: '',
@@ -330,31 +332,9 @@
                     ],
                     images: []
                 },
-                config: {
-                    height: 300,
-                    plugins: [
-                        'advlist autolink lists link image charmap print preview anchor importcss',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
-                    ],
-                    menubar: '',
-                    toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
-                    content_css: '/css/contents.css',
-                    quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
-                    contextmenu: "link image imagetools table",
-                    formats: {
-                        alignleft: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'left' },
-                        aligncenter: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'center' },
-                        alignright: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'right' },
-                        alignfull: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'full' },
-                        bold: { inline: 'span', classes: 'bold' },
-                        italic: { inline: 'span', classes: 'italic' },
-                        underline: { inline: 'span', classes: 'underline', exact: true },
-                        strikethrough: { inline: 'del' },
-                        customformat: { inline: 'span', styles: { color: '#00ff00', fontSize: '20px' }, attributes: { title: 'My custom format'} , classes: 'example1'}
-                    },
-                    font_formats: 'Oswold=Oswald,san-serif;ProximaNova=Lato,san-serif;Arial=arial,helvetica,sans-serif;',
-                    fontsize_formats: '11px 12px 14px 16px 18px 24px 36px 48px'
+                editor: ClassicEditor,
+                editorConfig: {
+                // The configuration of the rich-text editor.
                 },
                 editingSku: false,
                 editingWeight: false,
