@@ -11,8 +11,7 @@
               <div class="card-header" id="headingOne">
                 <a href="#" data-toggle="collapse" data-target="#collapseOne">Site Management</a>
               </div><!-- End card header -->
-
-              <div id="collapseOne" class="collapse" :class="{ 'show': request.match('admin/') || request.match('admin/pages*') || request.match('admin/pages*') || request.match('admin/users*') || request.match('admin/templates*') || request.match('admin/permissions*') || request.match('admin/navigation*') || request.match('admin/roles*') }" aria-labelledby="headingOne" data-parent="#accordion">
+              <div id="collapseOne" class="collapse" :class="{ 'show': request.match('admin/pages*') || request.match('admin/pages*') || request.match('admin/users*') || request.match('admin/templates*') || request.match('admin/permissions*') || request.match('admin/navigation*') || request.match('admin/roles*') }" aria-labelledby="headingOne" data-parent="#accordion">
                 <!--              ['admin/', 'admin/pages*', 'admin/home', 'admin/users*', 'admin/templates*', 'admin/navigation*', 'admin/permissions*', 'admin/roles*'].indexOf(request)-->
                 <div class="card-body">
                   <ul class="nav">
@@ -161,23 +160,14 @@
               <div class="card-header" id="headingFour">
                 <a href="#" data-toggle="collapse" data-target="#collapseFour">Account</a>
               </div><!-- End card header -->
-              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/components') || request.match('admin/variables') || request.match('admin/authentication') || request.match('admin/settings') }" aria-labelledby="headingThree" data-parent="#accordion">
+
+              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/logout') }" aria-labelledby="headingThree" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav">
                     <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/components') }" href="/admin/settings">
-                        <i class="fas fa-cog"></i>
-                        Settings
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <!--                      <a class="nav-link" href="{{ route('logout') }}"
-                                                  onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                                    {{ __('Logout') }}
-                                                 </a>-->
-                      <a class="nav-link" @click="$refs.logout_form.submit()">
+                      <a class="nav-link logoutBtn" @click="$refs.logout_form.submit()">
                         <i class="fas fa-sign-out-alt"></i>
-                        Logout
+                        Logout ({{ user }})
                       </a>
                     </li>
                   </ul>
@@ -185,8 +175,8 @@
               </div><!-- End collapse -->
             </div><!-- End card -->
           </div><!-- End accordion sidebar -->
-          <form ref="logout_form" action="/admin/logout" method="POST" style="display: none;">
-            {{ csrfToken }}
+          <form ref="logout_form" action="http://127.0.0.1:8000/admin/logout" method="POST" style="display: none;">
+            <input type="hidden" name="_token" :value="csrfToken">
           </form>
         </nav>
       </div>
@@ -203,6 +193,10 @@ export default {
       required: true
     },
     role: {
+      type: String,
+      required: true
+    },
+    user: {
       type: String,
       required: true
     },
@@ -226,7 +220,7 @@ export default {
 </script>
 
 <style scoped>
-.b-sidebar {
-
+.logoutBtn {
+  cursor: pointer;
 }
 </style>
