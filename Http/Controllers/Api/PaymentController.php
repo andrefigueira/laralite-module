@@ -27,56 +27,26 @@ class PaymentController extends Controller
         $customer = $request->get('customer');
         $discount = $request->get('discount');
 
-        // @todo: Fetch DB stored discount, and confirm value, and apply the discount to the stripe payment request
-        // @todo: Add a commission charge to the stripe payment of 5%
+        // @todo: Load stripe key from .env
+        $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
+
+        $stripe = new StripeClient($stripeKey);
+
+        $result = $stripe->paymentIntents->retrieve($token, []);
 
         Log::info('Processing payment for basket', [
-            'token' => $token['id'],
+            'token' => $token,
             'basket' => $basket,
             'customer' => $customer,
         ]);
 
         $customerEmail = $customer['email'];
 
-        // @todo: Load stripe key from .env
-        $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
-
-        $stripe = new StripeClient($stripeKey);
-
         $basketTotal = $this->getBasketTotal($basket);
 
         // @todo: Load from settings
         $paymentDescription = 'TrapMusicMuseum Payment';
         $currency = 'usd';
-
-        // Fees
-        $feeCollection = $this->isFeeCollectionActive();
-
-        if ($feeCollection !== false) {
-            // Fees are enabled, so send fee amount to connected Stripe Account
-            // `feeAmount` is the amount set in the settings
-            // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
-            $result = $stripe->paymentIntents->create([
-                'payment_method_types' => ['card'],
-                'amount' => $basketTotal,
-                'currency' => $currency,
-                'receipt_email' => $customerEmail,
-                'description' => $paymentDescription,
-                'application_fee_amount' => $feeCollection['feeAmount'],
-                'transfer_data' => [
-                  'destination' => $feeCollection['connectedStripeAccount'],
-                ],
-              ]);
-        } else {
-            // Fees not enabled, create standard stripe charge
-            $result = $stripe->charges->create([
-                'amount' => $basketTotal,
-                'currency' => $currency,
-                'source' => $token['id'],
-                'description' => $paymentDescription,
-                'receipt_email' => $customerEmail,
-            ]);
-        }
 
         $fetchedCustomer = Customer::where('email', '=', $customerEmail)->get();
 
@@ -94,8 +64,8 @@ class PaymentController extends Controller
             'unique_id' => Uuid::uuid4(),
             'customer_id' => $fetchedCustomer->id,
             'basket' => $basket,
-            'payment_processor_result' => $result,
             'status' => 1,
+            'payment_processor_result' => $result,
         ]);
 
         $orderAssets = $this->generateOrderAssets($order, $basket, $fetchedCustomer);
@@ -241,5 +211,43 @@ class PaymentController extends Controller
         }
 
         return false;
+    }
+
+    protected function intentSecret (Request $request)
+    {
+        $amount = $request->get('amount');
+        $currency = $request->get('currency');
+
+        // @todo: Load stripe key from .env
+        $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
+
+        $stripe = new StripeClient($stripeKey);
+
+        // Fees
+        $feeCollection = $this->isFeeCollectionActive();
+
+        // @todo: This is now using the PaymentIntents API
+        // Customer details are not being sent to stripe here, we need to do add additional details to the PI creation.
+
+        if ($feeCollection !== false) {
+            // Fees are enabled, so send fee amount to connected Stripe Account
+            // `feeAmount` is the amount set in the settings
+            // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
+            $intent = $stripe->paymentIntents->create([
+                'amount' => $amount,
+                'currency' => $currency,
+            ]);
+        } else {
+            $intent = $stripe->paymentIntents->create([
+                'amount' => $amount,
+                'currency' => $currency,
+                'application_fee_amount' => $feeCollection['feeAmount'],
+                'transfer_data' => [
+                    'destination' => $feeCollection['connectedStripeAccount'],
+                ],
+            ]);
+        }
+
+        return json_encode(array('client_secret' => $intent->client_secret));
     }
 }

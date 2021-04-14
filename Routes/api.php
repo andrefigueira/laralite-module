@@ -82,6 +82,7 @@ Route::group(['middleware' => 'auth:api'], static function () {
 
     Route::get('/order', 'Api\OrderController@get');
     Route::get('/order/{id}', 'Api\OrderController@getOne');
+    Route::post('/order/refund', 'Api\OrderController@refund');
 
     Route::get('/scan/ticket/{uuid}', 'Api\OrderController@scanTicket');
 
@@ -93,6 +94,7 @@ Route::group(['middleware' => 'auth:api'], static function () {
 
     Route::patch('/settings', 'Api\SettingsController@update');
 
+    Route::post('/intent-secret', 'Api\PaymentController@intentSecret');
 
 //    Route::post('/form', 'Api\FormController@submit');
 });
