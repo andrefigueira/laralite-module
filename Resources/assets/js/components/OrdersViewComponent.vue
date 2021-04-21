@@ -1,11 +1,19 @@
 <template>
     <div class="customer-details">
+      <div>
+        <b-button @click="goBack" variant="link" class="p-0">
+          <b-icon icon="arrow-left" font-scale="1"></b-icon>
+        </b-button>
+      </div>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h1 class="h2">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group mr-2">
-                    <b-button variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
+                    <b-button :disabled="order.refunded" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
                 </div>
+              <div class="btn-group mr-2">
+                <b-button :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
+              </div>
             </div><!-- End toolbar -->
         </div><!-- End content bar -->
 
@@ -26,6 +34,22 @@
             </div>
             <b-button class="mt-3" block @click="hideRefund">Exit</b-button>
         </b-modal>
+      <b-modal ref="cancelOrder" id="cancelOrder" title="Cancel Order" hide-footer>
+        <div v-if="cancelProcessing === false && cancelError === false && cancelSuccess !== true">
+          <p>Are You Sure?? <br/> <strong>Order Id </strong>:- {{ order.unique_id}}</p>
+          <b-button class="mt-2" variant="warning" block @click="toggleCancel">Cancel Order</b-button>
+        </div>
+        <div v-if="cancelError === true">
+          <p>{{ cancelErrorMessage }}</p>
+        </div>
+        <div v-if="cancelSuccess === true">
+          <p>Successfully canceled order {{ order.unique_id }}</p>
+        </div>
+        <div v-show="cancelProcessing" class="text-center">
+          <b-spinner label="Spinning"></b-spinner>
+        </div>
+        <b-button class="mt-3" block @click="hideCancel">Exit</b-button>
+      </b-modal>
 
         <div v-show="loading" class="text-center">
             <b-spinner label="Spinning"></b-spinner>
@@ -181,6 +205,7 @@
         },
         data() {
             return {
+                disabled: false,
                 refundProcessing: false,
                 refundError: false,
                 refundSuccess: false,
@@ -199,10 +224,18 @@
                     { value: 'duplicate', text: 'Duplicate' },
                     { value: 'fraudulent', text: 'Fraudulent' },
                     { value: 'requested_by_customer', text: 'Requested by Customer' },
-                ]
+                ],
+              cancelProcessing: false,
+              cancelError: false,
+              cancelSuccess: false,
+              cancelErrorMessage: '',
+              cancelSuccessMessage: '',
             }
         },
         methods: {
+          goBack() {
+            window.history.back();
+          },
             hideRefund() {
                 this.$refs['issueRefund'].hide()
             },
@@ -219,8 +252,9 @@
                     self.refundError = false;
                     self.refundSuccess = true;
                     self.refundProcessing = false;
+                    location.reload();
                 }).catch(function (error) {
-                    console.log('Refund failed', {
+                    console.log('Canceling Order failed', {
                         error: error.response.data
                     });
 
@@ -229,7 +263,34 @@
                     self.refundErrorMessage = error.response.data.message;
                     self.refundProcessing = false;
                 });
-            }
+            },
+            hideCancel() {
+              this.$refs['cancelOrder'].hide()
+            },
+          toggleCancel() {
+            let self = this;
+            self.cancelProcessing = true;
+
+            let formData = {
+              orderId: this.order.id,
+            };
+
+            axios.post('/api/order/cancel', formData).then(function (result) {
+              self.cancelError = false;
+              self.cancelSuccess = true;
+              self.cancelProcessing = false;
+              location.reload();
+            }).catch(function (error) {
+              console.log('cancel failed', {
+                error: error.response.data
+              });
+
+              self.cancelError = true;
+              self.cancelSuccess = false;
+              self.cancelErrorMessage = error.response.data.message;
+              self.cancelProcessing = false;
+            });
+          }
         }
     }
 </script>

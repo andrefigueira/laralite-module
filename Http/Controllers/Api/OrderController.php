@@ -3,6 +3,8 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Mail;
+use Modules\Laralite\Mail\OrderCancellation;
 use Modules\Laralite\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -56,14 +58,16 @@ class OrderController extends Controller
 
         $ticket = Ticket::where('unique_id', '=', $uuid)->first();
 
-        if($ticket) {
-                $ticket->validated = '1';
-                $ticket->visited_counts = $ticket->visited_counts + 1;
-                $ticket->save();
-                return response()->json([
-                    'success' => 'true',
-                    'message' => "Tickets table updated successfully",
-                    'ticket'  => $ticket]);
+        $order = $ticket->order;
+
+        if($ticket && $order->order_status == 'complete' && $order->refunded == 0) {
+            $ticket->validated = '1';
+            $ticket->visited_counts = $ticket->visited_counts + 1;
+            $ticket->save();
+            return response()->json([
+                'success' => 'true',
+                'message' => "Tickets table updated successfully",
+                'ticket'  => $ticket]);
         } else{
             return response()->json([
                 'success' => 'false',
@@ -83,16 +87,31 @@ class OrderController extends Controller
             ], 400);
         }
 
+        $response = $this->refundOrder($orderId);
+
+        if ($response['success']) {
+            return new JsonResponse([
+                'success' => true,
+                'message' => $response['message'],
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'success' => 'false',
+                'message' => $response['message']
+            ], 400);
+        }
+    }
+
+    private function refundOrder ($orderId) {
         $order = $this->getOne($orderId);
-        
         $paymentProcessorResult = $order->payment_processor_result;
         $paymentId = $paymentProcessorResult->id;
 
         if (!$paymentId) {
-            return response()->json([
+            return [
                 'success' => 'false',
                 'message' => "Error: Cannot locate paymentId from Stripe"
-            ], 400);
+            ];
         }
 
         $paymentType = substr($paymentId, 0, 3);
@@ -108,22 +127,28 @@ class OrderController extends Controller
 
         try {
             $result = $this->issueRefund($type, $paymentId);
+
+            if ($result->status == 'succeeded') {
+                $order->refunded = 1;
+                $order->save();
+            }
         } catch (\Stripe\Exception\InvalidRequestException $exception) {
-            return new JsonResponse([
+            return [
                 'success' => false,
-                'message' => $exception->getMessage(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                'message' => $exception->getError(),
+            ];
         } catch (\Exception $exception) {
-            return new JsonResponse([
+            return [
                 'success' => false,
                 'message' => $exception->getMessage(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            ];
         }
 
-        return new JsonResponse([
+        return [
             'success' => true,
             'message' => 'Successfully refunded order',
-        ], Response::HTTP_OK);
+            'payment' => $result
+        ];
     }
 
     private function issueRefund ($type, $paymentId)
@@ -138,5 +163,51 @@ class OrderController extends Controller
         ]);
 
         return $result;
+    }
+
+    public function cancel(Request $request)
+    {
+        $orderId = $request->get('orderId', null);
+
+        if (!$orderId) {
+            return response()->json([
+                'success' => 'false',
+                'message' => "Error: No order ID given"
+            ], 400);
+        }
+
+        $order = Order::where('id', '=', $orderId)->first();
+
+        $order->order_status = 'cancel';
+        $order->save();
+
+        $status = $this->refundOrder($orderId);
+
+        Mail::to($order->customer->email)->send(new OrderCancellation([
+            'order' => $order,
+            'customer' => $order->customer,
+        ]));
+
+        return response()->json([
+            'success' => 'true',
+            'message' => "Order Canceled Successfully."]);
+
+//        if ($order->order_status === 'completed') {
+//            $order->order_status = 'canceled';
+//            $order->save();
+//
+//            $ticket->status = 'canceled';
+//            $ticket->save();
+//
+//            return response()->json([
+//                'success' => 'true',
+//                'message' => "Order Canceled Successfully.",
+//                'ticket'  => $order]);
+//        } else{
+//            return response()->json([
+//                'success' => 'false',
+//                'message' => "Error: No order ID given"
+//            ], 400);
+//    }
     }
 }

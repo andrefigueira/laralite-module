@@ -65,6 +65,8 @@ class PaymentController extends Controller
             'customer_id' => $fetchedCustomer->id,
             'basket' => $basket,
             'status' => 1,
+            'order_status' => 'complete',
+            'refunded'  => 0,
             'payment_processor_result' => $result,
         ]);
 
