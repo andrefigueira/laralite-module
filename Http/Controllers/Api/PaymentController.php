@@ -32,7 +32,21 @@ class PaymentController extends Controller
 
         $stripe = new StripeClient($stripeKey);
 
+        if(!$stripe){
+            return response()->json([
+                'success' => 'false',
+                'message' => "Error in Payment Processing. Try again later!"
+            ], 400);
+        }
+
         $result = $stripe->paymentIntents->retrieve($token, []);
+
+        if(!$result){
+            return response()->json([
+                'success' => 'false',
+                'message' => "Error! PLease try again later."
+            ], 400);
+        }
 
         Log::info('Processing payment for basket', [
             'token' => $token,
@@ -77,15 +91,22 @@ class PaymentController extends Controller
             'orderAssets' => $orderAssets,
         ]));
 
-        return (new JsonResponse([
-            'success' => true,
-            'message' => 'Processed payment',
-            'data' => [
-                'basket' => $basket,
-                'stripe_result' => $result,
-                'order' => $order,
-            ],
-        ]))->setStatusCode(Response::HTTP_OK);
+        if($orderAssets){
+            return (new JsonResponse([
+                'success' => true,
+                'message' => 'Processed payment',
+                'data' => [
+                    'basket' => $basket,
+                    'stripe_result' => $result,
+                    'order' => $order,
+                ],
+            ]))->setStatusCode(Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'success' => 'false',
+                'message' => "Error."
+            ], 400);
+        }
     }
 
     /**
@@ -236,16 +257,17 @@ class PaymentController extends Controller
             $intent = $stripe->paymentIntents->create([
                 'amount' => $amount,
                 'currency' => $currency,
-            ]);
-        } else {
-            $intent = $stripe->paymentIntents->create([
-                'amount' => $amount,
-                'currency' => $currency,
                 'application_fee_amount' => $feeCollection['feeAmount'],
                 'transfer_data' => [
                     'destination' => $feeCollection['connectedStripeAccount'],
                 ],
             ]);
+        } else {
+            $intent = $stripe->paymentIntents->create([
+                'amount' => $amount,
+                'currency' => $currency,
+            ]);
+
         }
 
         return json_encode(array('client_secret' => $intent->client_secret));
