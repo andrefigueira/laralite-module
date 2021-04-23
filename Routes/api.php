@@ -94,11 +94,10 @@ Route::group(['middleware' => 'auth:api'], static function () {
 
     Route::patch('/settings', 'Api\SettingsController@update');
 
-    Route::post('/intent-secret', 'Api\PaymentController@intentSecret');
-
 //    Route::post('/form', 'Api\FormController@submit');
 });
 
+Route::post('/intent-secret', 'Api\PaymentController@intentSecret');
 // need to figure out a way to protect this route
 Route::get('/stripe-connect', 'Api\SettingsController@stripeConnect');
 
