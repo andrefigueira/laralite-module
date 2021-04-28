@@ -175,7 +175,7 @@
               </div><!-- End collapse -->
             </div><!-- End card -->
           </div><!-- End accordion sidebar -->
-          <form ref="logout_form" action="http://127.0.0.1:8000/admin/logout" method="POST" style="display: none;">
+          <form ref="logout_form" action="/admin/logout" method="POST" style="display: none;">
             <input type="hidden" name="_token" :value="csrfToken">
           </form>
         </nav>
