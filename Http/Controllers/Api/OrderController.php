@@ -18,7 +18,7 @@ class OrderController extends Controller
 {
     public function get(Request $request)
     {
-        $orders = Order::query();
+        $orders = Order::with(['customer']);
         $perPage = $request->get('perPage', 1);
 
         if ($request->get('all') === 'true') {
@@ -35,7 +35,7 @@ class OrderController extends Controller
             $orders->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
         }
 
-        return $orders->paginate($perPage);
+        return response()->json($orders->paginate($perPage));
     }
 
     public function getOne($id)
