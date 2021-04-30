@@ -25,7 +25,7 @@ class OrderController extends Controller
             return $orders->get();
         }
 
-        if ($request->input('filter') !== 'null') {
+        if ($request->input('filter') !== 'null' && $request->input('filter') != '') {
             $orders
                 ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
                 ->orWhere('email', 'LIKE', '%' . $request->input('filter') . '%');

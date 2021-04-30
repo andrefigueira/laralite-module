@@ -32,11 +32,13 @@
                         <b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge>
                     </template>
                   <template v-slot:cell(customer_name)="data">
-                    {{ data.item.customer.name }}
+                    <span v-if="data.item.customer">{{ data.item.customer.name }}</span>
+                    <span v-else>N/A</span>
                   </template>
-                    <template v-slot:cell(customer_email)="data">
-                        {{ data.item.customer.email }}
-                    </template>
+                  <template v-slot:cell(customer_email)="data">
+                    <span v-if="data.item.customer">{{ data.item.customer.email }}</span>
+                    <span v-else>N/A</span>
+                  </template>
                     <template v-slot:cell(date_created)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
@@ -120,7 +122,6 @@
                     return items;
                 }).catch(error => {
                     this.isBusy = false;
-                  error: error
                     return [];
                 })
             }
