@@ -31,9 +31,14 @@
                     <template v-slot:cell(status)="data">
                         <b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge>
                     </template>
-                    <template v-slot:cell(customer_email)="data">
-                        {{ data.item.payment_processor_result.receipt_email }}
-                    </template>
+                  <template v-slot:cell(customer_name)="data">
+                    <span v-if="data.item.customer">{{ data.item.customer.name }}</span>
+                    <span v-else>N/A</span>
+                  </template>
+                  <template v-slot:cell(customer_email)="data">
+                    <span v-if="data.item.customer">{{ data.item.customer.email }}</span>
+                    <span v-else>N/A</span>
+                  </template>
                     <template v-slot:cell(date_created)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
@@ -58,8 +63,10 @@
 
 <script>
     import * as moment from "moment";
+    import AlertComponent from "./AlertComponent";
 
     export default {
+      components: {AlertComponent},
         data() {
             return {
                 // Alert settings
@@ -75,6 +82,7 @@
                 // Table settings
                 fields: [
                     { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
+                    { key: 'customer_name', label: 'Customer Name' },
                     { key: 'customer_email', label: 'Customer Email' },
                     { key: 'date_created', label: 'Order Date'},
                     { key: 'actions', label: '' }
@@ -114,7 +122,6 @@
                     return items;
                 }).catch(error => {
                     this.isBusy = false;
-
                     return [];
                 })
             }
