@@ -25,11 +25,12 @@ class OrderController extends Controller
             return $orders->get();
         }
 
-        if ($request->input('filter') !== 'null' && $request->input('filter') != '') {
-            $orders
-                ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
-                ->orWhere('email', 'LIKE', '%' . $request->input('filter') . '%');
-        }
+      if ($request->input('filter') !== 'null' && $request->input('filter') != '') {
+        $orders->whereHas('customer', function ($q) use ($request) {
+          $q->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+            ->orWhere('email', 'LIKE', '%' . $request->input('filter') . '%');
+        })->get();
+      }
 
         if ($request->input('sortBy') !== null) {
             $orders->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
