@@ -237,7 +237,8 @@
             window.history.back();
           },
             hideRefund() {
-                this.$refs['issueRefund'].hide()
+                this.$refs['issueRefund'].hide();
+                location.reload();
             },
             toggleRefund() {
                 let self = this;
