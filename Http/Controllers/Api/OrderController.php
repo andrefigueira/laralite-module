@@ -211,4 +211,34 @@ class OrderController extends Controller
 //            ], 400);
 //    }
     }
+
+    public function bulkRefunds(Request $request)
+    {
+      $orders = $request->get('orders', null);
+
+      foreach ($orders as $order) {
+
+        $orderId = $order['id'];
+
+        if (!$orderId) {
+          return response()->json([
+            'success' => 'false',
+            'message' => "Error: No order ID given"
+          ], 400);
+        }
+
+        $response = $this->refundOrder($orderId);
+        }
+      if ($response['success']) {
+        return new JsonResponse([
+          'success' => true,
+          'message' => $response['message'],
+        ], Response::HTTP_OK);
+      } else {
+        return response()->json([
+          'success' => 'false',
+          'message' => $response['message']
+        ], 400);
+      }
+    }
 }
