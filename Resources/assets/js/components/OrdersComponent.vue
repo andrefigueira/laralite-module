@@ -84,7 +84,6 @@
         </div>
 
         <hr class="pagination-rem">
-
         <b-pagination
           class="ml-2"
           v-model="currentPage"
@@ -138,7 +137,6 @@ export default {
       sortDirection: 'asc',
       filter: null,
       filterOn: [],
-
       isBusy: false,
     }
   },
@@ -203,6 +201,7 @@ export default {
     },
   },
 }
+
 </script>
 
 <style scoped>
