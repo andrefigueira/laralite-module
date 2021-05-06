@@ -54,7 +54,8 @@
             :fields="fields"
             :per-page="perPage"
             :current-page="currentPage"
-            :filter="filter">
+            :filter="filter"
+            sortDesc>
             <template v-slot:cell(unique_id)="data" class="min-width-0" style="width: 10%">
               <input type="checkbox" class="" :value="data.item" :id="data.item.unique_id" v-model="checkedOrders">&nbsp;&nbsp;
               <span>{{ data.item.unique_id }}</span>
@@ -125,7 +126,7 @@ export default {
         { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
         { key: 'customer_name', label: 'Customer Name' },
         { key: 'customer_email', label: 'Customer Email' },
-        { key: 'date_created', label: 'Order Date'},
+        { key: 'date_created', label: 'Order Date', sortDirection: 'desc' },
         { key: 'actions', label: '' }
       ],
       totalRows: 1,
@@ -174,7 +175,9 @@ export default {
     },
     hideRefund() {
       this.$refs['issueRefund'].hide();
-      location.reload();
+      // location.reload();
+      /*this.$root.$emit('bv::refresh::table', 'orders-table')*/
+      // this.tableDataProvider(this)
     },
     toggleRefund() {
       let self = this;
@@ -188,14 +191,15 @@ export default {
         self.refundError = false;
         self.refundSuccess = true;
         self.refundProcessing = false;
-        location.reload();
+        self.$root.$emit('bv::refresh::table', 'orders-table')
+        // location.reload();
       }).catch(function (error) {
         console.log('Bulk Refund for Orders Failed', {
           error: error.response.data
         });
         self.refundError = true;
         self.refundSuccess = false;
-        self.refundErrorMessage = error.response.data.message;
+        self.refundErrorMessage = 'We are sorry! Something unexpected happened. Please contact admin.';
         self.refundProcessing = false;
       });
     },

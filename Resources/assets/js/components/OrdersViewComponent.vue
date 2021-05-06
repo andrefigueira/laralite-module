@@ -69,10 +69,14 @@
                                 <td><strong>Customer</strong></td>
                                 <td>{{ order.payment_processor_result.receipt_email }}</td>
                             </tr>
-                            <tr>
+                            <tr v-if="order.refunded">
                                 <td><strong>Status</strong></td>
-                                <td><b-badge variant="success"><i class="fas fa-check-circle"></i> Accepted</b-badge></td>
+                                <td><b-badge variant="secondary"><i class="fas fa-check-circle"></i>Refunded</b-badge></td>
                             </tr>
+                          <tr v-if="order.order_status === 'complete' || order.order_status === null">
+                            <td><strong>Status</strong></td>
+                            <td><b-badge variant="success" v-if="order.order_status === 'complete' || order.order_status === null"><i class="fas fa-check-circle"></i>Accepted</b-badge></td>
+                          </tr>
                             <tr>
                                 <td><strong>Date</strong></td>
                                 <td>{{ order.created_at }}</td>
@@ -95,7 +99,7 @@
                             </template>
 
                             <template #cell(price)="data">
-                                {{ data.item.price }}
+                                ${{ (data.item.price / 100)*data.item.quantity }}
                             </template>
 
                             <template #cell(quantity)="data">
@@ -124,7 +128,7 @@
                             </tr>
                             <tr>
                                 <td><strong>Amount</strong></td>
-                                <td>{{ order.payment_processor_result.amount }}</td>
+                                <td>${{ order.payment_processor_result.amount / 100 }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Fee</strong></td>

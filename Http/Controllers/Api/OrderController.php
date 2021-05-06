@@ -36,7 +36,7 @@ class OrderController extends Controller
             $orders->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
         }
 
-        return response()->json($orders->paginate($perPage));
+        return response()->json($orders->orderBy('created_at', 'DESC')->paginate($perPage));
     }
 
     public function getOne($id)
