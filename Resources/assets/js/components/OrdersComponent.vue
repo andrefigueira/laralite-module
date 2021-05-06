@@ -138,7 +138,6 @@ export default {
       sortDirection: 'asc',
       filter: null,
       filterOn: [],
-
       isBusy: false,
     }
   },
