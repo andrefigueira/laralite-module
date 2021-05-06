@@ -38,11 +38,11 @@
                         <tr>
                             <td align="left" width="75%">{{ $product->sku }}</td>
                             <td align="left" width="75%">&times;{{ $product->quantity }}</td>
-                            <td align="left" width="75%">${{ $product->price }}</td>
+                            <td align="left" width="75%">${{ ($product->price) / 100 }}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="5" align="right">Subtotal</td>
+                        <td colspan="5" align="right">Subtotal: ${{ ($product->price / 100)*$product->quantity }}</td>
                     </tr>
                     </table>
             </td>
