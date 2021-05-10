@@ -34,16 +34,25 @@
                         <div class="col-md-12">
                           <div class="row">
                             <div class="col-md-6">
-                              <b-form-group id="template-image-group" label="Template image" label-for="template-image">
-                              <div class="row">
-                                <div class="col-md-4">
-                                  <b-img :src="template.background_image" fluid-grow alt="Responsive image"></b-img>
+                              <b-form-group id="template-image-group" label="Template image" label-for="template-image" v-if="!showBackgroundUploadBlock">
+                                <div class="row">
+                                  <div class="col-md-12">
+                                    <a @click="uploadNewImage = true" class="float-right" style="cursor: pointer">Change image</a>
+                                    <b-img :src="template.background_image" alt="Responsive image" style="height: 165px !important; width: 100%; background-size: cover"></b-img>
+                                  </div>
+<!--                                  <div class="col-md-2">
+                                    <b-button @click="uploadNewImage = true">Change image</b-button>
+                                  </div>-->
                                 </div>
-                                <div class="col-md-8">
-                                    <image-upload-component @image-removed="removeUploadedImage" v-model="image" @image-uploaded="setUploadedImage"></image-upload-component>
-                                </div>
-                              </div>
                               </b-form-group>
+                              <b-form-group id="template-image-group" label="Template image" label-for="template-image" v-if="showBackgroundUploadBlock">
+                                <div class="row">
+                                  <div class="col-md-12">
+                                    <image-upload-component @image-removed="removeUploadedImage" v-model="image" @image-uploaded="setUploadedImage"></image-upload-component>
+                                  </div>
+                                </div>
+                              </b-form-group>
+
                             </div>
                             <div class="col-md-6">
                               <b-form-group id="template-description-group" label="Template description" label-for="template-description">
@@ -202,10 +211,14 @@
                 sectionWrapperClass: '',
                 navigation: [],
                 selectedHeaderNavigation: {},
-                selectedFooterNavigation: {}
+                selectedFooterNavigation: {},
+                uploadNewImage: false
             }
         },
         computed: {
+            showBackgroundUploadBlock () {
+              return this.uploadNewImage || !this.template.background_image
+            },
             button() {
                 if (this.type === 'create') {
                     return 'Create';
