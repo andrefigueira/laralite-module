@@ -34,14 +34,16 @@
                         <!--                        <td>Refund Id</td>-->
                         <td>Amount</td>
                     </tr>
+                  @foreach($form['order']->basket->products as $product)
                     <tr>
-                        <td align="left" width="75%">{{ $form['order']->unique_id }}</td>
-                    <!--                            <td align="left" width="75%">&times;{{ $form['order']->payment_processor_result->id }}</td>-->
-                        <td align="left" width="75%">${{ $form['order']->amount }}</td>
+                      <td align="left" width="75%">{{ $product->sku }}</td>
+                      <td align="left" width="75%">&times;{{ $product->quantity }}</td>
+                      <td align="left" width="75%">${{ ($product->price) / 100 }}</td>
                     </tr>
-                    <!--                    <tr>
-                                            <td colspan="5" align="right">Subtotal</td>
-                                        </tr>-->
+                  @endforeach
+                  <tr>
+                    <td colspan="5" align="right">Subtotal: ${{ ($product->price / 100)*$product->quantity }}</td>
+                  </tr>
                 </table>
             </td>
         </tr>

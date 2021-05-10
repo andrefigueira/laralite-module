@@ -18,24 +18,25 @@ class OrderController extends Controller
 {
     public function get(Request $request)
     {
-        $orders = Order::query();
+        $orders = Order::with(['customer']);
         $perPage = $request->get('perPage', 1);
 
         if ($request->get('all') === 'true') {
             return $orders->get();
         }
 
-        if ($request->input('filter') !== 'null') {
-            $orders
-                ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
-                ->orWhere('email', 'LIKE', '%' . $request->input('filter') . '%');
-        }
+      if ($request->input('filter') !== 'null' && $request->input('filter') != '') {
+        $orders->whereHas('customer', function ($q) use ($request) {
+          $q->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+            ->orWhere('email', 'LIKE', '%' . $request->input('filter') . '%');
+        })->get();
+      }
 
         if ($request->input('sortBy') !== null) {
             $orders->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
         }
 
-        return $orders->paginate($perPage);
+        return response()->json($orders->orderBy('created_at', 'DESC')->paginate($perPage));
     }
 
     public function getOne($id)
@@ -209,5 +210,35 @@ class OrderController extends Controller
 //                'message' => "Error: No order ID given"
 //            ], 400);
 //    }
+    }
+
+    public function bulkRefunds(Request $request)
+    {
+      $orders = $request->get('orders', null);
+
+      foreach ($orders as $order) {
+
+        $orderId = $order['id'];
+
+        if (!$orderId) {
+          return response()->json([
+            'success' => 'false',
+            'message' => "Error: No order ID given"
+          ], 400);
+        }
+
+        $response = $this->refundOrder($orderId);
+        }
+      if ($response['success']) {
+        return new JsonResponse([
+          'success' => true,
+          'message' => $response['message'],
+        ], Response::HTTP_OK);
+      } else {
+        return response()->json([
+          'success' => 'false',
+          'message' => $response['message']
+        ], 400);
+      }
     }
 }

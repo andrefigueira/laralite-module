@@ -29,7 +29,7 @@ class CustomerController extends Controller
             $customers->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
         }
 
-        return $customers->paginate($perPage);
+        return $customers->orderBy('created_at', 'DESC')->paginate($perPage);
     }
 
     public function getOne($id)

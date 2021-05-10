@@ -27,7 +27,8 @@
                     :fields="fields"
                     :per-page="perPage"
                     :current-page="currentPage"
-                    :filter="filter">
+                    :filter="filter"
+                    sortDesc>
                     <template v-slot:cell(verified)="data">
                         <b-badge v-if="data.item.verification_guid === ''" variant="success"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
                         <b-badge v-if="data.item.verification_guid !== ''" variant="danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
@@ -79,7 +80,7 @@
                     { key: 'email', label: 'Email', sortable: true, sortDirection: 'desc' },
                     { key: 'verified', label: 'Verified'},
                     { key: 'status', label: 'Status'},
-                    { key: 'registered', label: 'Registered'},
+                    { key: 'registered', label: 'Registered', sortDirection: 'desc'},
                     { key: 'actions', label: '' }
                 ],
                 totalRows: 1,
