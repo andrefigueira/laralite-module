@@ -32,22 +32,46 @@
                             </b-form-group>
                         </div><!-- End col -->
                         <div class="col-md-12">
-                            <b-form-group id="template-description-group" label="Template description" label-for="template-description">
-                                <b-form-textarea id="template-name-input" v-model="description" required></b-form-textarea>
-                            </b-form-group>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <b-form-group id="template-image-group" label="Template image" label-for="template-image" v-if="!showBackgroundUploadBlock">
+                                <div class="row">
+                                  <div class="col-md-12">
+                                    <a @click="uploadNewImage = true" class="float-right" style="cursor: pointer">Change image</a>
+                                    <b-img :src="template.background_image" alt="Responsive image" style="height: 165px !important; width: 100%; background-size: cover"></b-img>
+                                  </div>
+<!--                                  <div class="col-md-2">
+                                    <b-button @click="uploadNewImage = true">Change image</b-button>
+                                  </div>-->
+                                </div>
+                              </b-form-group>
+                              <b-form-group id="template-image-group" label="Template image" label-for="template-image" v-if="showBackgroundUploadBlock">
+                                <div class="row">
+                                  <div class="col-md-12">
+                                    <image-upload-component @image-removed="removeUploadedImage" v-model="image" @image-uploaded="setUploadedImage"></image-upload-component>
+                                  </div>
+                                </div>
+                              </b-form-group>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <b-form-group id="template-header-navigation-group" label="Template header navigation" label-for="template-navigation">
-                                        <v-select class="mb-3" id="header-navigation" label="name" v-model="selectedHeaderNavigation" :options="navigation" :clearable="false"></v-select>
-                                    </b-form-group>
-                                </div>
-                                <div class="col-md-6">
-                                    <b-form-group id="template-footer-navigation-group" label="Template footer navigation" label-for="template-navigation">
-                                        <v-select class="mb-3" id="footer-navigation" label="name" v-model="selectedFooterNavigation" :options="navigation" :clearable="false"></v-select>
-                                    </b-form-group>
-                                </div>
                             </div>
+                            <div class="col-md-6">
+                              <b-form-group id="template-description-group" label="Template description" label-for="template-description">
+                                <b-form-textarea id="template-name-input" v-model="description" rows="8" required></b-form-textarea>
+                              </b-form-group>
+                            </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-6">
+                                  <b-form-group id="template-header-navigation-group" label="Template header navigation" label-for="template-navigation">
+                                      <v-select class="mb-3" id="header-navigation" label="name" v-model="selectedHeaderNavigation" :options="navigation" :clearable="false"></v-select>
+                                  </b-form-group>
+                              </div>
+                              <div class="col-md-6">
+                                  <b-form-group id="template-footer-navigation-group" label="Template footer navigation" label-for="template-navigation">
+                                      <v-select class="mb-3" id="footer-navigation" label="name" v-model="selectedFooterNavigation" :options="navigation" :clearable="false"></v-select>
+                                  </b-form-group>
+                              </div>
+                          </div>
 
                             <hr>
 
@@ -177,6 +201,7 @@
                 moduleItem: '',
                 moduleOptions: [],
                 description: '',
+                image: '',
                 sections: [],
                 sectionName: '',
                 sectionSlug: '',
@@ -186,10 +211,14 @@
                 sectionWrapperClass: '',
                 navigation: [],
                 selectedHeaderNavigation: {},
-                selectedFooterNavigation: {}
+                selectedFooterNavigation: {},
+                uploadNewImage: false
             }
         },
         computed: {
+            showBackgroundUploadBlock () {
+              return this.uploadNewImage || !this.template.background_image
+            },
             button() {
                 if (this.type === 'create') {
                     return 'Create';
@@ -231,6 +260,7 @@
                     this.id = this.template.id;
                     this.name = this.template.name;
                     this.description = this.template.description;
+                    this.image = this.template.image;
                     this.sections = this.template.sections;
                 }
             },
@@ -294,6 +324,7 @@
                         name: this.name,
                         module_name: this.moduleItem.label,
                         description: this.description,
+                        image: this.image,
                         sections: this.sections,
                         header_navigation_id: headerNavigationId,
                         footer_navigation_id: footerNavigationId
@@ -310,6 +341,7 @@
                     this.alertShow = true;
                     this.alertMessage = 'Saved changes to template';
                     this.alertType = 'success';
+                    location.reload();
                 }).catch(error => {
                     this.saving = false;
 
@@ -386,7 +418,13 @@
                 let index = this.sections.indexOf(section);
 
                 this.sections.splice(index, 1);
-            }
+            },
+            setUploadedImage(path) {
+              this.image = path;
+            },
+            removeUploadedImage() {
+              this.image = '';
+            },
         }
     }
 </script>
