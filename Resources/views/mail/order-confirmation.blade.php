@@ -4,7 +4,7 @@
     <table bgcolor="#2a2a2a" border="0" cellpadding="20" cellspacing="0" width="600" style="width:600px!important;" id="emailContainer">
         <tr>
             <td align="center" valign="top">
-                <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailHeader" style="width:100%!important;background: #000; color: white;">
+                <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailHeader" style="width:100%!important;background: #2A2A2A; color: white;">
                     <tr>
                         <td align="center" valign="top">
                             <img class="site-logo" src="https://trapmusicmuseum.us/images/trap-music-museum-logo.png" alt="" height="80">
@@ -28,8 +28,8 @@
         <tr>
             <td align="center" valign="top">
                 <p style="color: white; text-align: left !important;"><strong>Order Summary:</strong></p>
-                <table border="1" cellpadding="20" cellspacing="0" width="100%" style="color: #fff;border-collapse: collapse; border:solid 1px #333333;">
-                    <tr bgcolor="#333333">
+                <table border="1" cellpadding="20" cellspacing="0" width="100%" style="background-color: #FFFFFF; color: #333;border-collapse: collapse; border:solid 1px #333333;">
+                    <tr bgcolor="#FFFFFF">
                         <td>SKU</td>
                         <td>Quantity</td>
                         <td>Price</td>
