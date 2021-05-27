@@ -12,6 +12,8 @@ class Order extends Model
         'basket',
         'payment_processor_result',
         'status',
+        'order_status',
+        'refunded'
     ];
 
     protected $casts = [
