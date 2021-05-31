@@ -5,6 +5,7 @@ namespace Modules\Laralite\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Mail;
 use Modules\Laralite\Mail\OrderCancellation;
+use Modules\Laralite\Mail\OrderRefundDetails;
 use Modules\Laralite\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -132,6 +133,11 @@ class OrderController extends Controller
             if ($result->status == 'succeeded') {
                 $order->refunded = 1;
                 $order->save();
+
+                Mail::to($order->customer->email)->send(new OrderRefundDetails([
+                    'order' => $order,
+                    'customer' => $order->customer,
+                ]));
             }
         } catch (\Stripe\Exception\InvalidRequestException $exception) {
             return [

@@ -79,7 +79,7 @@ class PaymentController extends Controller
             'customer_id' => $fetchedCustomer->id,
             'basket' => $basket,
             'status' => 1,
-            'order_status' => 'complete',
+            'order_status' => "complete",
             'refunded'  => 0,
             'payment_processor_result' => $result,
         ]);
@@ -101,6 +101,7 @@ class PaymentController extends Controller
                     'basket' => $basket,
                     'stripe_result' => $result,
                     'order' => $order,
+                    'tickets' => $order->tickets
                 ],
             ]))->setStatusCode(Response::HTTP_OK);
         } else {
