@@ -17,6 +17,7 @@ use Ramsey\Uuid\Uuid;
 use Stripe\StripeClient;
 use Symfony\Component\HttpFoundation\Response;
 use Mail;
+use Spatie\Newsletter\NewsletterFacade;
 
 class PaymentController extends Controller
 {
@@ -79,7 +80,7 @@ class PaymentController extends Controller
             'customer_id' => $fetchedCustomer->id,
             'basket' => $basket,
             'status' => 1,
-            'order_status' => 'complete',
+            'order_status' => "complete",
             'refunded'  => 0,
             'payment_processor_result' => $result,
         ]);
@@ -93,6 +94,14 @@ class PaymentController extends Controller
             'orderAssets' => $orderAssets,
         ]));
 
+        if($customer['subscribedToMailingList']) {
+            $splitName = explode(' ', $customer['name']); // Restricts it to only 2 values, for names like Billy Bob Jones
+
+            $first_name = $splitName[0];
+            $last_name = !empty($splitName[1]) ? $splitName[1] : '';
+            NewsletterFacade::subscribe($customer['email'], ['FNAME'=>$first_name, 'LNAME'=>$last_name]);
+        }
+
         if($orderAssets){
             return (new JsonResponse([
                 'success' => true,
@@ -101,6 +110,8 @@ class PaymentController extends Controller
                     'basket' => $basket,
                     'stripe_result' => $result,
                     'order' => $order,
+                    'tickets' => $order->tickets,
+                    'subscribed' =>$customer['subscribedToMailingList'],
                 ],
             ]))->setStatusCode(Response::HTTP_OK);
         } else {
