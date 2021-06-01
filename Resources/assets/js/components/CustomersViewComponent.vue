@@ -1,5 +1,10 @@
 <template>
     <div class="customer-details">
+      <div>
+        <b-button @click="goBack" variant="link" class="p-0">
+          <b-icon icon="arrow-left" font-scale="1"></b-icon>
+        </b-button>
+      </div>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h1 class="h2">Customer &rarr; <strong>{{ customer.name }}</strong></h1>
             <div class="btn-toolbar mb-2 mb-md-0">
@@ -46,8 +51,8 @@
                 <b-card>
                     <b-card-text>
                         <h5 class="heading-style"><i class="fas fa-user"></i> Customer Orders</h5>
-                        
-                        <b-table striped :fields="orderFields" :items="customer.orders" responsive="sm">
+
+                        <b-table striped :fields="orderFields" :items="customer.orders" responsive="sm" sortDesc>
                             <template #cell(unique_id)="data">
                                  {{ data.item.unique_id }}
                             </template>
@@ -67,7 +72,7 @@
 
 <script>
     import * as moment from "moment";
-    
+
     export default {
         mounted() {
             console.log('Component mounted.');
@@ -84,10 +89,13 @@
                 loading: true,
                 showResults: false,
                 orderFields: [
-                    { key: 'unique_id', label: 'Order ID' },
-                    { key: 'date_created', label: 'Order Date'},
+                    { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
+                    { key: 'date_created', label: 'Order Date', sortDirection: 'desc'},
                     { key: 'actions', label: '' }
                 ],
+              sortBy: '',
+              sortDesc: false,
+              sortDirection: 'asc',
             }
         },
         methods: {

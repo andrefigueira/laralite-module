@@ -13,10 +13,12 @@ class Template extends Model
         'sections',
         'header_navigation_id',
         'footer_navigation_id',
+        'background_image'
     ];
 
     protected $casts = [
         'sections' => 'array',
+      'background_image' => 'array'
     ];
 
     public function headerNavigation()
