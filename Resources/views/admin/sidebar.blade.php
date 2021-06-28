@@ -158,7 +158,9 @@
         @endif
     </div><!-- End accordion sidebar -->
 </nav>--}}
+
 <div>
     <sidebar-component request="{{ request()->path() }}" role="{{ Auth::user()->hasRole('admin') }}" user="{{ Auth::user()->name }}"></sidebar-component>
 </div>
+
 

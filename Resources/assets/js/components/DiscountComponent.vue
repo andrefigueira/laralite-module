@@ -11,9 +11,10 @@
                         type="search"
                         id="filterInput"
                         placeholder="Type to Search"
+                        style="padding: 18px 10px"
                     ></b-form-input>
                     <b-input-group-append>
-                        <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+                        <a :disabled="!filter" @click="filter = ''" class="btn btn-secondary">Clear</a>
                     </b-input-group-append>
                 </b-input-group>
 
@@ -32,22 +33,23 @@
                         {{ timeFormat(data.item.created_at) }}
                     </template>
                     <template v-slot:cell(actions)="data">
-                        <b-button @click="confirmDelete(data.item)" variant="danger" size="sm" class="float-right">Delete</b-button>
-                        <a :href="'/admin/discounts/edit/' + data.item.id" class="btn btn-sm btn-success float-right mr-1">Edit</a>
+                        <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right" style="text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
+                        <a v-b-tooltip:hover title="Edit" :href="'/admin/discounts/edit/' + data.item.id" class="float-right mr-3" style="text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
                     </template>
                 </b-table>
                 </div>
-
-                <hr class="pagination-rem">
-
-                <b-pagination
-                    class="ml-2"
-                    v-model="currentPage"
-                    :total-rows="totalRows"
-                    :per-page="perPage"
-                ></b-pagination>
             </div><!-- End col -->
         </div><!-- End row -->
+        <div class="float-right mb-3">
+          <ul class="pagination pagination-rounded mt-2">
+            <b-pagination
+                class="ml-2"
+                v-model="currentPage"
+                :total-rows="totalRows"
+                :per-page="perPage"
+            ></b-pagination>
+          </ul>
+        </div>
     </div>
 </template>
 
@@ -72,7 +74,7 @@
                     { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
                     { key: 'type', label: 'Discount Type', sortable: true, sortDirection: 'desc' },
                     { key: 'value', label: 'Discount Value', sortable: true, sortDirection: 'desc' },
-                    { key: 'date_created', label: 'Created'},
+                    { key: 'date_created', label: 'Created', sortable: true, sortDirection: 'desc'},
                     { key: 'actions', label: '' }
                 ],
                 totalRows: 1,
@@ -107,6 +109,7 @@
 
                     this.isBusy = false;
 
+                    console.log(items);
                     return items;
                 }).catch(error => {
                     this.isBusy = false;

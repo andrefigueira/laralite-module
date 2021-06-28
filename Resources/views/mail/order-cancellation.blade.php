@@ -1,4 +1,4 @@
-@extends('laralite::mail.layout')
+    @extends('laralite::mail.layout')
 
 @section('content')
     <table bgcolor="#2a2a2a" border="0" cellpadding="20" cellspacing="0" width="600" style="width:600px!important;" id="emailContainer">

@@ -5,31 +5,61 @@
         <div v-show="loading" class="text-center">
             <b-spinner label="Spinning"></b-spinner>
         </div>
+        <b-input-group size="sm" class="m-2 mr-0 pr-3">
+          <b-form-input
+              v-model="filter"
+              type="search"
+              id="filterInput"
+              placeholder="Type to Search"
+              style="padding: 18px 10px"
+          ></b-form-input>
+          <b-input-group-append>
+            <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+          </b-input-group-append>
+        </b-input-group>
         <div class="table-responsive-sm">
-        <table class="table" v-show="showResults">
-            <tr>
-                <th width="5%"></th>
-                <th width="30%">Name</th>
-                <th width="25%">URL</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th></th>
-            </tr>
-            <tr v-for="product in products">
-                <td class="align-middle">
-                    <a href="#" :style="{'background-image': 'url(' + product.variants[0].image + ')'}" class="variant-image-placeholder dark-link"></a>
-                </td>
-                <td class="align-middle"><a class="table-link" :href="'/admin/product/edit/' + product.id">{{ product.name }}</a></td>
-                <td class="align-middle">/{{ product.slug }}</td>
-                <td class="align-middle">{{ product.category !== null ? product.category.name : 'Uncategorised' }}</td>
-                <td class="align-middle">${{ product.variants[0].pricing.price }}</td>
-                <td class="align-middle">
-                    <b-button @click="confirmDelete(product)" variant="default" class="float-right"><i class="far fa-trash-alt"></i></b-button>
-                    <a :href="'/admin/product/edit/' + product.id" class="btn btn-default float-right mr-1"><i class="far fa-edit"></i></a>
-                </td>
-            </tr>
-        </table>
+          <b-table
+              hover
+              show-empty
+              ref="table"
+              :busy.sync="isBusy"
+              :items="tableDataProvider"
+              :fields="fields"
+              :per-page="perPage"
+              :current-page="currentPage"
+              :filter="filter"
+              sortDesc>
+            <template v-slot:cell(image)="data">
+              <a href="#" :style="{'background-image': 'url(' + data.item.variants[0].image + ')'}" class="variant-image-placeholder dark-link"></a>
+            </template>
+            <template v-slot:cell(name)="data">
+              <span>{{ data.item.name }}</span>
+            </template>
+            <template v-slot:cell(slug)="data">
+              <span>{{ data.item.slug }}</span>
+            </template>
+            <template v-slot:cell(category_name)="data">
+              <span>{{ data.item.category.name }}</span>
+            </template>
+            <template v-slot:cell(category_price)="data">
+              <span>${{ data.item.variants[0].pricing.price }}</span>
+            </template>
+            <template v-slot:cell(actions)="data">
+                <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right"><i class="ri-delete-bin-6-fill"></i></a>
+                <a v-b-tooltip:hover title="Edit" :href="'/admin/product/edit/' + data.item.id" class="float-right mr-3"><i class="ri-pencil-fill"></i></a>
+            </template>
+          </b-table>
         </div>
+      <div class="float-right m-2">
+        <ul class="pagination pagination-rounded mb-0">
+          <b-pagination
+              class="ml-2"
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+          ></b-pagination>
+        </ul>
+      </div>
     </div>
 </template>
 
@@ -44,10 +74,49 @@
             return {
                 loading: true,
                 showResults: false,
-                products: []
+                products: [],
+              fields: [
+                { key: 'image', label: '' },
+                { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+                { key: 'slug', label: 'URL', sortable: true, sortDirection: 'desc' },
+                { key: 'category_name', label: 'Category', sortable: true, sortDirection: 'desc' },
+                { key: 'category_price', label: 'Price', sortable: true, sortDirection: 'desc' },
+                { key: 'actions', label: '' }
+              ],
+              totalRows: 1,
+              currentPage: 1,
+              perPage: 10,
+              pageOptions: [5, 10, 15],
+              sortBy: '',
+              sortDesc: false,
+              sortDirection: 'asc',
+              filter: null,
+              filterOn: [],
+              isBusy: false,
             }
         },
         methods: {
+          tableDataProvider(context) {
+            this.isBusy = true;
+
+            const promise = axios.get(
+                '/api/product?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
+            );
+
+            return promise.then((data) => {
+              const items = data.data.data;
+
+              this.totalRows = data.data.total;
+
+              this.isBusy = false;
+
+              console.log(items);
+              return items;
+            }).catch(error => {
+              this.isBusy = false;
+              return [];
+            })
+          },
             load() {
                 axios.get('/api/product').then(response => {
                     this.products = response.data.data;

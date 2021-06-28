@@ -11,9 +11,10 @@
                         type="search"
                         id="filterInput"
                         placeholder="Type to Search"
+                        style="padding: 18px 10px"
                     ></b-form-input>
                     <b-input-group-append>
-                        <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+                        <b-button :disabled="!filter" @click="filter = ''" class="btn btn-secondary">Clear</b-button>
                     </b-input-group-append>
                 </b-input-group>
 
@@ -30,31 +31,33 @@
                     :filter="filter"
                     sortDesc>
                     <template v-slot:cell(verified)="data">
-                        <b-badge v-if="data.item.verification_guid === ''" variant="success"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
-                        <b-badge v-if="data.item.verification_guid !== ''" variant="danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
+                        <b-badge v-if="data.item.verification_guid === ''" class="badge-soft-primary"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
+                        <b-badge v-if="data.item.verification_guid !== ''" class="badge-soft-danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
                     </template>
                     <template v-slot:cell(status)="data">
-                        <b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge>
+                        <b-badge class="badge-soft-primary"><i class="fas fa-check-circle"></i> Account Active</b-badge>
                     </template>
                     <template v-slot:cell(registered)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
                     <template v-slot:cell(actions)="data">
-                        <a :href="'/admin/customers/view/' + data.item.unique_id" class="btn btn-sm btn-success float-right mr-1">View</a>
+                        <a v-b-tooltip:hover title="View Customer":href="'/admin/customers/view/' + data.item.unique_id" class="float-right mr-1"><i class="ri-eye-fill"></i></a>
                     </template>
                 </b-table>
                 </div>
-
-                <hr class="pagination-rem">
-
-                <b-pagination
-                    class="ml-2"
-                    v-model="currentPage"
-                    :total-rows="totalRows"
-                    :per-page="perPage"
-                ></b-pagination>
             </div><!-- End col -->
         </div><!-- End row -->
+
+      <div class="float-right mb-3 mt-2">
+        <ul class="pagination pagination-rounded mb-0">
+          <b-pagination
+              class="ml-2"
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+          ></b-pagination>
+        </ul>
+      </div>
     </div>
 </template>
 
@@ -78,9 +81,9 @@
                 fields: [
                     { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
                     { key: 'email', label: 'Email', sortable: true, sortDirection: 'desc' },
-                    { key: 'verified', label: 'Verified'},
-                    { key: 'status', label: 'Status'},
-                    { key: 'registered', label: 'Registered', sortDirection: 'desc'},
+                    { key: 'verified', label: 'Verified', sortable: true, sortDirection: 'desc'},
+                    { key: 'status', label: 'Status', sortable: true, sortDirection: 'desc'},
+                    { key: 'registered', label: 'Registered',sortable: true, sortDirection: 'desc'},
                     { key: 'actions', label: '' }
                 ],
                 totalRows: 1,

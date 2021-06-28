@@ -11,9 +11,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TemplateController extends Controller
 {
-    public function get()
+    public function get(Request $request)
     {
-        return Template::paginate();
+        $templates = Template::query();
+        $perPage = $request->get('perPage', 1);
+
+        if ($request->get('all') === 'true') {
+            return $templates->get();
+        }
+
+        if ($request->input('filter') !== 'null') {
+            $templates
+                ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+                ->where('description', 'LIKE', '%' . $request->input('filter') . '%');
+        }
+
+        if ($request->input('sortBy') !== null) {
+            $templates->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
+        }
+
+        return $templates->paginate($perPage);
     }
 
     public function getOne($id)

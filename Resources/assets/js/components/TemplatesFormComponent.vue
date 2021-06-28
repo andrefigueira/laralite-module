@@ -3,10 +3,13 @@
         <div class="row">
             <div class="col-md-12">
               <div class="admin-title-section">
-                  <h2 class="admin-title">
+                <b-button @click="goBack" variant="link" class="p-0 mr-3">
+                  <b-icon icon="arrow-left" font-scale="1"></b-icon>
+                </b-button>
+                  <span class="admin-title">
                       {{ type === 'create' ? 'Create new template' : 'Edit template ' }}
                       <strong v-show="type === 'edit'">{{ template.name }}</strong>
-                  </h2>
+                  </span>
               </div>
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
@@ -246,6 +249,9 @@
             }
         },
         methods: {
+          goBack() {
+            window.history.back();
+          },
             load() {
                 let defaultOption = {
                     id: null,

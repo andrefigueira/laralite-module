@@ -13,6 +13,7 @@
                 type="search"
                 id="filterInput"
                 placeholder="Type to Search"
+                style="padding: 18px 10px"
               ></b-form-input>
               <b-input-group-append>
                 <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
@@ -20,8 +21,8 @@
             </b-input-group>
           </div>
           <div class="col-md-6" v-if="checkedOrders.length">
-            <b-button class="mt-2 float-right mr-4" size="sm" @click="uncheckAll" :disabled="checkedOrders.length == 0">Clear All</b-button>
-            <b-button class="mt-2 float-right mr-4" variant="danger" size="sm" :disabled="checkedOrders.length == 0" v-b-modal.issueRefund>Process Bulk Refunds</b-button>
+            <b-button class="mt-2 float-right mr-4" @click="uncheckAll" :disabled="checkedOrders.length == 0">Clear All</b-button>
+            <a class="btn btn-danger mt-2 float-right mr-4" :disabled="checkedOrders.length == 0" v-b-modal.issueRefund>Process Bulk Refunds</a>
           </div>
         </div>
 <!--        {{ checkedOrders }}-->
@@ -59,7 +60,7 @@
             <template v-slot:cell(unique_id)="data" class="min-width-0" style="width: 10%">
               <input type="checkbox" class="" :value="data.item" :id="data.item.unique_id" v-model="checkedOrders">&nbsp;&nbsp;
               <span>{{ data.item.unique_id }}</span>
-              <b-badge variant="secondary" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
+              <b-badge class="badge-soft-danger" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
             </template>
             <template v-slot:cell(customer_name)="data">
               <span>{{ data.item.customer.name }}</span>
@@ -79,20 +80,22 @@
               {{ timeFormat(data.item.created_at) }}
             </template>
             <template v-slot:cell(actions)="data">
-              <a :href="'/admin/orders/view/' + data.item.unique_id" class="btn btn-sm btn-success float-right mr-1">View</a>
+              <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="float-right mr-1" style="font-size: 20px"><i class="ri-eye-fill"></i></a>
             </template>
           </b-table>
         </div>
-
-        <hr class="pagination-rem">
-        <b-pagination
-          class="ml-2"
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :per-page="perPage"
-        ></b-pagination>
       </div><!-- End col -->
     </div><!-- End row -->
+    <div class="float-right m-2">
+      <ul class="pagination pagination-rounded mb-0">
+        <b-pagination
+            class="ml-2"
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+        ></b-pagination>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -124,9 +127,9 @@ export default {
       // Table settings
       fields: [
         { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
-        { key: 'customer_name', label: 'Customer Name' },
-        { key: 'customer_email', label: 'Customer Email' },
-        { key: 'date_created', label: 'Order Date', sortDirection: 'desc' },
+        { key: 'customer_name', label: 'Customer Name', sortable: true, sortDirection: 'desc' },
+        { key: 'customer_email', label: 'Customer Email', sortable: true, sortDirection: 'desc' },
+        { key: 'date_created', label: 'Order Date', sortable: true, sortDirection: 'desc' },
         { key: 'actions', label: '' }
       ],
       totalRows: 1,
@@ -167,6 +170,7 @@ export default {
 
         this.isBusy = false;
 
+        console.log(items);
         return items;
       }).catch(error => {
         this.isBusy = false;

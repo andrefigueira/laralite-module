@@ -19,7 +19,7 @@
         </div>
 
         <div class="row">
-            <div class="col-6">
+            <div class="col-md-6">
                 <b-card>
                     <b-card-text>
                         <h5 class="heading-style"><i class="fas fa-user"></i> Customer Details</h5>
@@ -34,20 +34,20 @@
                             </tr>
                             <tr>
                                 <td><strong>Status</strong></td>
-                                <td><b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge></td>
+                                <td><b-badge class="badge-soft-primary"><i class="fas fa-check-circle"></i> Account Active</b-badge></td>
                             </tr>
                             <tr>
                                 <td><strong>Verified</strong></td>
                                 <td>
-                                    <b-badge v-if="customer.verification_guid === ''" variant="success"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
-                                    <b-badge v-if="customer.verification_guid !== ''" variant="danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
+                                    <b-badge v-if="customer.verification_guid === ''" class="badge-soft-primary"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
+                                    <b-badge v-if="customer.verification_guid !== ''" class="badge-soft-danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
                                 </td>
                             </tr>
                         </table>
                     </b-card-text>
                 </b-card>
             </div><!-- End col -->
-            <div class="col-12 mt-2">
+            <div class="col-md-12 mt-2">
                 <b-card>
                     <b-card-text>
                         <h5 class="heading-style"><i class="fas fa-user"></i> Customer Orders</h5>
@@ -60,7 +60,7 @@
                                 {{ timeFormat(data.item.created_at) }}
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <a :href="'/admin/orders/view/' + data.item.unique_id" class="btn btn-sm btn-success float-right mr-1">View</a>
+                                <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="float-right mr-1"><i class="ri-eye-fill"></i></a>
                             </template>
                         </b-table>
                     </b-card-text>

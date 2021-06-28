@@ -3,10 +3,13 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="admin-title-section">
-                    <h2 class="admin-title">
+                  <b-button @click="goBack" variant="link" class="p-0 mr-3">
+                    <b-icon icon="arrow-left" font-scale="1"></b-icon>
+                  </b-button>
+                    <span class="admin-title">
                         {{ type === 'create' ? 'Create new discount' : 'Edit discount ' }}
                         <strong v-show="type === 'edit'">{{ discount.name }}</strong>
-                    </h2>
+                    </span>
                 </div>
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
@@ -53,7 +56,7 @@
                             </b-form-group>
                               </div>
                       <div class="col-md-12">
-                            <button class="btn btn-theme" :disabled="saving" @click="save()">{{ button }}</button>
+                            <button class="btn btn-success" :disabled="saving" @click="save()">{{ button }}</button>
                       </div>
                         </div><!-- End col -->
                     </div><!-- End row -->
@@ -137,6 +140,9 @@ export default {
         }
     },
     methods: {
+      goBack() {
+        window.history.back();
+      },
         load() {
             if (this.discount.id !== undefined) {
                 this.id = this.discount.id;

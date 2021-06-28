@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
             </div>
 
-            <div class="col-12">
+            <div class="col-md-12">
                 <div class="page-section p-4">
                     <b-form-checkbox
                         id="checkbox-1"
@@ -17,17 +17,18 @@
                     </b-form-checkbox>
                 </div>
             </div><!-- End col -->
-            <div class="col-3">
+            <div class="col-md-3">
                 <div class="page-section p-4 mt-2">
                     <label for="currency-option" class="mt-3">Currency</label>
                     <v-select class="mb-3" id="currency-option" label="title" v-model="settings.currency" :options="currencyOptions" :clearable="false"></v-select>
                 </div><!-- End page section -->
             </div><!-- End col -->
-            <div class="col-3">
+            <div class="col-md-3">
                 <div class="page-section p-4 mt-2">
                     <label for="connected-stripe-account" class="mt-3">Connected Stripe Account</label>
                     <b-form-input id="connected-stripe-account" v-model="settings.connectedStripeAccount" placeholder="Connected Stripe Account ID"></b-form-input>
-                    <b-button @click="connectStripeAccount()" variant="outline-secondary" style="width:100%;"><i class="fas fa-external-link-alt"></i> CONNECT STRIPE ACCOUNT</b-button>
+                  <br/>
+                    <a @click="connectStripeAccount()" class="btn btn-primary" style="width:100%;"><i class="fas fa-external-link-alt"></i> CONNECT STRIPE ACCOUNT</a>
 
                     <div class="mt-4" v-if="settings.connectedStripeAccount !== ''">
                         <b-form-checkbox
@@ -45,7 +46,7 @@
                 </div><!-- End page section -->
             </div><!-- End col -->
 
-            <div class="col-12 mt-2">
+            <div class="col-md-12 mt-2">
                 <div class="page-section p-4">
                     <button class="btn btn-success" :disabled="saving" @click="save()">Save Changes</button>
                 </div>

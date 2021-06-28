@@ -1,13 +1,13 @@
 <template>
     <div>
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <div v-if="uploadSuccess === false" class="page-section p-4">
                     <p>Upload an exported .csv file from SquareSpace here.</p>
                     <squarespace-import-component @csv-uploaded="csvUploaded" @set-total-rows="setTotalRows"></squarespace-import-component>
                 </div>
             </div><!-- End col -->
-            <div class="col-12 mt-2" v-if="uploadSuccess === true && importSuccess === false">
+            <div class="col-md-12 mt-2" v-if="uploadSuccess === true && importSuccess === false">
                 <div class="page-section p-4">
                     <p>Successfully imported into a temporary table, please press the import button below to begin the process.</p>
                     <button :disabled="busy" class="btn btn-warning" v-on:click="handleFileImport()">
@@ -17,7 +17,7 @@
                     </button>
                 </div>
             </div>
-            <div class="col-12 mt-2" v-if="importSuccess === true">
+            <div class="col-md-12 mt-2" v-if="importSuccess === true">
                 <div class="page-section p-4">
                     <h3>{{ importMessage }}</h3>
                     <p>There were {{ updatedOrders }} created orders.</p>
@@ -31,7 +31,7 @@
 <script>
     export default {
         props: {
-            
+
         },
         mounted() {
             console.log('Component mounted.')

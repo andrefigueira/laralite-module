@@ -8,11 +8,11 @@
                         <a class="text-dark" :href="'/admin/pages/edit/' + page.id">{{ page.name }}</a>
                     </div>
                     <div class="col-md-3">{{ page.slug }}</div>
-                    <div class="col-md-2"><b-badge :variant="page.primary === 1 ? 'primary' : 'secondary'">{{ page.primary === 1 ? 'Primary' : 'Standard' }}</b-badge></div>
-                    <div class="col-md-2"><b-badge variant="primary">{{ getTemplateName(page) }}</b-badge></div>
+                    <div class="col-md-2"><b-badge class="badge-soft-warning" :variant="page.primary === 1 ? 'primary' : 'secondary'">{{ page.primary === 1 ? 'Primary' : 'Standard' }}</b-badge></div>
+                    <div class="col-md-2"><b-badge variant="primary" class="badge-soft-primary">{{ getTemplateName(page) }}</b-badge></div>
                     <div class="col-md-2">
-                        <b-button @click="confirmDelete(page)" variant="default" class="float-right row-button"><i class="far fa-trash-alt"></i></b-button>
-                        <a :href="'/admin/pages/edit/' + page.id" class="btn btn-default float-right mr-1 row-button"><i class="far fa-edit"></i></a>
+                        <a v-b-tooltip:hover title="Delete" @click="confirmDelete(page)" class="float-right row-button"><i class="ri-delete-bin-6-fill"></i></a>
+                        <a v-b-tooltip:hover title="Edit" :href="'/admin/pages/edit/' + page.id" class="float-right mr-3 row-button"><i class="ri-pencil-fill"></i></a>
                     </div>
                 </div>
             </div>

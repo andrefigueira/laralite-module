@@ -13,7 +13,24 @@ class ProductCategoryController extends Controller
 {
     public function get(Request $request)
     {
-        return ProductCategory::paginate();
+        $productCategory = ProductCategory::query();
+        $perPage = $request->get('perPage', 1);
+
+        if ($request->get('all') === 'true') {
+            return $productCategory->get();
+        }
+
+        if ($request->input('filter') !== 'null') {
+            $productCategory
+                ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+                ->orWhere('slug', 'LIKE', '%' . $request->input('filter') . '%');
+        }
+
+        if ($request->input('sortBy') !== null) {
+            $productCategory->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
+        }
+
+        return $productCategory->paginate($perPage);
     }
 
     public function getOne($id)

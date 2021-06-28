@@ -14,7 +14,24 @@ class RolesController extends Controller
 {
     public function get(Request $request)
     {
-        return Roles::paginate();
+        $roles = Roles::query();
+        $perPage = $request->get('perPage', 1);
+
+        if ($request->get('all') === 'true') {
+            return $roles->get();
+        }
+
+        if ($request->input('filter') !== 'null') {
+            $roles
+                ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+                ->orWhere('guard_name', 'LIKE', '%' . $request->input('filter') . '%');
+        }
+
+        if ($request->input('sortBy') !== null) {
+            $roles->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
+        }
+
+        return $roles->paginate($perPage);
     }
 
     public function getOne($id)

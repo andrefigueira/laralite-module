@@ -11,9 +11,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 class NavigationController extends Controller
 {
-    public function get()
+    public function get(Request $request)
     {
-        return Navigation::paginate();
+        $navigations = Navigation::query();
+        $perPage = $request->get('perPage', 1);
+
+        if ($request->get('all') === 'true') {
+            return $navigations->get();
+        }
+
+        if ($request->input('filter') !== 'null') {
+            $navigations
+                ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+                ->orWhere('description', 'LIKE', '%' . $request->input('filter') . '%');
+        }
+
+        if ($request->input('sortBy') !== null) {
+            $navigations->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
+        }
+
+        return $navigations->paginate($perPage);
     }
 
     public function getOne($id)
