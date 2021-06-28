@@ -21,7 +21,8 @@
             <div v-if="refundProcessing === false && refundError === false && refundSuccess !== true">
                 <label> Please select a reason for the refund:</label>
                 <b-form-select v-model="reason" :options="reasonOptions"></b-form-select>
-                <b-button class="mt-2" variant="warning" block @click="toggleRefund">Issue Refund</b-button>
+                <button class="btn btn-default mt-2 float-right" @click="hideRefund">Exit</button>
+                <button class="btn btn-danger mt-2 mr-1 float-right" block @click="toggleRefund">Issue Refund</button>
             </div>
             <div v-if="refundError === true">
                 <p>{{ refundErrorMessage }}</p>
@@ -32,12 +33,12 @@
             <div v-show="refundProcessing" class="text-center">
                 <b-spinner label="Spinning"></b-spinner>
             </div>
-            <b-button class="mt-3" block @click="hideRefund">Exit</b-button>
         </b-modal>
       <b-modal ref="cancelOrder" id="cancelOrder" title="Cancel Order" hide-footer>
         <div v-if="cancelProcessing === false && cancelError === false && cancelSuccess !== true">
           <p>Are You Sure?? <br/> <strong>Order Id </strong>:- {{ order.unique_id}}</p>
-          <b-button class="mt-2" variant="warning" block @click="toggleCancel">Cancel Order</b-button>
+          <button class="btn btn-default mt-2 float-right" block @click="hideCancel">Exit</button>
+          <button class="btn btn-danger mt-2 mr-1 float-right" variant="warning" block @click="toggleCancel">Cancel Order</button>
         </div>
         <div v-if="cancelError === true">
           <p>{{ cancelErrorMessage }}</p>
@@ -48,7 +49,6 @@
         <div v-show="cancelProcessing" class="text-center">
           <b-spinner label="Spinning"></b-spinner>
         </div>
-        <b-button class="mt-3" block @click="hideCancel">Exit</b-button>
       </b-modal>
 
         <div v-show="loading" class="text-center">
@@ -69,10 +69,14 @@
                                 <td><strong>Customer</strong></td>
                                 <td>{{ order.payment_processor_result.receipt_email }}</td>
                             </tr>
-                            <tr>
+                            <tr v-if="order.refunded">
                                 <td><strong>Status</strong></td>
-                                <td><b-badge variant="success"><i class="fas fa-check-circle"></i> Accepted</b-badge></td>
+                                <td><b-badge class="badge-soft-warning"><i class="fas fa-check-circle"></i>Refunded</b-badge></td>
                             </tr>
+                          <tr v-if="order.order_status === 'complete' || order.order_status === null">
+                            <td><strong>Status</strong></td>
+                            <td><b-badge class="badge-soft-primary" v-if="order.order_status === 'complete' || order.order_status === null"><i class="fas fa-check-circle"></i>Accepted</b-badge></td>
+                          </tr>
                             <tr>
                                 <td><strong>Date</strong></td>
                                 <td>{{ order.created_at }}</td>
@@ -84,7 +88,7 @@
             <div class="col-sm-12 col-md-6">
                 <b-card>
                     <b-card-text>
-                        <h5 class="heading-style"><i class="fas fa-user"></i> Order Basket</h5>
+                        <h5 class="heading-style"><i class="ri-shopping-basket-fill" style="font-size: 20px"></i> Order Basket</h5>
                         <b-table striped :fields="productFields" :items="order.basket.products" responsive="sm">
                             <template #cell(image)="data">
                                  <b-img thumbnail fluid :src="data.item.image" :alt="data.item.sku" style="max-width: 80px;"></b-img>
@@ -95,7 +99,7 @@
                             </template>
 
                             <template #cell(price)="data">
-                                {{ data.item.price }}
+                                ${{ (data.item.price / 100)*data.item.quantity }}
                             </template>
 
                             <template #cell(quantity)="data">
@@ -108,7 +112,7 @@
             <div class="col-sm-12 col-md-6 mt-2">
                 <b-card>
                     <b-card-text>
-                        <h5 class="heading-style"><i class="fas fa-user"></i> Payment Details</h5>
+                        <h5 class="heading-style"><i class="ri-bank-card-fill" style="font-size: 20px"></i> Payment Details</h5>
                         <table class="table table-striped">
                             <tr>
                                 <td><strong>ID</strong></td>
@@ -124,7 +128,7 @@
                             </tr>
                             <tr>
                                 <td><strong>Amount</strong></td>
-                                <td>{{ order.payment_processor_result.amount }}</td>
+                                <td>${{ order.payment_processor_result.amount / 100 }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Fee</strong></td>
@@ -237,7 +241,8 @@
             window.history.back();
           },
             hideRefund() {
-                this.$refs['issueRefund'].hide()
+                this.$refs['issueRefund'].hide();
+                location.reload();
             },
             toggleRefund() {
                 let self = this;

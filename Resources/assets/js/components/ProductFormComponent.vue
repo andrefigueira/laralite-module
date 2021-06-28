@@ -1,11 +1,14 @@
 <template>
     <div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-lg-12">
                 <div class="admin-title-section">
-                  <h2 class="admin-title">
+                    <b-button @click="goBack" variant="link" class="p-0 mr-3">
+                      <b-icon icon="arrow-left" font-scale="1"></b-icon>
+                    </b-button>
+                  <span  class="admin-title">
                       {{ type === 'create' ? 'Create new product' + (form.name !== '' ? ' &rarr; ' + form.name : '') : 'Edit product &rarr; ' + product.name }}
-                  </h2>
+                  </span>
                 </div><!-- End admin title section -->
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
@@ -13,9 +16,9 @@
         </div><!-- End row -->
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-lg-12">
                 <div class="page-section">
-                    <form-wizard shape="tab" color="#333" error-color="#ff4949" finish-button-text="Save & Publish">
+                    <form-wizard shape="circle" class="ml-lg-4 mr-lg-4 mt-md-2" color="rgb(86, 100, 210)" error-color="rgb(86, 100, 210)" finish-button-text="Save & Publish">
                         <template slot="title">
                             <div></div>
                         </template>
@@ -197,7 +200,7 @@
                         </tab-content>
                         <tab-content title="SEO" icon="fas fa-globe-europe">
                             <div class="row">
-                                <div class="col-12">
+                                <div class="col-lg-12">
                                     <p>Search engine optimization (SEO) allows you to improve your ranking in search results. Use these features to make it easier for users to find this item when they search for it.</p>
                                     <div class="hr mb-3"></div>
                                 </div>
@@ -247,12 +250,12 @@
                         </tab-content>
                         <template slot="footer" slot-scope="props">
                             <div class="wizard-footer-left">
-                                <wizard-button v-if="props.activeTabIndex > 0 && !props.isLastStep" @click.native="props.prevTab()" :style="props.fillButtonStyle"><i class="fas fa-arrow-left"></i> Previous</wizard-button>
+                                <wizard-button v-if="props.activeTabIndex > 0 && !props.isLastStep" @click.native="props.prevTab()" class="btn btn-primary" :style="props.fillButtonStyle"><i class="fas fa-arrow-left"></i> Previous</wizard-button>
                             </div>
                             <div class="wizard-footer-right">
-                                <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab()" class="wizard-footer-right" :style="props.fillButtonStyle">Next <i class="fas fa-arrow-right"></i></wizard-button>
+                                <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab()" class="btn btn-primary wizard-footer-right" :style="props.fillButtonStyle">Next <i class="fas fa-arrow-right"></i></wizard-button>
 
-                                <wizard-button v-else @click.native="save()" class="wizard-footer-right finish-button" :style="props.fillButtonStyle">{{props.isLastStep ? 'Save & Publish' : 'Next'}}</wizard-button>
+                                <wizard-button v-else @click.native="save()" class=" btn btn-success wizard-footer-right finish-button" :style="props.fillButtonStyle">{{props.isLastStep ? 'Save & Publish' : 'Next'}}</wizard-button>
                             </div>
                         </template>
                     </form-wizard>
@@ -291,7 +294,7 @@
                 default: function () {
                   return {};
                 }
-            }
+            },
         },
         data() {
             return {
@@ -401,6 +404,9 @@
             }
         },
         methods: {
+          goBack() {
+            window.history.back();
+          },
             validateState(name) {
                 const { $dirty, $error } = this.$v.form[name];
                 return $dirty ? !$error : null;
@@ -599,8 +605,10 @@
     }
 
     .wizard-navigation {
-        .wizard-progress-with-circle {
-            display: none;
+        .wizard-progress-bar {
+          background-color: rgb(86, 100, 210) !important;
+          color: rgb(86, 100, 210) !important;
+
         }
         .wizard-nav {
             border-bottom: 1px solid #F1F1F1;
@@ -611,11 +619,12 @@
                 a {
                     display: block;
                     .tab_shape {
-                        outline: none!important;
+                        outline: none !important;
                     }
                     .wizard-icon {
                         font-style: normal;
-                        font-size: 1rem;
+                        font-size: 1.2rem;
+                        color: rgb(86, 100, 210);
                     }
                     .stepTitle {
                         display: block;
@@ -627,6 +636,7 @@
                     a {
                         .wizard-icon {
                             font-size: 1rem!important;
+                            color: white;
                         }
                     }
                 }
@@ -705,4 +715,17 @@
             border: 3px solid #3853d8;
         }
     }
+    .wizard-nav-pills {
+      text-align: -webkit-center !important;
+    }
+    .wizard-icon-circle {
+      border-color: rgb(86, 100, 210) !important;
+    }
+
+    .active .wizard-progress-bar {
+      background-color: rgb(86, 100, 210) !important;
+      color: rgb(86, 100, 210) !important;
+      width: 16.6667% !important;
+    }
+
 </style>

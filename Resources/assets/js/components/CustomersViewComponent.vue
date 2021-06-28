@@ -1,5 +1,10 @@
 <template>
     <div class="customer-details">
+      <div>
+        <b-button @click="goBack" variant="link" class="p-0">
+          <b-icon icon="arrow-left" font-scale="1"></b-icon>
+        </b-button>
+      </div>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h1 class="h2">Customer &rarr; <strong>{{ customer.name }}</strong></h1>
             <div class="btn-toolbar mb-2 mb-md-0">
@@ -14,7 +19,7 @@
         </div>
 
         <div class="row">
-            <div class="col-6">
+            <div class="col-md-6">
                 <b-card>
                     <b-card-text>
                         <h5 class="heading-style"><i class="fas fa-user"></i> Customer Details</h5>
@@ -29,25 +34,25 @@
                             </tr>
                             <tr>
                                 <td><strong>Status</strong></td>
-                                <td><b-badge variant="success"><i class="fas fa-check-circle"></i> Account Active</b-badge></td>
+                                <td><b-badge class="badge-soft-primary"><i class="fas fa-check-circle"></i> Account Active</b-badge></td>
                             </tr>
                             <tr>
                                 <td><strong>Verified</strong></td>
                                 <td>
-                                    <b-badge v-if="customer.verification_guid === ''" variant="success"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
-                                    <b-badge v-if="customer.verification_guid !== ''" variant="danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
+                                    <b-badge v-if="customer.verification_guid === ''" class="badge-soft-primary"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
+                                    <b-badge v-if="customer.verification_guid !== ''" class="badge-soft-danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
                                 </td>
                             </tr>
                         </table>
                     </b-card-text>
                 </b-card>
             </div><!-- End col -->
-            <div class="col-12 mt-2">
+            <div class="col-md-12 mt-2">
                 <b-card>
                     <b-card-text>
                         <h5 class="heading-style"><i class="fas fa-user"></i> Customer Orders</h5>
-                        
-                        <b-table striped :fields="orderFields" :items="customer.orders" responsive="sm">
+
+                        <b-table striped :fields="orderFields" :items="customer.orders" responsive="sm" sortDesc>
                             <template #cell(unique_id)="data">
                                  {{ data.item.unique_id }}
                             </template>
@@ -55,7 +60,7 @@
                                 {{ timeFormat(data.item.created_at) }}
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <a :href="'/admin/orders/view/' + data.item.unique_id" class="btn btn-sm btn-success float-right mr-1">View</a>
+                                <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="float-right mr-1"><i class="ri-eye-fill"></i></a>
                             </template>
                         </b-table>
                     </b-card-text>
@@ -67,7 +72,7 @@
 
 <script>
     import * as moment from "moment";
-    
+
     export default {
         mounted() {
             console.log('Component mounted.');
@@ -84,10 +89,13 @@
                 loading: true,
                 showResults: false,
                 orderFields: [
-                    { key: 'unique_id', label: 'Order ID' },
-                    { key: 'date_created', label: 'Order Date'},
+                    { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
+                    { key: 'date_created', label: 'Order Date', sortDirection: 'desc'},
                     { key: 'actions', label: '' }
                 ],
+              sortBy: '',
+              sortDesc: false,
+              sortDirection: 'asc',
             }
         },
         methods: {

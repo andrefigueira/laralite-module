@@ -11,6 +11,7 @@
                         type="search"
                         id="filterInput"
                         placeholder="Type to Search"
+                        style="padding: 18px 10px"
                     ></b-form-input>
                     <b-input-group-append>
                         <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
@@ -29,24 +30,26 @@
                     :current-page="currentPage"
                     :filter="filter">
                     <template v-slot:cell(actions)="row">
-                        <b-button variant="default" size="sm" class="float-right" @click="showSettingsForm(row.item, row.index, $event.target)">
-                            <i class="far fa-edit"></i>
-                        </b-button>
+                        <a v-b-tooltip:hover title="Edit" class="float-right" @click="showSettingsForm(row.item, row.index, $event.target)" style="text-decoration:none">
+                            <i class="ri-pencil-fill"></i>
+                        </a>
                     </template>
                 </b-table>
             </div>
 
-                <hr class="pagination-hr">
-
-                <b-pagination
-                    class="ml-2"
-                    v-model="currentPage"
-                    :total-rows="totalRows"
-                    :per-page="perPage"
-                ></b-pagination>
             </div><!-- End col -->
         </div><!-- End row -->
 
+        <div class="float-right mb-3 mt-2">
+          <ul class="pagination pagination-rounded mb-0">
+            <b-pagination
+                class="ml-2"
+                v-model="currentPage"
+                :total-rows="totalRows"
+                :per-page="perPage"
+            ></b-pagination>
+          </ul>
+        </div>
         <b-modal id="settings-modal" :title="'Edit Settings: ' + settingsComponent.name" :hide-footer="true" size="xl" @hide="clearSettings()">
             <component :is="settingsComponent.componentName" :component="settingsComponent" v-model="settingsComponent.properties"></component>
         </b-modal>
@@ -77,7 +80,7 @@
                 ],
                 totalRows: 1,
                 currentPage: 1,
-                perPage: 10,
+                perPage: 8,
                 pageOptions: [5, 10, 15],
                 sortBy: '',
                 sortDesc: false,

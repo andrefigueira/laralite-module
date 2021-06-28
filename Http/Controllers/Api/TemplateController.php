@@ -11,9 +11,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TemplateController extends Controller
 {
-    public function get()
+    public function get(Request $request)
     {
-        return Template::paginate();
+        $templates = Template::query();
+        $perPage = $request->get('perPage', 1);
+
+        if ($request->get('all') === 'true') {
+            return $templates->get();
+        }
+
+        if ($request->input('filter') !== 'null') {
+            $templates
+                ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+                ->where('description', 'LIKE', '%' . $request->input('filter') . '%');
+        }
+
+        if ($request->input('sortBy') !== null) {
+            $templates->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
+        }
+
+        return $templates->paginate($perPage);
     }
 
     public function getOne($id)
@@ -43,6 +60,7 @@ class TemplateController extends Controller
                 'name' => $request->get('name'),
                 'module_name' => $request->get('module_name'),
                 'description' => $request->get('description'),
+                'background_image' => $request->get('image'),
                 'sections' => $request->get('sections'),
                 'header_navigation_id' => $request->get('header_navigation_id'),
                 'footer_navigation_id' => $request->get('footer_navigation_id'),
@@ -89,6 +107,7 @@ class TemplateController extends Controller
                 'name' => $request->get('name'),
                 'module_name' => $request->get('module_name'),
                 'description' => $request->get('description'),
+                'background_image' => $request->get('image'),
                 'sections' => $request->get('sections'),
                 'header_navigation_id' => $request->get('header_navigation_id'),
                 'footer_navigation_id' => $request->get('footer_navigation_id'),

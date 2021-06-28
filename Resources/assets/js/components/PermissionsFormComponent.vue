@@ -2,10 +2,13 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-                <h2 class="admin-title">
+              <b-button @click="goBack" variant="link" class="p-0 mr-3">
+                <b-icon icon="arrow-left" font-scale="1"></b-icon>
+              </b-button>
+                <span class="admin-title">
                     {{ type === 'create' ? 'Create new permission' : 'Edit permission ' }}
                     <strong v-show="type === 'edit'">{{ permission.name }}</strong>
-                </h2>
+                </span>
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
             </div><!-- End col -->
@@ -125,6 +128,9 @@
             }
         },
         methods: {
+          goBack() {
+            window.history.back();
+          },
             validateState(name) {
                 const { $dirty, $error } = this.$v.form[name];
                 return $dirty ? !$error : null;

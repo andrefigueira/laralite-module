@@ -7,6 +7,8 @@
     <meta name="author" content="">
     <title>{{ env('APP_NAME') }} CMS</title>
     <link href="/css/admin.css" rel="stylesheet">
+    <link href="/css/custom.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/font-awesome-line-awesome/css/all.min.css">
     <script>window.Laravel = {csrfToken: '{{ csrf_token() }}'}</script>
 </head>
@@ -18,11 +20,38 @@
 
     <div class="container-fluid">
         <div class="row">
+            <div class="col-12">
                 @include('laralite::admin.content')
+            </div>
+
         </div><!-- End row -->
     </div><!-- End container -->
 </div><!-- End app -->
 
 <script src="/js/admin.js"></script>
+<script>
+    document.getElementById("close-sidebar").style.display="block";
+    document.getElementById("main").style.marginLeft = "260px";
+    document.getElementById("header").style.marginLeft = "260px";
+    document.getElementById("open-sidebar").style.display = "none";
+
+    function openNav() {
+        document.getElementById("sidebar-1").style.width = "260px";
+        document.getElementById("main").style.marginLeft = "260px";
+        document.getElementById("header").style.marginLeft = "260px";
+        document.getElementById("open-sidebar").style.display = "none";
+        document.getElementById("close-sidebar").style.display = "block";
+    }
+
+    function closeNav() {
+        document.getElementById("sidebar-1").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+        document.getElementById("header").style.marginLeft = "0";
+        document.getElementById("open-sidebar").style.display = "block";
+        document.getElementById("close-sidebar").style.display = "none";
+    }
+</script>
 </body>
 </html>
+
+

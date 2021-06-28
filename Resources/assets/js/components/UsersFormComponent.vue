@@ -3,10 +3,13 @@
         <div class="row">
             <div class="col-md-12">
               <div class="admin-title-section">
-                  <h2 class="admin-title">
+                <b-button @click="goBack" variant="link" class="p-0 mr-3">
+                  <b-icon icon="arrow-left" font-scale="1"></b-icon>
+                </b-button>
+                  <span class="admin-title">
                       {{ type === 'create' ? 'Create new user' : 'Edit user ' }}
                       <strong v-show="type === 'edit'">{{ user.name }}</strong>
-                  </h2>
+                  </span>
               </div>
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
@@ -84,8 +87,8 @@
                                     <b-form-select-option :value="null">Please select an option</b-form-select-option>
                                 </b-form-select>
 
-                                <b-button 
-                                    size="sm" 
+                                <b-button
+                                    size="sm"
                                     class="m-1"
                                     title="Click to Remove"
                                     v-for="(role,key) in form.roles" :key="key"
@@ -231,6 +234,9 @@
             }
         },
         methods: {
+          goBack() {
+            window.history.back();
+          },
             validateState(name) {
                 const { $dirty, $error } = this.$v.form[name];
                 return $dirty ? !$error : null;

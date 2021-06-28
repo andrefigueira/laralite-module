@@ -14,7 +14,24 @@ class PermissionsController extends Controller
 {
     public function get(Request $request)
     {
-        return Permissions::paginate();
+        $permissions = Permissions::query();
+        $perPage = $request->get('perPage', 1);
+
+        if ($request->get('all') === 'true') {
+            return $permissions->get();
+        }
+
+        if ($request->input('filter') !== 'null') {
+            $permissions
+                ->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+                ->orWhere('guard_name', 'LIKE', '%' . $request->input('filter') . '%');
+        }
+
+        if ($request->input('sortBy') !== null) {
+            $permissions->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
+        }
+
+        return $permissions->paginate($perPage);
     }
 
     public function getOne($id)

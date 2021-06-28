@@ -1,3 +1,3 @@
-<main role="main" class="col-12 pt-4 mt-0">
+<main id="main" role="main" class="pt-3 mt-0">
     @yield('content')
 </main>

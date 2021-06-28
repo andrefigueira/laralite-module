@@ -2,18 +2,14 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-              <div class="admin-title-section row">
-                <div class="col-md-1 p-0 m-0 backDiv">
+              <div class="admin-title-section">
                   <b-button @click="goBack" variant="link" class="p-0">
                     <b-icon icon="arrow-left" font-scale="1"></b-icon>
                   </b-button>
-                </div>
-                <div class="col-md-11 p-0">
-                <h2 class="admin-title">
+                <span class="admin-title">
                     {{ type === 'create' ? 'Create new page' : 'Edit page ' }}
                     <strong v-show="type === 'edit'">{{ page.name }}</strong>
-                </h2>
-                </div>
+                </span>
               </div>
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
@@ -127,7 +123,7 @@
                     <label for="template">Template</label>
                     <v-select class="mb-3" id="template" label="name" v-model="template" :options="templates" :clearable="false"></v-select>
 
-                    <button class="btn btn-theme" :disabled="saving" @click="save()">{{ button }}</button>
+                    <button class="btn btn-primary" :disabled="saving" @click="save()">{{ button }}</button>
                 </div><!-- End content sidebar -->
             </div><!-- End col -->
         </div><!-- End row -->

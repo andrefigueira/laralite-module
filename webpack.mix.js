@@ -15,3 +15,6 @@ if (mix.inProduction()) {
 mix.js(__dirname + '/Resources/assets/js/admin.js', 'js/admin.js');
 mix.sass(__dirname + '/Resources/assets/sass/admin.scss', 'css/admin.css');
 mix.sass(__dirname + '/Resources/assets/sass/contents.scss', 'css/contents.css');
+mix.sass(__dirname + '/Resources/assets/sass/custom.scss', 'css/custom.css');
+
+mix.copyDirectory(__dirname + '/Resources/assets/images/', '../../public/images/');
