@@ -30,8 +30,8 @@
               :filter="filter"
               sortDesc>
             <template v-slot:cell(actions)="data">
-              <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right"><i class="ri-delete-bin-6-fill"></i></a>
-              <a v-b-tooltip:hover title="Edit" :href="'/admin/users/edit/' + data.item.id" class="float-right mr-3"><i class="ri-pencil-fill"></i></a>
+              <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right" style="width: 5%"><i class="ri-delete-bin-6-fill"></i></a>
+              <a v-b-tooltip:hover title="Edit" :href="'/admin/users/edit/' + data.item.id" class="float-right mr-3" style="width: 5%"><i class="ri-pencil-fill"></i></a>
             </template>
           </b-table>
           <div class="float-right mt-2 mb-3">

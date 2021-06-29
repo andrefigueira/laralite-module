@@ -62,21 +62,13 @@
               <span>{{ data.item.unique_id }}</span>
               <b-badge class="badge-soft-danger" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
             </template>
-            <template v-slot:cell(customer_name)="data">
+            <template v-slot:cell(customer_id)="data">
               <span>{{ data.item.customer.name }}</span>
             </template>
             <template v-slot:cell(customer_email)="data">
               <span>{{ data.item.customer.email }}</span>
             </template>
-            <!--            <template v-slot:cell(customer_name)="data">
-                          <span v-if="data.item.customer">{{ data.item.customer.name }}</span>
-                          <span v-else>N/A</span>
-                        </template>
-                        <template v-slot:cell(customer_email)="data">
-                          <span v-if="data.item.customer">{{ data.item.customer.email }}</span>
-                          <span v-else>N/A</span>
-                        </template>-->
-            <template v-slot:cell(date_created)="data">
+            <template v-slot:cell(created_at)="data">
               {{ timeFormat(data.item.created_at) }}
             </template>
             <template v-slot:cell(actions)="data">
@@ -127,9 +119,9 @@ export default {
       // Table settings
       fields: [
         { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
-        { key: 'customer_name', label: 'Customer Name', sortable: true, sortDirection: 'desc' },
-        { key: 'customer_email', label: 'Customer Email', sortable: true, sortDirection: 'desc' },
-        { key: 'date_created', label: 'Order Date', sortable: true, sortDirection: 'desc' },
+        { key: 'customer_id', label: 'Customer Name', sortable: true, sortDirection: 'desc' },
+        { key: 'customer_email', label: 'Customer Email'},
+        { key: 'created_at', label: 'Order Date', sortable: true, sortDirection: 'desc' },
         { key: 'actions', label: '' }
       ],
       totalRows: 1,

@@ -4,7 +4,7 @@
         <div class="btn-group">
             @if(!empty($buttons))
                 @foreach($buttons as $button)
-                    <a href="{{ $button['href'] }}" class="btn btn-sm btn-outline-secondary">{{ $button['label'] }}</a>
+                    <a href="{{ $button['href'] }}" class="btn btn-success"><i class="ri-add-line align-middle mr-2"></i>{{ $button['label'] }}</a>
                 @endforeach
             @endif
         </div>

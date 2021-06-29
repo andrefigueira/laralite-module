@@ -3,10 +3,10 @@
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
 body .container-fluid {
-     a{
+    a{
         text-decoration: none !important;
-      }
-     input{
+    }
+    input{
         border-color: 1px solid rgb(206, 212, 218) !important;
         border-radius: 0.25rem !important;
         background-color: #fff !important;
@@ -20,7 +20,7 @@ body .container-fluid {
     flex: 0 0 0 !important;
 }
 .container-fluid {
-    padding: 5px 25px !important;
+    padding: 0 15px !important;
 
     .authentication-page-content {
         height: 100vh;
@@ -57,12 +57,12 @@ body .container-fluid {
         }
     }
     .authentication-bg {
-        background-image: url("https://images.pexels.com/photos/1229861/pexels-photo-1229861.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260");
-        height: 100vh !important;
-        background-size: cover  !important;
-        background-position: center!important;
+        background-image: url("/images/login-background.png");
+        height: 100vh;
+        background-size: cover;
+        //background-position: center !important;
         .bg-overlay{
-            background-color: #292626 !important;
+            background-color: #292626;
             position: absolute;
             height: 100%;
             width: 100%;
@@ -222,6 +222,10 @@ body .container-fluid {
 .b-sidebar::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+.sidebar {
+    margin-top: initial !important;
+}
 .b-sidebar-body .sidebar, .sidebar .card {
     background-color: transparent !important;
 }
@@ -232,14 +236,34 @@ body .container-fluid {
     padding: 13px 15px !important;
 }
 
+
 .b-sidebar > .b-sidebar-header .close {
     color: #252B3B !important;
     cursor: default !important;
 }
+@media (max-width: 800px) {
+    .b-sidebar > .b-sidebar-header .close {
+        color: white !important;
+        cursor: pointer !important;
+    }
+}
+
+.b-sidebar .menu-title {
+    padding: 15px 12px !important;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+    cursor: default;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #8590a5;
+    font-weight: 700;
+    font-family: "Inter", sans-serif;
+    opacity: 0.5;
+}
 
 .b-sidebar .nav-item .nav-link {
     display: block;
-    padding: 0.625rem 1.5rem;
+    padding: 0.5rem 1rem !important;
     color: #74788d !important;
     position: relative;
     font-size: 14px !important;
@@ -251,7 +275,7 @@ body .container-fluid {
 .b-sidebar .nav-item .nav-link i {
     display: inline-block;
     min-width: 1.5rem;
-    padding-bottom: 0.125em;
+    padding-bottom: 0.125rem;
     font-size: 1.2rem;
     line-height: 1.40625rem;
     vertical-align: middle;
@@ -260,8 +284,12 @@ body .container-fluid {
     opacity: 0.75;
 }
 
-.sidebar .nav-item .nav-link:hover, .accordion .card .card-header a {
-    background: transparent;
+.accordion .card .card-header {
+    background-color: #252B3B !important;
+}
+
+.sidebar .nav-item .nav-link:hover, .accordion .card .card-header a:hover {
+    background: #252B3B !important;
     color: #d7e4ec !important;
 }
 .sidebar .nav-item .nav-link:hover i {
@@ -281,6 +309,11 @@ body .container-fluid {
 .accordion {
     width: 235px !important;
 }
+
+.accordion .card-header a {
+    font-weight: 600 !important;
+}
+
 .accordion .card-header .accordion-button::after {
     flex-shrink: 0;
     width: 1.25rem;
@@ -310,12 +343,12 @@ body .container-fluid {
     font-size: 14px !important;
 }
 
- .pagination .page-item.active .page-link {
-     z-index: 3;
-     color: #fff !important;
-     background-color: #5664d2 !important;
-     border-color: #5664d2 !important;
- }
+.pagination .page-item.active .page-link {
+    z-index: 3;
+    color: #fff !important;
+    background-color: #5664d2 !important;
+    border-color: #5664d2 !important;
+}
 .pagination-rounded {
     .page-link {
         border-radius: 30px !important;
