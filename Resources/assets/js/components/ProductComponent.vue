@@ -38,15 +38,15 @@
             <template v-slot:cell(slug)="data">
               <span>{{ data.item.slug }}</span>
             </template>
-            <template v-slot:cell(category_name)="data">
+            <template v-slot:cell(category_id)="data">
               <span>{{ data.item.category.name }}</span>
             </template>
             <template v-slot:cell(category_price)="data">
               <span>${{ data.item.variants[0].pricing.price }}</span>
             </template>
             <template v-slot:cell(actions)="data">
-                <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right"><i class="ri-delete-bin-6-fill"></i></a>
-                <a v-b-tooltip:hover title="Edit" :href="'/admin/product/edit/' + data.item.id" class="float-right mr-3"><i class="ri-pencil-fill"></i></a>
+                <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right" style="width: 10%"><i class="ri-delete-bin-6-fill"></i></a>
+                <a v-b-tooltip:hover title="Edit" :href="'/admin/product/edit/' + data.item.id" class="float-right mr-3" style="width: 10%"><i class="ri-pencil-fill"></i></a>
             </template>
           </b-table>
         </div>
@@ -79,8 +79,8 @@
                 { key: 'image', label: '' },
                 { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
                 { key: 'slug', label: 'URL', sortable: true, sortDirection: 'desc' },
-                { key: 'category_name', label: 'Category', sortable: true, sortDirection: 'desc' },
-                { key: 'category_price', label: 'Price', sortable: true, sortDirection: 'desc' },
+                { key: 'category_id', label: 'Category', sortable: true, sortDirection: 'desc' },
+                { key: 'category_price', label: 'Price', sortDirection: 'desc' },
                 { key: 'actions', label: '' }
               ],
               totalRows: 1,

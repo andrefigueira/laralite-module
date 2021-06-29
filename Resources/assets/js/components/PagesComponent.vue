@@ -8,11 +8,11 @@
         <div class="table-responsive-sm">
         <div class="table table-top-border-0" v-show="showResults">
             <div class="row table-header">
-                <div class="col-md-3">Name</div>
-                <div class="col-md-3">URL</div>
-                <div class="col-md-2">Type</div>
-                <div class="col-md-2">Template</div>
-                <div class="col-md-2"></div>
+                <div class="col-md-3 col-sm-3 col-xs-3">Name</div>
+                <div class="col-md-3 col-sm-3 col-xs-3">URL</div>
+                <div class="col-md-2 col-sm-2 col-xs-2">Type</div>
+                <div class="col-md-2 col-sm-2 col-xs-2">Template</div>
+                <div class="col-md-2 col-sm-2 col-xs-2"></div>
             </div><!-- End row -->
 
             <recursive-table-row :data="pages"></recursive-table-row>

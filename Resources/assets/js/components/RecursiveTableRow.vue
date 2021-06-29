@@ -1,22 +1,22 @@
 <template>
     <div v-show="data.length > 0">
         <div class="row" v-for="page in data" v-bind:key="page.id">
-            <div class="col-md-12 table-row">
+            <div class="col-md-12 col-sm-12 col-xs-12 table-row">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-sm-3 col-xs-3">
                         <span :class="'ml-' + nodeLevel">&rdsh;</span>
                         <a class="text-dark" :href="'/admin/pages/edit/' + page.id">{{ page.name }}</a>
                     </div>
-                    <div class="col-md-3">{{ page.slug }}</div>
-                    <div class="col-md-2"><b-badge class="badge-soft-warning" :variant="page.primary === 1 ? 'primary' : 'secondary'">{{ page.primary === 1 ? 'Primary' : 'Standard' }}</b-badge></div>
-                    <div class="col-md-2"><b-badge variant="primary" class="badge-soft-primary">{{ getTemplateName(page) }}</b-badge></div>
-                    <div class="col-md-2">
+                    <div class="col-md-3 col-sm-3 col-xs-3">{{ page.slug }}</div>
+                    <div class="col-md-2 col-sm-2 col-xs-2"><b-badge class="badge-soft-warning" :variant="page.primary === 1 ? 'primary' : 'secondary'">{{ page.primary === 1 ? 'Primary' : 'Standard' }}</b-badge></div>
+                    <div class="col-md-2 col-sm-2 col-xs-2"><b-badge variant="primary" class="badge-soft-primary">{{ getTemplateName(page) }}</b-badge></div>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
                         <a v-b-tooltip:hover title="Delete" @click="confirmDelete(page)" class="float-right row-button"><i class="ri-delete-bin-6-fill"></i></a>
                         <a v-b-tooltip:hover title="Edit" :href="'/admin/pages/edit/' + page.id" class="float-right mr-3 row-button"><i class="ri-pencil-fill"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-12" v-show="page.children.length > 0">
+            <div class="col-md-12 col-sm-12 col-xs-12" v-show="page.children.length > 0">
                 <recursive-table-row :nodeLevel="nodeLevel + 2" :parentSlug="page.slug" :data="page.children"></recursive-table-row>
             </div><!-- End col -->
         </div><!-- End col -->
