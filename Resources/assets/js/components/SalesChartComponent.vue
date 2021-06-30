@@ -15,8 +15,6 @@ export default {
                     "June",
                     "July",
                     "August",
-                    "September",
-                    "October"
                 ],
                 datasets: [
                     {
@@ -50,10 +48,8 @@ export default {
                     text: "Revenue"
                 }
             },
-            /*{
+            {
               defaultFontColor: "#8791af",
-              responsive: true,
-              maintainAspectRatio: false,
               scales: {
                 xAxes: [
                   {
@@ -75,8 +71,11 @@ export default {
                   }
                 ]
               }
-            }*/
+            }
         );
     }
 };
 </script>
+<style scoped>
+
+</style>

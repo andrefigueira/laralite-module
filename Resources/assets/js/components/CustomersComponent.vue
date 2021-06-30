@@ -34,10 +34,10 @@
                         <b-badge v-if="data.item.verification_guid === ''" class="badge-soft-primary"><i class="fas fa-check-circle"></i> Account Verified</b-badge>
                         <b-badge v-if="data.item.verification_guid !== ''" class="badge-soft-danger"><i class="fas fa-times-circle"></i> Not Verified</b-badge>
                     </template>
-                    <template v-slot:cell(status)="data">
+                    <template v-slot:cell(updated_at)="data">
                         <b-badge class="badge-soft-primary"><i class="fas fa-check-circle"></i> Account Active</b-badge>
                     </template>
-                    <template v-slot:cell(registered)="data">
+                    <template v-slot:cell(created_at)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
                     <template v-slot:cell(actions)="data">
@@ -81,9 +81,9 @@
                 fields: [
                     { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
                     { key: 'email', label: 'Email', sortable: true, sortDirection: 'desc' },
-                    { key: 'verified', label: 'Verified', sortable: true, sortDirection: 'desc'},
-                    { key: 'status', label: 'Status', sortable: true, sortDirection: 'desc'},
-                    { key: 'registered', label: 'Registered',sortable: true, sortDirection: 'desc'},
+                    { key: 'verified', label: 'Verified' },
+                    { key: 'updated_at', label: 'Status', sortable: true, sortDirection: 'desc' },
+                    { key: 'created_at', label: 'Registered',sortable: true, sortDirection: 'desc'},
                     { key: 'actions', label: '' }
                 ],
                 totalRows: 1,
@@ -117,7 +117,7 @@
                     this.totalRows = data.data.total;
 
                     this.isBusy = false;
-
+                    console.log(items);
                     return items;
                 }).catch(error => {
                     this.isBusy = false;

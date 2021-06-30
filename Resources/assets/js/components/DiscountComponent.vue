@@ -29,12 +29,12 @@
                     :per-page="perPage"
                     :current-page="currentPage"
                     :filter="filter">
-                    <template v-slot:cell(date_created)="data">
+                    <template v-slot:cell(created_at)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
                     <template v-slot:cell(actions)="data">
-                        <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right" style="text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
-                        <a v-b-tooltip:hover title="Edit" :href="'/admin/discounts/edit/' + data.item.id" class="float-right mr-3" style="text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
+                        <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right" style="width: 10%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
+                        <a v-b-tooltip:hover title="Edit" :href="'/admin/discounts/edit/' + data.item.id" class="float-right mr-3" style="width: 10%; text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
                     </template>
                 </b-table>
                 </div>
@@ -74,7 +74,7 @@
                     { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
                     { key: 'type', label: 'Discount Type', sortable: true, sortDirection: 'desc' },
                     { key: 'value', label: 'Discount Value', sortable: true, sortDirection: 'desc' },
-                    { key: 'date_created', label: 'Created', sortable: true, sortDirection: 'desc'},
+                    { key: 'created_at', label: 'Created', sortable: true, sortDirection: 'desc'},
                     { key: 'actions', label: '' }
                 ],
                 totalRows: 1,

@@ -180,7 +180,6 @@ export default {
               <th class="col-md-2 col-sm-2" style="width: 20%"></th>
             </tr>
             </thead>&lt;!&ndash; End row &ndash;&gt;
-
             <recursive-table-row :data="pages"></recursive-table-row>
         </table>
     </div>

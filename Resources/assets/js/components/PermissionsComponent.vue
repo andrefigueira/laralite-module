@@ -37,40 +37,28 @@
             <template v-slot:cell(guard_name)="data">
               {{ data.item.guard_name }}
             </template>
-            <template v-slot:cell(date_created)="data">
+            <template v-slot:cell(created_at)="data">
               {{ timeFormat(data.item.created_at) }}
             </template>
-            <template v-slot:cell(date_updated)="data">
+            <template v-slot:cell(updated_at)="data">
               {{ timeFormat(data.item.updated_at) }}
             </template>
             <template v-slot:cell(actions)="data">
-              <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right" style="text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
-              <a v-b-tooltip:hover title="Edit" :href="'/admin/permissions/edit/' + data.item.id" class="float-right mr-3" style="text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
+              <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right" style="width: 10%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
+              <a v-b-tooltip:hover title="Edit" :href="'/admin/permissions/edit/' + data.item.id" class="float-right mr-3" style="width: 10%; text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
             </template>
           </b-table>
-
-<!--          <table class="table" v-show="showResults">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Guard Name</th>
-                <th>Created At</th>
-                <th>Updated At</th>
-                <th></th>
-            </tr>
-            <tr v-for="permission in permissions">
-                <td>{{ permission.id }}</td>
-                <td>{{ permission.name }}</td>
-                <td>{{ permission.guard_name }}</td>
-                <td>{{ timeFormat(permission.created_at) }}</td>
-                <td>{{ timeFormat(permission.updated_at) }}</td>
-                <td>
-                    <a v-b-tooltip:hover title="Delete" @click="confirmDelete(permission)" size="" class="float-right"><i class="ri-delete-bin-6-fill"></i></a>
-                    <a v-b-tooltip:hover title="Edit" :href="'/admin/permissions/edit/' + permission.id" class="float-right mr-3"><i class="ri-pencil-fill"></i></a>
-                </td>
-            </tr>
-        </table>-->
         </div>
+      <div class="float-right m-2">
+        <ul class="pagination pagination-rounded mb-0">
+          <b-pagination
+              class="ml-2"
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+          ></b-pagination>
+        </ul>
+      </div>
     </div>
 </template>
 
@@ -89,11 +77,11 @@
                 showResults: false,
                 permissions: [],
                 fields: [
-                  { key: 'id', label: 'Name', sortable: true, sortDirection: 'desc' },
-                  { key: 'name', label: 'Discount Type', sortable: true, sortDirection: 'desc' },
-                  { key: 'guard_name', label: 'Discount Value', sortable: true, sortDirection: 'desc' },
-                  { key: 'date_created', label: 'Created At', sortable: true, sortDirection: 'desc'},
-                  { key: 'date_updated', label: 'Updated At', sortable: true, sortDirection: 'desc'},
+                  { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
+                  { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+                  { key: 'guard_name', label: 'Guard Name', sortable: true, sortDirection: 'desc' },
+                  { key: 'created_at', label: 'Created At', sortable: true, sortDirection: 'desc'},
+                  { key: 'updated_at', label: 'Updated At', sortable: true, sortDirection: 'desc'},
                   { key: 'actions', label: '' }
                 ],
                 totalRows: 1,

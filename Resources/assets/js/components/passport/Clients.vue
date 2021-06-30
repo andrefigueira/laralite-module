@@ -13,8 +13,9 @@
                         OAuth Clients
                     </span>
 
-                    <a class="action-link" tabindex="-1" @click="showCreateClientForm">
-                        Create New Client
+                    <a class="action-link btn btn-success" tabindex="-1" @click="showCreateClientForm">
+                      <i class="ri-add-line align-middle mr-2"></i>
+                      Create New Client
                     </a>
                 </div>
             </div>
@@ -31,8 +32,8 @@
                             <th>Client ID</th>
                             <th>Name</th>
                             <th>Secret</th>
-                            <th></th>
-                            <th></th>
+                            <th style="width: 5%"></th>
+                            <th style="width: 5%"></th>
                         </tr>
                     </thead>
 
@@ -55,15 +56,15 @@
 
                             <!-- Edit Button -->
                             <td style="vertical-align: middle;">
-                                <a class="action-link" tabindex="-1" @click="edit(client)">
-                                    Edit
+                                <a class="action-link float-right" tabindex="-1" @click="edit(client)">
+                                    <i class="ri-pencil-fill"></i>
                                 </a>
                             </td>
 
                             <!-- Delete Button -->
                             <td style="vertical-align: middle;">
-                                <a class="action-link text-danger" @click="destroy(client)">
-                                    Delete
+                                <a class="action-link float-right" @click="destroy(client)">
+                                    <i class="ri-delete-bin-6-fill"></i>
                                 </a>
                             </td>
                         </tr>
@@ -147,10 +148,11 @@
 
                     <!-- Modal Actions -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                        <button type="button" class="btn btn-primary" @click="store">
-                            Create
+                      <button type="button" class="btn btn-success" @click="store">
+                        Create
+                      </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                          Close
                         </button>
                     </div>
                 </div>
@@ -215,10 +217,11 @@
 
                     <!-- Modal Actions -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                        <button type="button" class="btn btn-primary" @click="update">
-                            Save Changes
+                      <button type="button" class="btn btn-success" @click="update">
+                        Save Changes
+                      </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                          Close
                         </button>
                     </div>
                 </div>
