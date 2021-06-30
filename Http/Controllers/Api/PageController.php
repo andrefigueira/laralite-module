@@ -13,11 +13,31 @@ class PageController extends Controller
 {
     public function get(Request $request)
     {
-        if ($request->has('with') && $request->get('with') === 'children') {
+        $pages = Page::with(['template'])->with(['children']);
+        $perPage = $request->get('perPage', 1);
+
+        if ($request->get('all') === 'true') {
+            return $pages->get();
+        }
+
+        if ($request->input('filter') !== 'null' && $request->input('filter') != '') {
+            $pages->whereHas('template', function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->input('filter') . '%');
+            })->orWhere('name', 'LIKE', '%' . $request->input('filter') . '%')
+                ->orWhere('slug', 'LIKE', '%' . $request->input('filter') . '%')
+                ->get();
+        }
+
+        if ($request->input('sortBy') !== null) {
+            $pages->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
+        }
+
+        return response()->json($pages->orderBy('created_at', 'DESC')->paginate($perPage));
+        /*if ($request->has('with') && $request->get('with') === 'children') {
             return Page::where('parent_id', '=', null)->with('children')->with('template')->paginate();
         }
 
-        return Page::orderBy('parent_id', 'ASC')->paginate();
+        return Page::orderBy('parent_id', 'ASC')->paginate();*/
     }
 
     public function getOne($id)

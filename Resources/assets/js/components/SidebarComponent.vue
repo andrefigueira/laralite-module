@@ -1,27 +1,71 @@
 <template>
   <div>
-<!--    <b-button v-b-toggle.sidebar-1 class="button" style="background-color: transparent !important; border: initial !important;">
-      <i data-icon="list" class="ri-menu-2-fill align-middle" style="font-size: 28px; color: #5664D2"></i>
-    </b-button>-->
-    <b-sidebar id="sidebar-1" visible no-close-on-route-change class="sidebar hide-menu"  title="TRAPMUSIC" sidebar-class="border-right border-dark" aria-expanded="true" style="border: none !important; display: block !important;">
+    <!--    <b-button v-b-toggle.sidebar-1 class="button" style="background-color: transparent !important; border: initial !important;">
+          <i data-icon="list" class="ri-menu-2-fill align-middle" style="font-size: 28px; color: #5664D2"></i>
+        </b-button>-->
+    <b-sidebar id="sidebar-1" :visible="visible" no-close-on-route-change class="sidebar hide-menu"  title="LARALITE" sidebar-class="border-right border-dark" aria-expanded="true" style="border: none !important; display: block !important;">
       <div class="py-2">
         <nav class="d-block pr-3 pl-2">
-          <div id="accordion" class="mt-4 sidebar accordion" style="width: 250px !important;">
-           <div class="card" v-if="role">
+          <div class="menu-title mb-1">MENU</div>
+          <ul class="nav">
+            <li class="nav-item">
+              <a class="nav-link" :class="{ 'active': request === 'admin' || request.match('admin/home') }" href="/admin/home">
+                <i class="bx ri-dashboard-line"></i>
+                Dashboard
+              </a>
+            </li>
+          </ul>
+
+          <div id="accordion" class="sidebar accordion" style="width: 230px !important;">
+            <div class="card" v-if="role">
               <div class="card-header" id="headingOne">
                 <a href="#" data-toggle="collapse" data-target="#collapseOne">Site Management
                   <i class="ri-arrow-down-s-line float-right"></i></a>
               </div>
-<!--              End card header-->
-              <div id="collapseOne" class="collapse" :class="{ 'show': request === 'admin' || request.match('admin/home') || request.match('admin/pages*') || request.match('admin/pages*') || request.match('admin/users*') || request.match('admin/templates*') || request.match('admin/permissions*') || request.match('admin/navigation*') || request.match('admin/roles*') }" aria-labelledby="headingOne" data-parent="#accordion">
+              <!--              End card header-->
+              <div id="collapseOne" class="collapse" :class="{ 'show': request.match('admin/pages*') || request.match('admin/templates*') || request.match('admin/components') || request.match('admin/navigation*') }" aria-labelledby="headingOne" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav">
                     <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request === 'admin' || request.match('admin/home') }" href="/admin/home">
-                        <i class="bx ri-dashboard-line"></i>
-                        Dashboard
+                      <a class="nav-link" :class="{ 'active': request.match('admin/pages*') }" href="/admin/pages">
+                        <i class="bx ri-pages-line"></i>
+                        Pages
                       </a>
                     </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/templates*') }" href="/admin/templates">
+                        <i class="bx ri-slideshow-line"></i>
+                        Templates
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/components') }" href="/admin/components">
+                        <i class="ri-tools-fill"></i>
+                        Components
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/navigation*') }" href="/admin/navigation">
+                        <i class="ri-compass-3-line"></i>
+                        Navigation
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <!--                End card body-->
+              </div>
+              <!--             End collapse-->
+            </div>
+            <!--End card-->
+            <div class="card" v-if="role">
+              <div class="card-header" id="headingtwo">
+                <a href="#" data-toggle="collapse" data-target="#collapseTwo">Users
+                  <i class="ri-arrow-down-s-line float-right"></i></a>
+              </div>
+              <!--End card header-->
+              <div id="collapseTwo" class="collapse" :class="{ 'show': request.match('admin/users*') || request.match('admin/permissions*') || request.match('admin/roles*') }" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                  <ul class="nav">
                     <li class="nav-item">
                       <a class="nav-link" :class="{ 'active': request.match('admin/users*') }" href="/admin/users">
                         <i class="bx ri-user-line"></i>
@@ -40,38 +84,20 @@
                         Permissions
                       </a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/pages*') }" href="/admin/pages">
-                        <i class="bx ri-pages-line"></i>
-                        Pages
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/templates*') }" href="/admin/templates">
-                        <i class="bx ri-slideshow-line"></i>
-                        Templates
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/navigation*') }" href="/admin/navigation">
-                        <i class="ri-compass-3-line"></i>
-                        Navigation
-                      </a>
-                    </li>
                   </ul>
                 </div>
-<!--                End card body-->
+                <!--                End card body-->
               </div>
-<!--             End collapse-->
+              <!--             End collapse-->
             </div>
-<!--            End card-->
-            <div class="card">
-              <div class="card-header" id="headingTwo">
-                <a href="#" data-toggle="collapse" data-target="#collapseTwo">Commerce
+            <!--End card-->
+            <div class="card" v-if="role">
+              <div class="card-header" id="headingThree">
+                <a href="#" data-toggle="collapse" data-target="#collapseThree">Ecommerce
                   <i class="ri-arrow-down-s-line float-right"></i></a>
               </div>
-<!--              End card header-->
-              <div id="collapseTwo" class="collapse" :class="{ 'show': request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/product-category*') || request.match('admin/customers*') || request.match('admin/orders*') || request.match('admin/discounts*') || request.match('admin/reporting*') || request.match('admin/scanner*') }" aria-labelledby="headingTwo" data-parent="#accordion">
+              <!--              End card header-->
+              <div id="collapseThree" class="collapse" :class="{ 'show': request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/product-category*') || request.match('admin/customers*') || request.match('admin/orders*') || request.match('admin/discounts*') }" aria-labelledby="headingTwo" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav pl-2">
                     <!--                    @if (Auth::user()->hasRole('admin'))-->
@@ -100,39 +126,36 @@
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/reporting*') }" href="/admin/reporting">
-                        <i class="ri-file-chart-line"></i>
-                        Reporting
-                      </a>
-                    </li>
-                    <li class="nav-item">
                       <a class="nav-link" :class="{ 'active': request.match('admin/customers*') }" href="/admin/customers">
                         <i class="ri-group-line"></i>
                         Customers
                       </a>
                     </li>
+                  </ul>
+                </div><!-- End card body -->
+              </div><!-- End collapse -->
+            </div>
+            <!-- End card -->
+            <div class="menu-title">Pages</div>
+
+            <div class="card" v-if="role">
+              <div class="card-header" id="headingFour">
+                <a href="#" data-toggle="collapse" data-target="#collapseFour">Advanced
+                  <i class="ri-arrow-down-s-line float-right"></i></a>
+              </div><!-- End card header -->
+              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/reporting*') || request.match('admin/scanner*') || request.match('admin/variables') || request.match('admin/authentication') || request.match('admin/settings') }" aria-labelledby="headingThree" data-parent="#accordion">
+                <div class="card-body">
+                  <ul class="nav">
                     <li class="nav-item" v-if="role">
                       <a class="nav-link" :class="{ 'active': request.match('admin/scanner*') }" href="/admin/scanner">
                         <i class="ri-qr-code-line"></i>
                         Scanner
                       </a>
                     </li>
-                  </ul>
-                </div><!-- End card body -->
-              </div><!-- End collapse -->
-            </div><!-- End card -->
-            <div class="card" v-if="role">
-              <div class="card-header" id="headingThree">
-                <a href="#" data-toggle="collapse" data-target="#collapseThree">Advanced
-                  <i class="ri-arrow-down-s-line float-right"></i></a>
-              </div><!-- End card header -->
-              <div id="collapseThree" class="collapse" :class="{ 'show': request.match('admin/components') || request.match('admin/variables') || request.match('admin/authentication') || request.match('admin/settings') }" aria-labelledby="headingThree" data-parent="#accordion">
-                <div class="card-body">
-                  <ul class="nav">
                     <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/components') }" href="/admin/components">
-                        <i class="ri-tools-fill"></i>
-                        Components
+                      <a class="nav-link" :class="{ 'active': request.match('admin/reporting*') }" href="/admin/reporting">
+                        <i class="ri-file-chart-line"></i>
+                        Reporting
                       </a>
                     </li>
                     <li class="nav-item">
@@ -148,29 +171,30 @@
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/settings') }" href="/admin/settings">
-                        <i class="ri-settings-3-line"></i>
-                        Settings
-                      </a>
-                    </li>
-                    <li class="nav-item">
                       <a class="nav-link" :class="{ 'active': request.match('admin/import') }" href="/admin/import">
                         <i class="ri-login-box-line"></i>
                         Data Import
                       </a>
                     </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/settings') }" href="/admin/settings">
+                        <i class="ri-settings-3-line"></i>
+                        Settings
+                      </a>
+                    </li>
                   </ul>
                 </div><!-- End card body -->
               </div><!-- End collapse -->
-            </div><!-- End card -->
+            </div>
+            <!-- End card -->
             <div class="card" v-if="role">
-              <div class="card-header" id="headingFour">
-                <a href="#" data-toggle="collapse" data-target="#collapseFour" class="accordion-button">
+              <div class="card-header" id="headingFive">
+                <a href="#" data-toggle="collapse" data-target="#collapseFive" class="accordion-button">
                   Account
                   <i class="ri-arrow-down-s-line float-right"></i></a>
               </div><!-- End card header -->
 
-              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/logout') }" aria-labelledby="headingThree" data-parent="#accordion">
+              <div id="collapseFive" class="collapse" :class="{ 'show': request.match('admin/logout') }" aria-labelledby="headingThree" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav">
                     <li class="nav-item">
@@ -182,9 +206,10 @@
                   </ul>
                 </div><!-- End card body -->
               </div><!-- End collapse -->
-            </div><!-- End card -->
+            </div>
+            <!-- End card -->
           </div><!-- End accordion sidebar -->
-          <form ref="logout_form" action="http://127.0.0.1:8000/admin/logout" method="POST" style="display: none;">
+          <form ref="logout_form" action="/admin/logout" method="POST" style="display: none;">
             <input type="hidden" name="_token" :value="csrfToken">
           </form>
         </nav>
@@ -210,12 +235,20 @@ export default {
       required: true
     },
   },
+  data() {
+    return {
+      visible: true
+    }
+  },
   computed: {
     csrfToken() {
       return window.Laravel.csrfToken;
     }
   },
   methods: {
+    onResize() {
+      this.visible = window.innerWidth >= 800;
+    },
     logout() {
       event.preventDefault();
       axios.post('/logout').then(response => {
@@ -224,6 +257,15 @@ export default {
         location.reload();
       });
     }
+  },
+  created() {
+    this.onResize()
+    // window.addEventListener('resize', this.onResize)
+  },
+
+  beforeDestroy() {
+    !this.onResize()
+    // window.removeEventListener('resize', this.onResize)
   },
 }
 </script>
