@@ -1,4 +1,168 @@
 <template>
+  <div>
+    <div class="row">
+      <div class="col-md-12">
+        <alert-component :alert="alert"></alert-component>
+      </div><!-- End col -->
+      <div class="col-md-12">
+        <b-input-group size="sm" class="m-2 mr-0 pr-3">
+          <b-form-input
+              v-model="filter"
+              type="search"
+              id="filterInput"
+              placeholder="Type to Search"
+              style="padding: 18px 10px"
+          ></b-form-input>
+          <b-input-group-append>
+            <a :disabled="!filter" @click="filter = ''" class="btn btn-secondary">Clear</a>
+          </b-input-group-append>
+        </b-input-group>
+
+        <div class="table-responsive-sm">
+          <b-table
+              hover
+              show-empty
+              ref="table"
+              :busy.sync="isBusy"
+              :items="tableDataProvider"
+              :fields="fields"
+              :per-page="perPage"
+              :current-page="currentPage"
+              :filter="filter">
+            <template v-slot:cell(name)="data">
+              <a class="text-dark" :href="'/admin/pages/edit/' + data.item.id">{{ data.item.name }}</a>
+            </template>
+            <template v-slot:cell(primary)="data">
+              <b-badge :class="data.item.primary === 1 ? 'badge badge-soft-primary' : 'badge badge-soft-warning'">{{ data.item.primary === 1 ? 'Primary' : 'Standard' }}</b-badge>
+            </template>
+            <template v-slot:cell(template_id)="data">
+              <b-badge class="badge badge-soft-primary">{{ data.item.template.name }}</b-badge>
+            </template>
+            <template v-slot:cell(actions)="data">
+              <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right row-button" style="width: 10%"><i class="ri-delete-bin-6-fill"></i></a>
+              <a v-b-tooltip:hover title="Edit" :href="'/admin/pages/edit/' + data.item.id" class="float-right mr-3 row-button" style="width: 10%"><i class="ri-pencil-fill"></i></a>
+            </template>
+          </b-table>
+        </div>
+      </div><!-- End col -->
+    </div><!-- End row -->
+    <div class="float-right mb-3">
+      <ul class="pagination pagination-rounded mt-2">
+        <b-pagination
+            class="ml-2"
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+        ></b-pagination>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<script>
+import * as moment from "moment";
+
+export default {
+  data() {
+    return {
+      // Alert settings
+      alert: {
+        show: false,
+        dismissible: true,
+        message: '',
+        variant: 'success',
+        dismissCountDown: 0,
+        dismissSecs: 3
+      },
+
+      // Table settings
+      fields: [
+        { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+        { key: 'slug', label: 'URL', sortable: true, sortDirection: 'desc' },
+        { key: 'primary', label: 'Type', sortable: true, sortDirection: 'desc' },
+        { key: 'template_id', label: 'Template', sortable: true, sortDirection: 'desc'},
+        { key: 'actions', label: '' }
+      ],
+      totalRows: 1,
+      currentPage: 1,
+      perPage: 10,
+      pageOptions: [5, 10, 15],
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
+
+      isBusy: false,
+    }
+  },
+  methods: {
+    timeFormat(time) {
+      return moment(time).fromNow();
+    },
+
+    tableDataProvider(context) {
+      this.isBusy = true;
+
+      const promise = axios.get(
+          '/api/page?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
+      );
+
+      return promise.then((data) => {
+        const items = data.data.data;
+
+        this.totalRows = data.data.total;
+
+        this.isBusy = false;
+
+        console.log(items);
+        return items;
+      }).catch(error => {
+        this.isBusy = false;
+
+        return [];
+      })
+    },
+    confirmDelete(page) {
+      if (page.primary === 1) {
+        this.$bvModal.msgBoxOk('Cannot delete primary page').then(value => {
+          return false;
+        }).catch(error => {
+          return false;
+        });
+        return false;
+      }
+
+      if (page.children.length > 0) {
+        this.$bvModal.msgBoxOk('Unable to delete page, children exist').then(value => {
+          return false;
+        }).catch(error => {
+          return false;
+        });
+
+        return false;
+      }
+
+      this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
+        if (value) {
+          let self = this;
+
+          axios.delete('/api/page/' + page.id).then(response => {
+            self.$refs.table.refresh();
+          }).catch(error => {
+            // handle error
+          });
+        }
+      }).catch(error => {
+        // An error occurred
+      });
+    }
+  }
+}
+</script>
+
+
+<!--<template>
     <div>
         <b-alert :show="!loading && !showResults" class="m-3">No pages added yet &middot; <a href="/admin/pages/create">Create one</a></b-alert>
 
@@ -6,17 +170,18 @@
             <b-spinner label="Spinning"></b-spinner>
         </div>
         <div class="table-responsive-sm">
-        <div class="table table-top-border-0" v-show="showResults">
-            <div class="row table-header">
-                <div class="col-md-3 col-sm-3 col-xs-3">Name</div>
-                <div class="col-md-3 col-sm-3 col-xs-3">URL</div>
-                <div class="col-md-2 col-sm-2 col-xs-2">Type</div>
-                <div class="col-md-2 col-sm-2 col-xs-2">Template</div>
-                <div class="col-md-2 col-sm-2 col-xs-2"></div>
-            </div><!-- End row -->
-
+        <table class="table table-top-border-0" v-show="showResults">
+            <thead>
+            <tr>
+              <th class="col-md-3 col-sm-3" style="width: 20%">Name</th>
+              <th class="col-md-3 col-sm-3" style="width: 20%">URL</th>
+              <th class="col-md-2 col-sm-2" style="width: 20%">Type</th>
+              <th class="col-md-2 col-sm-2" style="width: 20%">Template</th>
+              <th class="col-md-2 col-sm-2" style="width: 20%"></th>
+            </tr>
+            </thead>&lt;!&ndash; End row &ndash;&gt;
             <recursive-table-row :data="pages"></recursive-table-row>
-        </div>
+        </table>
     </div>
     </div>
 </template>
@@ -51,4 +216,4 @@
             }
         }
     }
-</script>
+</script>-->

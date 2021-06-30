@@ -1,16 +1,16 @@
 <template>
     <div>
         <div class="row">
-            <div class="col-6">
-                <h5 class="float-left m-0">Page Features</h5>
+            <div class="col-md-6">
+                <h5 class="float-left m-0 pt-2">Page Features</h5>
             </div><!-- End col -->
-            <div class="col-6">
-                <b-button variant="default" size="sm" class="float-right" @click="toggleFeatureOptions()" v-b-tooltip.hover title="Click to add a new page feature">
-                    <i v-show="!showFeatureOptions" class="fas fa-plus"></i>
-                    <i v-show="showFeatureOptions" class="fas fa-minus"></i>
-                </b-button>
+            <div class="col-md-6">
+                <a class="p-2 float-right" @click="toggleFeatureOptions()" v-b-tooltip.hover title="Click to add a new page feature">
+                    <i v-show="!showFeatureOptions" class="fas fa-plus" style="font-size: 20px"></i>
+                    <i v-show="showFeatureOptions" class="fas fa-minus" style="font-size: 20px"></i>
+                </a>
             </div><!-- End col -->
-            <div class="col-12" v-show="showFeatureOptions">
+            <div class="col-md-12" v-show="showFeatureOptions">
                 <div class="hr mt-2 mb-2"></div>
                 <label for="component-section">Page Placement</label>
                 <v-select id="component-section" label="name" v-model="section" :options="sectionOptions" :clearable="false"></v-select>
@@ -29,10 +29,10 @@
                 <div v-for="pageComponent in components">
                     <b-card class="mb-2">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-md-6">
                                 <h4>{{ pageComponent.frontendName }}</h4>
                             </div><!-- End col -->
-                            <div class="col-6">
+                            <div class="col-md-6">
                                 <b-btn @click="removeComponent(pageComponent)" variant="default" class="float-right" v-b-tooltip.hover title="Click to remove from page">&times;</b-btn>
                             </div><!-- End col -->
                         </div><!-- End row -->

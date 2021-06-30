@@ -44,9 +44,9 @@
             document.getElementById("open-sidebar").style.display = "block";
             document.getElementById("close-sidebar").style.display = "none";
         } else {
-            document.getElementById("sidebar-1").style.width = "260px";
-            document.getElementById("main").style.marginLeft = "260px";
-            document.getElementById("header").style.marginLeft = "260px";
+            document.getElementById("sidebar-1").style.width = "240px";
+            document.getElementById("main").style.marginLeft = "240px";
+            document.getElementById("header").style.marginLeft = "240px";
             document.getElementById("open-sidebar").style.display = "none";
             document.getElementById("close-sidebar").style.display = "block";
         }
