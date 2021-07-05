@@ -1,6 +1,9 @@
-<style scoped>
+<style scoped xmlns="http://www.w3.org/1999/html">
     .action-link {
         cursor: pointer;
+    }
+    .card-body {
+      padding: initial !important;
     }
 </style>
 
@@ -21,12 +24,31 @@
             </div>
 
             <div class="card-body">
-                <!-- Current Clients -->
-                <p class="mb-0" v-if="clients.length === 0">
-                    You have not created any OAuth clients.
-                </p>
-
-                <table class="table table-borderless mb-0" v-if="clients.length > 0">
+              <div class="table-responsive-sm">
+                <b-table
+                    hover
+                    show-empty
+                    ref="table"
+                    :busy.sync="isBusy"
+                    :items="tableDataProvider"
+                    :fields="fields"
+                    :per-page="perPage"
+                    :current-page="currentPage"
+                    :filter="filter">
+                  <template v-slot:cell(secret)="data">
+                    <code>{{ data.item.secret ? data.item.secret : '-' }}</code>
+                  </template>
+                  <template v-slot:cell(actions)="data">
+                    <a class="action-link float-right" @click="destroy(data.item.id)">
+                      <i class="ri-delete-bin-6-fill"></i>
+                    </a>
+                    <a class="action-link float-right" tabindex="-1" @click="edit(data.item)">
+                      <i class="ri-pencil-fill"></i>
+                    </a>
+                  </template>
+                </b-table>
+              </div>
+<!--                <table class="table table-borderless mb-0" v-if="clients.length > 0">
                     <thead>
                         <tr>
                             <th>Client ID</th>
@@ -39,29 +61,29 @@
 
                     <tbody>
                         <tr v-for="client in clients">
-                            <!-- ID -->
+                            &lt;!&ndash; ID &ndash;&gt;
                             <td style="vertical-align: middle;">
                                 {{ client.id }}
                             </td>
 
-                            <!-- Name -->
+                            &lt;!&ndash; Name &ndash;&gt;
                             <td style="vertical-align: middle;">
                                 {{ client.name }}
                             </td>
 
-                            <!-- Secret -->
+                            &lt;!&ndash; Secret &ndash;&gt;
                             <td style="vertical-align: middle;">
                                 <code>{{ client.secret ? client.secret : '-' }}</code>
                             </td>
 
-                            <!-- Edit Button -->
+                            &lt;!&ndash; Edit Button &ndash;&gt;
                             <td style="vertical-align: middle;">
                                 <a class="action-link float-right" tabindex="-1" @click="edit(client)">
                                     <i class="ri-pencil-fill"></i>
                                 </a>
                             </td>
 
-                            <!-- Delete Button -->
+                            &lt;!&ndash; Delete Button &ndash;&gt;
                             <td style="vertical-align: middle;">
                                 <a class="action-link float-right" @click="destroy(client)">
                                     <i class="ri-delete-bin-6-fill"></i>
@@ -69,9 +91,19 @@
                             </td>
                         </tr>
                     </tbody>
-                </table>
+                </table>-->
             </div>
         </div>
+      <div class="float-right mb-3">
+        <ul class="pagination pagination-rounded mt-2">
+          <b-pagination
+              class="ml-2"
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+          ></b-pagination>
+        </ul>
+      </div>
 
         <!-- Create Client Modal -->
         <div class="modal fade" id="modal-create-client" tabindex="-1" role="dialog">
@@ -281,7 +313,24 @@
                     errors: [],
                     name: '',
                     redirect: ''
-                }
+                },
+              fields: [
+                { key: 'id', label: 'Client Id', sortable: true, sortDirection: 'desc' },
+                { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+                { key: 'secret', label: 'Secret', sortable: true, sortDirection: 'desc' },
+                { key: 'actions', label: '' }
+              ],
+              totalRows: 1,
+              currentPage: 1,
+              perPage: 5,
+              pageOptions: [5, 10, 15],
+              sortBy: '',
+              sortDesc: false,
+              sortDirection: 'asc',
+              filter: null,
+              filterOn: [],
+
+              isBusy: false,
             };
         },
 
@@ -304,7 +353,6 @@
              * Prepare the component.
              */
             prepareComponent() {
-                this.getClients();
 
                 $('#modal-create-client').on('shown.bs.modal', () => {
                     $('#create-client-name').focus();
@@ -318,12 +366,34 @@
             /**
              * Get all of the OAuth clients for the user.
              */
-            getClients() {
-                axios.get('/oauth/clients')
+            tableDataProvider(context) {
+              this.isBusy = true;
+
+              const promise = axios.get(
+                  '/api/oauth/clients?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
+              );
+
+              return promise.then((data) => {
+                const items = data.data.data;
+
+                this.totalRows = data.data.total;
+
+                this.isBusy = false;
+
+                console.log(items);
+                return items;
+              }).catch(error => {
+                this.isBusy = false;
+
+                return [];
+              })
+            },
+           /* getClients() {
+                axios.get('/api/oauth/clients')
                         .then(response => {
                             this.clients = response.data;
                         });
-            },
+            },*/
 
             /**
              * Show the form for creating new clients.
