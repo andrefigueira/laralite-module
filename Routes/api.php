@@ -96,6 +96,9 @@ Route::group(['middleware' => 'auth:api'], static function () {
 
     Route::patch('/settings', 'Api\SettingsController@update');
 
+    Route::get('/oauth/clients', 'Api\ClientController@get');
+    Route::get('/oauth/personal-access-tokens', 'Api\PersonalAccessTokenController@get');
+
 //    Route::post('/form', 'Api\FormController@submit');
 });
 

@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="page-section">
-                    <form-wizard shape="circle" class="ml-lg-4 mr-lg-4 mt-md-2" color="rgb(86, 100, 210)" error-color="rgb(86, 100, 210)" finish-button-text="Save & Publish">
+                    <form-wizard shape="tab" color="#333" error-color="#ff4949" finish-button-text="Save & Publish">
                         <template slot="title">
                             <div></div>
                         </template>
@@ -605,10 +605,8 @@
     }
 
     .wizard-navigation {
-        .wizard-progress-bar {
-          background-color: rgb(86, 100, 210) !important;
-          color: rgb(86, 100, 210) !important;
-
+        .wizard-progress-with-circle {
+            display: none;
         }
         .wizard-nav {
             border-bottom: 1px solid #F1F1F1;
@@ -619,12 +617,11 @@
                 a {
                     display: block;
                     .tab_shape {
-                        outline: none !important;
+                        outline: none!important;
                     }
                     .wizard-icon {
                         font-style: normal;
-                        font-size: 1.2rem;
-                        color: rgb(86, 100, 210);
+                        font-size: 1rem;
                     }
                     .stepTitle {
                         display: block;
@@ -636,7 +633,6 @@
                     a {
                         .wizard-icon {
                             font-size: 1rem!important;
-                            color: white;
                         }
                     }
                 }
@@ -715,7 +711,7 @@
             border: 3px solid #3853d8;
         }
     }
-    .wizard-nav-pills {
+   /* .wizard-nav-pills {
       text-align: -webkit-center !important;
     }
     .wizard-icon-circle {
@@ -726,6 +722,6 @@
       background-color: rgb(86, 100, 210) !important;
       color: rgb(86, 100, 210) !important;
       width: 16.6667% !important;
-    }
+    }*/
 
 </style>

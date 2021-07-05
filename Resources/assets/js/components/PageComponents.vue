@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <div class="col-md-6">
-                <h5 class="float-left m-0 pt-2">Page Features</h5>
+                <h5 class="float-left m-0 pt-2 pl-2">Page Features</h5>
             </div><!-- End col -->
             <div class="col-md-6">
                 <a class="p-2 float-right" @click="toggleFeatureOptions()" v-b-tooltip.hover title="Click to add a new page feature">
@@ -12,11 +12,11 @@
             </div><!-- End col -->
             <div class="col-md-12" v-show="showFeatureOptions">
                 <div class="hr mt-2 mb-2"></div>
-                <label for="component-section">Page Placement</label>
-                <v-select id="component-section" label="name" v-model="section" :options="sectionOptions" :clearable="false"></v-select>
+                <label for="component-section" class="ml-2">Page Placement</label>
+                <v-select class="ml-2 mr-2" id="component-section" label="name" v-model="section" :options="sectionOptions" :clearable="false"></v-select>
 
-                <div class="component-options">
-                    <div class="component-option-selector" v-for="component in options" @click="addComponent(component)">
+                <div class="component-options pl-2 pr-2">
+                    <div class="component-option-selector m-2 p-2" v-for="component in options" @click="addComponent(component)">
                         <i class="fas" :class="component.settings.icon"></i>
                         <h6 class="title">{{ component.name }}</h6>
                     </div><!-- Component option selector -->
