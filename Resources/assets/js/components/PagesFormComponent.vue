@@ -244,8 +244,8 @@
           window.history.back();
         },
         loadParentOptions(defaultOption) {
-          axios.get('/api/page').then(response => {
-            this.pages = response.data.data;
+          axios.get('/api/page', { params: { all: true } }).then(response => {
+            this.pages = response.data;
             this.pages.unshift(defaultOption);
 
             if (this.page.id !== undefined) {
@@ -280,8 +280,8 @@
           }
         },
         loadTemplateOptions() {
-          axios.get('/api/template').then(response => {
-            this.templates = response.data.data;
+          axios.get('/api/template', { params: { all: true } }).then(response => {
+            this.templates = response.data;
 
             if (this.page.template_id === undefined) {
               this.template = this.templates[0];

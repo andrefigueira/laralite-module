@@ -96,6 +96,9 @@
             }
         },
         methods: {
+          goBack() {
+            window.history.back();
+          },
             timeFormat(time) {
                 return moment(time).fromNow();
             },
