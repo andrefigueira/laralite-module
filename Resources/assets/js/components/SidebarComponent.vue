@@ -102,7 +102,7 @@
                   <ul class="nav pl-2">
                     <!--                    @if (Auth::user()->hasRole('admin'))-->
                     <li class="nav-item" v-if="role">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') }" href="/admin/product">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/reporting*') }" href="/admin/product">
                         <i class="ri-shopping-cart-2-line"></i>
                         Products
                       </a>
@@ -131,6 +131,12 @@
                         Customers
                       </a>
                     </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/reporting*') }" href="/admin/reporting">
+                        <i class="ri-file-chart-line"></i>
+                        Reporting
+                      </a>
+                    </li>
                   </ul>
                 </div><!-- End card body -->
               </div><!-- End collapse -->
@@ -143,19 +149,13 @@
                 <a href="#" data-toggle="collapse" data-target="#collapseFour">Advanced
                   <i class="ri-arrow-down-s-line float-right"></i></a>
               </div><!-- End card header -->
-              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/reporting*') || request.match('admin/scanner*') || request.match('admin/variables') || request.match('admin/authentication') || request.match('admin/settings') }" aria-labelledby="headingThree" data-parent="#accordion">
+              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/variables') || request.match('admin/authentication') || request.match('admin/settings') }" aria-labelledby="headingThree" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav">
                     <li class="nav-item" v-if="role">
                       <a class="nav-link" :class="{ 'active': request.match('admin/scanner*') }" href="/admin/scanner">
                         <i class="ri-qr-code-line"></i>
                         Scanner
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/reporting*') }" href="/admin/reporting">
-                        <i class="ri-file-chart-line"></i>
-                        Reporting
                       </a>
                     </li>
                     <li class="nav-item">

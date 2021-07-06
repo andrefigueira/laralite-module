@@ -1,5 +1,5 @@
-<div class="admin-title-section d-flex justify-content-between flex-wrap flex-md-nowrap">
-    <h1 class="admin-title">{{ $title }}</h1>
+<div class="admin-title-section d-flex justify-content-between flex-wrap flex-md-nowrap mt-2 align-middle">
+    <h1 class="admin-title align-middle pt-1">{{ $title }}</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group">
             @if(!empty($buttons))
