@@ -2,6 +2,9 @@
     .action-link {
         cursor: pointer;
     }
+    .card-body {
+      padding: initial !important;
+    }
 </style>
 
 <template>
@@ -22,13 +25,26 @@
                 </div>
 
                 <div class="card-body">
-                    <!-- No Tokens Notice -->
-                    <p class="mb-0" v-if="tokens.length === 0">
-                        You have not created any personal access tokens.
-                    </p>
-
+                  <div class="table-responsive-sm">
+                    <b-table
+                        hover
+                        show-empty
+                        ref="table"
+                        :busy.sync="isBusy"
+                        :items="tableDataProvider"
+                        :fields="fields"
+                        :per-page="perPage"
+                        :current-page="currentPage"
+                        :filter="filter">
+                      <template v-slot:cell(actions)="data">
+                        <a class="action-link float-right" @click="destroy(data.item.id)">
+                          <i class="ri-delete-bin-6-fill"></i>
+                        </a>
+                      </template>
+                    </b-table>
+                  </div>
                     <!-- Personal Access Tokens -->
-                    <table class="table table-borderless mb-0" v-if="tokens.length > 0">
+<!--                    <table class="table table-borderless mb-0" v-if="tokens.length > 0">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -38,12 +54,12 @@
 
                         <tbody>
                             <tr v-for="token in tokens">
-                                <!-- Client Name -->
+                                &lt;!&ndash; Client Name &ndash;&gt;
                                 <td style="vertical-align: middle;">
                                     {{ token.name }}
                                 </td>
 
-                                <!-- Delete Button -->
+                                &lt;!&ndash; Delete Button &ndash;&gt;
                                 <td style="vertical-align: middle;">
                                     <a class="action-link float-right" @click="revoke(token)">
                                         <i class="ri-delete-bin-6-fill"></i>
@@ -52,8 +68,19 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>-->
                 </div>
             </div>
+          <div class="float-right mb-3">
+            <ul class="pagination pagination-rounded mt-2">
+              <b-pagination
+                  class="ml-2"
+                  v-model="currentPage"
+                  :total-rows="totalRows"
+                  :per-page="perPage"
+              ></b-pagination>
+            </ul>
+          </div>
         </div>
 
         <!-- Create Token Modal -->
@@ -171,7 +198,22 @@
                     name: '',
                     scopes: [],
                     errors: []
-                }
+                },
+              fields: [
+                { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+                { key: 'actions', label: '' }
+              ],
+              totalRows: 1,
+              currentPage: 1,
+              perPage: 5,
+              pageOptions: [5, 10, 15],
+              sortBy: '',
+              sortDesc: false,
+              sortDirection: 'asc',
+              filter: null,
+              filterOn: [],
+
+              isBusy: false,
             };
         },
 
@@ -194,7 +236,6 @@
              * Prepare the component.
              */
             prepareComponent() {
-                this.getTokens();
                 this.getScopes();
 
                 $('#modal-create-token').on('shown.bs.modal', () => {
@@ -205,12 +246,35 @@
             /**
              * Get all of the personal access tokens for the user.
              */
-            getTokens() {
-                axios.get('/oauth/personal-access-tokens')
+            tableDataProvider(context) {
+              this.isBusy = true;
+
+              const promise = axios.get(
+                  '/api/oauth/personal-access-tokens?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
+              );
+
+              return promise.then((data) => {
+                const items = data.data.data;
+
+                this.totalRows = data.data.total;
+
+                this.isBusy = false;
+
+                console.log(items);
+                return items;
+              }).catch(error => {
+                this.isBusy = false;
+
+                return [];
+              })
+            },
+
+            /*getTokens() {
+                axios.get('api/oauth/personal-access-tokens')
                         .then(response => {
                             this.tokens = response.data;
                         });
-            },
+            },*/
 
             /**
              * Get all of the available scopes.

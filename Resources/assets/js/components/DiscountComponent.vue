@@ -12,9 +12,10 @@
                         id="filterInput"
                         placeholder="Type to Search"
                         style="padding: 18px 10px"
+                        class="mr-2"
                     ></b-form-input>
                     <b-input-group-append>
-                        <a :disabled="!filter" @click="filter = ''" class="btn btn-secondary">Clear</a>
+                        <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
                     </b-input-group-append>
                 </b-input-group>
 
