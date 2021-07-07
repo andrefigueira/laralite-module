@@ -2,11 +2,11 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-              <div class="admin-title-section">
-                  <b-button @click="goBack" variant="link" class="p-0">
+              <div class="admin-title-section pt-2">
+                  <a @click="goBack" class="back-btn p-0">
                     <b-icon icon="arrow-left" font-scale="1"></b-icon>
-                  </b-button>
-                <span class="admin-title">
+                  </a>
+                <span class="admin-title pl-2">
                     {{ type === 'create' ? 'Create new page' : 'Edit page ' }}
                     <strong v-show="type === 'edit'">{{ page.name }}</strong>
                 </span>
@@ -49,7 +49,7 @@
                                 <b-tabs pills card end>
                                     <b-tab title="Page Features" active>
                                         <b-card-text>
-                                            <page-components v-model="components" :template="template" :editing="isEditing"></page-components>
+                                            <page-components class="m-2" v-model="components" :template="template" :editing="isEditing"></page-components>
                                         </b-card-text>
                                     </b-tab>
                                     <b-tab title="SEO">

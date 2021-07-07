@@ -33,7 +33,7 @@
                                 <h4>{{ pageComponent.frontendName }}</h4>
                             </div><!-- End col -->
                             <div class="col-md-6">
-                                <b-btn @click="removeComponent(pageComponent)" variant="default" class="float-right" v-b-tooltip.hover title="Click to remove from page">&times;</b-btn>
+                                <a @click="removeComponent(pageComponent)" class="ri-close-fill float-right align-middle" v-b-tooltip.hover title="Click to remove from page"></a>
                             </div><!-- End col -->
                         </div><!-- End row -->
 

@@ -1,9 +1,9 @@
 <template>
     <div class="customer-details">
       <div class="d-flex flex-wrap flex-md-nowrap align-items-center mb-2 border-bottom">
-        <b-button @click="goBack" variant="link" class="p-0 mr-3">
+        <a @click="goBack" class="back-btn p-0 mr-3">
           <b-icon icon="arrow-left" font-scale="1"></b-icon>
-        </b-button>
+        </a>
         <h1 class="h2 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mt-2 mr-2" style="position: absolute; right: 0; top: 0">
