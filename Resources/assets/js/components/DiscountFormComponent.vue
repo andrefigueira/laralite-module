@@ -2,11 +2,11 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-                <div class="admin-title-section">
-                  <b-button @click="goBack" variant="link" class="p-0 mr-3">
+                <div class="admin-title-section pt-2">
+                  <a @click="goBack" class="back-btn p-0">
                     <b-icon icon="arrow-left" font-scale="1"></b-icon>
-                  </b-button>
-                    <span class="admin-title">
+                  </a>
+                    <span class="admin-title pl-2">
                         {{ type === 'create' ? 'Create new discount' : 'Edit discount ' }}
                         <strong v-show="type === 'edit'">{{ discount.name }}</strong>
                     </span>

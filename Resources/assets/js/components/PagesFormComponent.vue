@@ -2,11 +2,11 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-              <div class="admin-title-section">
-                  <b-button @click="goBack" variant="link" class="p-0">
+              <div class="admin-title-section pt-2">
+                  <a @click="goBack" class="back-btn p-0">
                     <b-icon icon="arrow-left" font-scale="1"></b-icon>
-                  </b-button>
-                <span class="admin-title">
+                  </a>
+                <span class="admin-title pl-2">
                     {{ type === 'create' ? 'Create new page' : 'Edit page ' }}
                     <strong v-show="type === 'edit'">{{ page.name }}</strong>
                 </span>
@@ -49,7 +49,7 @@
                                 <b-tabs pills card end>
                                     <b-tab title="Page Features" active>
                                         <b-card-text>
-                                            <page-components v-model="components" :template="template" :editing="isEditing"></page-components>
+                                            <page-components class="m-2" v-model="components" :template="template" :editing="isEditing"></page-components>
                                         </b-card-text>
                                     </b-tab>
                                     <b-tab title="SEO">
@@ -244,8 +244,8 @@
           window.history.back();
         },
         loadParentOptions(defaultOption) {
-          axios.get('/api/page').then(response => {
-            this.pages = response.data.data;
+          axios.get('/api/page', { params: { all: true } }).then(response => {
+            this.pages = response.data;
             this.pages.unshift(defaultOption);
 
             if (this.page.id !== undefined) {
@@ -280,8 +280,8 @@
           }
         },
         loadTemplateOptions() {
-          axios.get('/api/template').then(response => {
-            this.templates = response.data.data;
+          axios.get('/api/template', { params: { all: true } }).then(response => {
+            this.templates = response.data;
 
             if (this.page.template_id === undefined) {
               this.template = this.templates[0];
@@ -396,3 +396,21 @@
       }
     }
 </script>
+
+<style scoped>
+.style-chooser .vs__search::placeholder,
+.style-chooser .vs__dropdown-toggle,
+.style-chooser .vs__dropdown-menu {
+  background: #dfe5fb;
+  border: none;
+  color: #394066;
+  text-transform: lowercase;
+  font-variant: small-caps;
+}
+
+.style-chooser .vs__clear,
+.style-chooser .vs__open-indicator {
+  fill: #394066 !important;
+}
+</style>
+

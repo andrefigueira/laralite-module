@@ -1,15 +1,12 @@
 <template>
     <div class="customer-details">
-      <div>
-        <b-button @click="goBack" variant="link" class="p-0">
-          <b-icon icon="arrow-left" font-scale="1"></b-icon>
-        </b-button>
-      </div>
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h1 class="h2">Customer &rarr; <strong>{{ customer.name }}</strong></h1>
+        <div class="d-flex flex-wrap flex-md-nowrap align-items-center mb-2 border-bottom">
+          <a @click="goBack" class="back-btn p-0 mr-3">
+            <b-icon icon="arrow-left" font-scale="1"></b-icon>
+          </a>
+            <h1 class="h2 mt-1">Customer &rarr; <strong>{{ customer.name }}</strong></h1>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group mr-2">
-
                 </div>
             </div><!-- End toolbar -->
         </div><!-- End content bar -->
@@ -99,6 +96,9 @@
             }
         },
         methods: {
+          goBack() {
+            window.history.back();
+          },
             timeFormat(time) {
                 return moment(time).fromNow();
             },

@@ -1,21 +1,17 @@
 <template>
     <div class="customer-details">
-      <div>
-        <b-button @click="goBack" variant="link" class="p-0">
+      <div class="d-flex flex-wrap flex-md-nowrap align-items-center mb-2 border-bottom">
+        <a @click="goBack" class="back-btn p-0 mr-3">
           <b-icon icon="arrow-left" font-scale="1"></b-icon>
-        </b-button>
+        </a>
+        <h1 class="h2 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group mt-2 mr-2" style="position: absolute; right: 0; top: 0">
+            <b-button class="mr-2" :disabled="order.refunded" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
+            <b-button :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
+          </div>
+        </div><!-- End toolbar -->
       </div>
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h1 class="h2">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
-            <div class="btn-toolbar mb-2 mb-md-0">
-                <div class="btn-group mr-2">
-                    <b-button :disabled="order.refunded" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
-                </div>
-              <div class="btn-group mr-2">
-                <b-button :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
-              </div>
-            </div><!-- End toolbar -->
-        </div><!-- End content bar -->
 
         <b-modal ref="issueRefund" id="issueRefund" title="Issue a Refund" hide-footer>
             <div v-if="refundProcessing === false && refundError === false && refundSuccess !== true">

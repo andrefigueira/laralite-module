@@ -2,15 +2,17 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-              <b-button @click="goBack" variant="link" class="p-0 mr-3">
-                <b-icon icon="arrow-left" font-scale="1"></b-icon>
-              </b-button>
-                <span class="admin-title">
-                    {{ type === 'create' ? 'Create new permission' : 'Edit permission ' }}
-                    <strong v-show="type === 'edit'">{{ permission.name }}</strong>
+              <div class="admin-title-section pt-2">
+                <a @click="goBack" class="back-btn p-0">
+                  <b-icon icon="arrow-left" font-scale="1"></b-icon>
+                </a>
+                <span class="admin-title pl-2">
+                  {{ type === 'create' ? 'Create new permission' : 'Edit permission ' }}
+                  <strong v-show="type === 'edit'">{{ permission.name }}</strong>
                 </span>
+              </div>
 
-                <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
+              <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
             </div><!-- End col -->
         </div>
         <div class="row">

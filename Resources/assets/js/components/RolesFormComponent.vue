@@ -2,10 +2,15 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-                <h2 class="admin-title">
-                    {{ type === 'create' ? 'Create new role' : 'Edit role ' }}
+              <div class="admin-title-section pt-2">
+                <a @click="goBack" class="back-btn p-0">
+                  <b-icon icon="arrow-left" font-scale="1"></b-icon>
+                </a>
+                <span class="admin-title pl-2">
+                      {{ type === 'create' ? 'Create new role' : 'Edit role ' }}
                     <strong v-show="type === 'edit'">{{ role.name }}</strong>
-                </h2>
+                  </span>
+              </div>
 
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
             </div><!-- End col -->
@@ -156,6 +161,9 @@
             }
         },
         methods: {
+          goBack() {
+            window.history.back();
+          },
             validateState(name) {
                 const { $dirty, $error } = this.$v.form[name];
                 return $dirty ? !$error : null;

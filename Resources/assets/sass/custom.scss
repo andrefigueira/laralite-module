@@ -2,6 +2,11 @@
  * Font Awesome Free 5.15.2 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
+@media (max-width: 800px) {
+    body, #main, #header, .container-fluid {
+        font-size: .875rem !important;
+    }
+}
 body .container-fluid {
     a{
         text-decoration: none !important;
@@ -44,14 +49,14 @@ body .container-fluid {
             top: 50%;
             transform: translateY(-50%);
             left: 19px;
-            font-size: 24px;
+            font-size: 1.5px;
             color: #5664d2;
         }
         .custom-control-label {
             cursor: pointer;
         }
         .invalid-feedback {
-            font-size: 80% !important;
+            font-size: 1.5rem !important;
             color: #FF3D60 !important;
             font-weight: lighter !important;
         }
@@ -254,7 +259,7 @@ body .container-fluid {
     letter-spacing: 0.05em;
     pointer-events: none;
     cursor: default;
-    font-size: 11px;
+    font-size: 0.688rem;
     text-transform: uppercase;
     color: #8590a5;
     font-weight: 700;
@@ -267,7 +272,7 @@ body .container-fluid {
     padding: 0.5rem 1rem !important;
     color: #74788d !important;
     position: relative;
-    font-size: 14px !important;
+    font-size: 0.875rem !important;
     transition: all 0.4s;
     font-family: "Inter", sans-serif;
     font-weight: 500;
@@ -341,7 +346,7 @@ body .container-fluid {
 
 .accordion .card .card-header a {
     color: #74788d !important;
-    font-size: 14px !important;
+    font-size: 0.875rem !important;
 }
 
 .pagination .page-item.active .page-link {
@@ -357,4 +362,13 @@ body .container-fluid {
         border: none;
         text-align: center;
     }
+}
+
+.vs__open-indicator {
+    display: block !important;
+    cursor: pointer !important;
+}
+
+.back-btn {
+    cursor: pointer;
 }
