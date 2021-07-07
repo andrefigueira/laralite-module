@@ -12,6 +12,7 @@
             id="filterInput"
             placeholder="Type to Search"
             style="padding: 18px 10px"
+            class="mr-2"
         ></b-form-input>
         <b-input-group-append>
           <a :disabled="!filter" @click="filter = ''" class="btn btn-secondary">Clear</a>
@@ -30,7 +31,7 @@
             :current-page="currentPage"
             :filter="filter">
           <template v-slot:cell(name)="data">
-            <a href="'/admin/templates/edit/' + data.item.id" style="color: black">{{ data.item.name }}</a>
+            <a :href="'/admin/templates/edit/' + data.item.id" style="color: black">{{ data.item.name }}</a>
           </template>
           <template v-slot:cell(description)="data">
             {{ data.item.description }}
