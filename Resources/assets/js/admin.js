@@ -35,6 +35,9 @@ import 'vue-form-wizard/dist/vue-form-wizard.min.css'
  * Used for auto-formatting inputs when inputting formats, e.g. dates
  */
 import Cleave from 'cleave.js';
+import ColorPicker from "vue-color-picker-simple";
+import Tabs from "vue-material-tabs";
+import "vue-color-picker-simple/dist/index.css";
 
 import VueCurrencyFilter from 'vue-currency-filter'
 
@@ -51,7 +54,8 @@ Vue.use(VueCurrencyFilter,
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
-
+Vue.use(ColorPicker);
+Vue.use(Tabs);
 Vue.use(CKEditor);
 
 Vue.use(Vuelidate);

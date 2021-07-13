@@ -10,6 +10,9 @@ class Settings extends Model
         'id',
         'active',
         'settings',
+        'colour',
+        'font',
+        'site_logo'
     ];
 
     protected $casts = [

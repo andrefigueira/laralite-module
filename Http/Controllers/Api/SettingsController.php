@@ -21,12 +21,24 @@ class SettingsController extends Controller
         $currency = $request->get('currency');
         $feeActive = $request->get('feeActive');
         $feeAmount = $request->get('feeAmount');
+        $siteLogo = $request->get('siteLogo');
+        $font = $request->get('font');
+        $buttonPrimaryColor = $request->get('buttonPrimaryColor');
+        $buttonSecondaryColor = $request->get('buttonSecondaryColor');
+        $textPrimaryColor = $request->get('textPrimaryColor');
+        $textHighlightColor = $request->get('textHighlightColor');
 
         $settings = [
             'currency' => $currency,
             'connectedStripeAccount' => $connectedStripeAccount,
             'feeActive' => $feeActive,
             'feeAmount' => $feeAmount,
+            'siteLogo'  => $siteLogo,
+            'font'     =>  $font,
+            'buttonPrimaryColor'    =>  $buttonPrimaryColor,
+            'textPrimaryColor'     =>  $textPrimaryColor,
+            'buttonSecondaryColor'     =>  $buttonSecondaryColor,
+            'textHighlightColor'     =>  $textHighlightColor,
         ];
 
         try {
