@@ -4,10 +4,12 @@ namespace Modules\Laralite\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Modules\Laralite\Models\Page;
+use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\User;
 use Illuminate\Http\Request;
 use Auth;
 use Log;
+use Psy\Util\Json;
 
 class CmsController extends Controller
 {
@@ -97,8 +99,17 @@ class CmsController extends Controller
             $page->authed_user->token = $authedUser->createToken('access-token')->plainTextToken;
         }
 
+        $settings = Settings::firstOrFail();
+        Log::info(json_encode($settings));
         return view($template, [
             'page' => $page,
+            'settings' => [
+                'logo'  =>  json_decode($settings->settings, true)['siteLogo'],
+                'buttonPrimaryColor'  =>  json_decode($settings->settings, true)['buttonPrimaryColor'],
+                'buttonSecondaryColor'  =>  json_decode($settings->settings, true)['buttonSecondaryColor'],
+                'textPrimaryColor'   =>   json_decode($settings->settings, true)['textPrimaryColor'],
+                'textHighlightColor' =>   json_decode($settings->settings, true)['textHighlightColor'],
+            ]
         ]);
     }
 }
