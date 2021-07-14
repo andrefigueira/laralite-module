@@ -372,3 +372,21 @@ body .container-fluid {
 .back-btn {
     cursor: pointer;
 }
+
+.ew-cp-trigger {
+    height: 25px !important;
+    border: none !important;
+    border-radius: initial !important;
+    width: initial !important;
+    align-items: initial !important;
+    display: revert !important;
+}
+.ew-cp-panel {
+    z-index: 15 !important;
+}
+.tabs {
+    margin-top: 10px !important;
+}
+.tabs__content {
+    padding-bottom: 10px !important;
+}
