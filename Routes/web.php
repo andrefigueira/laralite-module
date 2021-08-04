@@ -92,4 +92,6 @@ Route::get('/parallax', 'LaraliteController@parallax');
  *
  * !! DO NOT DEFINE ANY ROUTES BENEATH THIS, MUST ALL BE REGISTERED ABOVE
  */
+Route::get('/dynamic', 'CmsController@dynamic');
+
 Route::any('/{any}', 'CmsController@route')->where('any', '.*');

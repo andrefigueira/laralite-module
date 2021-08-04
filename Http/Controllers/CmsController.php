@@ -100,7 +100,7 @@ class CmsController extends Controller
         }
 
         $settings = Settings::firstOrFail();
-        Log::info(json_encode($settings));
+        Log::info($template);
         return view($template, [
             'page' => $page,
             'settings' => [
@@ -111,5 +111,13 @@ class CmsController extends Controller
                 'textHighlightColor' =>   json_decode($settings->settings, true)['textHighlightColor'],
             ]
         ]);
+    }
+
+    public function dynamic(Request $request)
+    {
+        return response('.shop .product .add-to-basket {
+                font-family: "Gabriela", sans-serif!important;
+            }', 200)
+            ->header('Content-Type', 'text/css');
     }
 }
