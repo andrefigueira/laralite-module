@@ -22,11 +22,15 @@ class SettingsController extends Controller
         $feeActive = $request->get('feeActive');
         $feeAmount = $request->get('feeAmount');
         $siteLogo = $request->get('siteLogo');
-        $font = $request->get('font');
         $buttonPrimaryColor = $request->get('buttonPrimaryColor');
         $buttonSecondaryColor = $request->get('buttonSecondaryColor');
         $textPrimaryColor = $request->get('textPrimaryColor');
         $textHighlightColor = $request->get('textHighlightColor');
+        $buttonsFont = $request->get('buttonsFont');
+        $headerFooterFont = $request->get('headerFooterFont');
+        $paragraphFont = $request->get('paragraphFont');
+        $mainTextFont = $request->get('mainTextFont');
+
 
         $settings = [
             'currency' => $currency,
@@ -34,11 +38,14 @@ class SettingsController extends Controller
             'feeActive' => $feeActive,
             'feeAmount' => $feeAmount,
             'siteLogo'  => $siteLogo,
-            'font'     =>  $font,
             'buttonPrimaryColor'    =>  $buttonPrimaryColor,
             'textPrimaryColor'     =>  $textPrimaryColor,
             'buttonSecondaryColor'     =>  $buttonSecondaryColor,
             'textHighlightColor'     =>  $textHighlightColor,
+            'buttonsFont' => $buttonsFont,
+            'headerFooterFont' => $headerFooterFont,
+            'paragraphFont' => $paragraphFont,
+            'mainTextFont' => $mainTextFont,
         ];
 
         try {

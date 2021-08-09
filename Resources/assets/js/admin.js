@@ -39,6 +39,7 @@ import ColorPicker from "vue-color-picker-simple";
 import Tabs from "vue-material-tabs";
 import "vue-color-picker-simple/dist/index.css";
 
+
 import VueCurrencyFilter from 'vue-currency-filter'
 
 Vue.use(VueCurrencyFilter,

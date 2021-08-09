@@ -115,9 +115,68 @@ class CmsController extends Controller
 
     public function dynamic(Request $request)
     {
-        return response('.shop .product .add-to-basket {
-                font-family: "Gabriela", sans-serif!important;
-            }', 200)
+
+        $settings = Settings::firstOrFail();
+        $settingsObject = json_decode($settings->settings, true);
+        return response(
+            implode(" ", [
+                $this->dynamicButton($settingsObject['buttonsFont']),
+                $this->dynamicHeaderFooter($settingsObject['headerFooterFont']),
+                $this->dynamicText($settingsObject['mainTextFont']),
+                $this->dynamicPara($settingsObject['paragraphFont'])
+            ])
+            , 200)
             ->header('Content-Type', 'text/css');
     }
+
+    public function dynamicButton($font)
+    {
+        return ' .shop .product .add-to-basket {
+                font-family: ' .json_encode($font). ', sans-serif!important;
+            }
+            .btn {
+            font-family: ' .json_encode($font). ', sans-serif!important;
+            }';
+
+    }
+    public function dynamicHeaderFooter($font)
+    {
+        return ' .footer ul li a {
+                    font-family: ' .json_encode($font). ', sans-serif!important;
+                   }
+                   
+                   .top-nav .top-nav-menu li a {
+                    font-family: ' .json_encode($font). ', sans-serif!important;
+                   }
+                   
+                   .logo-link {
+                   font-family:' .json_encode($font). ', sans-serif!important;
+               }';
+    }
+    public function dynamicText($font)
+    {
+        return 'h3 {
+                   font-family: ' .json_encode($font). ', sans-serif!important;
+               }';
+    }
+
+    public function dynamicPara($font)
+    {
+        return ' .form-text {
+                   font-family:' .json_encode($font). ', sans-serif!important;
+               }
+               label {
+                   font-family:' .json_encode($font). ', sans-serif!important;
+               }
+               p {
+                   font-family:' .json_encode($font). ', sans-serif!important;
+               }
+               td {
+                   font-family:' .json_encode($font). ', sans-serif!important;
+               }
+               .form-control {
+                   font-family:' .json_encode($font). ', sans-serif!important;
+               }';
+    }
+
 }

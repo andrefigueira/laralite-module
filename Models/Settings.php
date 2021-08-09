@@ -11,7 +11,6 @@ class Settings extends Model
         'active',
         'settings',
         'colour',
-        'font',
         'site_logo'
     ];
 
