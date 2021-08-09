@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row">
+      <div class="row">
             <div class="col-md-12">
                 <b-alert :show="alertShow" :variant="alertType" v-html="alertMessage" dismissible></b-alert>
             </div>
@@ -51,8 +51,8 @@
                 </div><!-- End page section -->
               </div><!-- End col -->
               </div>
-
             </TabItem>
+
             <TabItem name="Site Settings">
               <div class="row pl-2 pr-2 pb-2">
                 <div class="col-md-6 mt-2">
@@ -92,13 +92,34 @@
                 </div>
               </div>
 
-
-              <div class="col-md-12 mt-2">
+          <div class="col-md-6">
                 <div class="page-section pl-2 pr-2">
-                  <label for="font-option" class="mt-2" style="font-weight: bold">Font</label>
-                  <v-select class="mb-3" id="font-option" label="title" v-model="settings.font" :options="fontOptions" :clearable="false"></v-select>
+                  <label for="buttonfont-option" class="mt-2" style="font-weight: bold">Buttons Font</label>
+                  <v-select class="mb-3" id="buttonfont-option" label="title" v-model="settings.buttonsFont" :options="buttonOptions" :clearable="false"></v-select>
                 </div><!-- End page section -->
-              </div>
+              </div><!-- End col -->
+
+                <div class="col-md-6">
+                  <div class="page-section pl-2 pr-2">
+                    <label for="font-option" class="mt-2" style="font-weight: bold">Header Footer Font</label>
+                    <v-select class="mb-3" id="font-option" label="title" v-model="settings.headerFooterFont" :options="headerfooterOptions" :clearable="false"></v-select>
+                  </div><!-- End page section -->
+                </div><!-- End col -->
+
+                <div class="col-md-6">
+                  <div class="page-section pl-2 pr-2">
+                    <label for="textfont-option" class="mt-2" style="font-weight: bold">Main Text Font</label>
+                    <v-select class="mb-3" id="textfont-option" label="title" v-model="settings.mainTextFont" :options="textOptions" :clearable="false"></v-select>
+                  </div><!-- End page section -->
+                </div><!-- End col -->
+
+                <div class="col-md-6">
+                  <div class="page-section pl-2 pr-2">
+                    <label for="parafont-option" class="mt-2" style="font-weight: bold">Paragraph Font</label>
+                    <v-select class="mb-3" id="parafont-option" label="title" v-model="settings.paragraphFont" :options="paraOptions" :clearable="false"></v-select>
+                  </div><!-- End page section -->
+                </div><!-- End col -->
+
               </div>
 
             </TabItem>
@@ -110,7 +131,7 @@
                 </div>
             </div>
         </div>
-        </div><!-- End row -->
+    </div><!-- End row -->
 </template>
 
 <script>
@@ -135,11 +156,14 @@ export default {
                     feeActive: false,
                     feeAmount: '',
                     siteLogo: '',
-                    font: 'Arial',
                     buttonPrimaryColor: "#36A3B8",
                     buttonSecondaryColor: "#28a745",
                     textPrimaryColor: "#FFFFFF",
                     textHighlightColor: "#FFD700",
+                    buttonsFont: "Acme",
+                    headerFooterFont: "Padauk",
+                    mainTextFont: "Cinzel",
+                    paragraphFont: "Gabriela"
                 },
                 maintenance: false,
                 currencyOptions: [
@@ -152,15 +176,10 @@ export default {
                         value: 'GBP'
                     }
                 ],
-              fontOptions: [
-                {
-                  title: 'Arial'
-                },
-                {
-                  title: 'Verdana'
-                },
-              ]
-
+              buttonOptions: ["Cinzel","Pacifico","Acme"],
+              headerfooterOptions: ["Padauk","Cinzel","Oswald"],
+              textOptions: ["Acme","Oswald","Gabriela"],
+              paraOptions: ["Cinzel","Pacifico","Padauk"],
             }
         },
         computed: {
@@ -226,9 +245,6 @@ export default {
                 if (settingsObject.siteLogo) {
                     this.settings.siteLogo = settingsObject.siteLogo;
                 }
-              if (settingsObject.font) {
-                this.settings.font = settingsObject.font;
-              }
               if (settingsObject.buttonPrimaryColor) {
                 this.settings.buttonPrimaryColor = settingsObject.buttonPrimaryColor;
               }
@@ -240,6 +256,18 @@ export default {
               }
               if (settingsObject.textHighlightColor) {
                 this.settings.textHighlightColor = settingsObject.textHighlightColor;
+              }
+              if (settingsObject.buttonsFont) {
+                this.settings.buttonsFont = settingsObject.buttonsFont;
+              }
+              if (settingsObject.headerFooterFont) {
+                this.settings.headerFooterFont = settingsObject.headerFooterFont;
+              }
+              if (settingsObject.mainTextFont) {
+                this.settings.mainTextFont = settingsObject.mainTextFont;
+              }
+              if (settingsObject.paragraphFont) {
+                this.settings.paragraphFont = settingsObject.paragraphFont;
               }
                 var connectedAccount = this.getUrlParameter('connectedAccountId');
                 if (connectedAccount !== false) {

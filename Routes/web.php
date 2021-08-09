@@ -87,9 +87,12 @@ Route::get('/ticket/{uuid}', 'TicketController@generateTicket');
 
 Route::get('/parallax', 'LaraliteController@parallax');
 
+
 /**
  * CMS catch-all route
  *
  * !! DO NOT DEFINE ANY ROUTES BENEATH THIS, MUST ALL BE REGISTERED ABOVE
  */
+Route::get('/dynamic', 'CmsController@dynamic');
+
 Route::any('/{any}', 'CmsController@route')->where('any', '.*');
