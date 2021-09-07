@@ -171,9 +171,9 @@ class PaymentController extends Controller
         $generatedTickets = [];
 
         foreach ($basket['products'] as $index => $product) {
-            if ($product['sku'] === 'TRAPMUSICTICKET') {
+//            if ($product['sku'] === 'TRAPMUSICTICKET') {
                 $generatedTickets = $this->getGeneratedTickets($index, $product, $order, $customer);
-            }
+//            }
         }
 
         return $generatedTickets;
@@ -262,22 +262,21 @@ class PaymentController extends Controller
 
         // @todo: This is now using the PaymentIntents API
         // Customer details are not being sent to stripe here, we need to do add additional details to the PI creation.
-
         if ($feeCollection !== false) {
             // Fees are enabled, so send fee amount to connected Stripe Account
             // `feeAmount` is the amount set in the settings
             // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
             $intent = $stripe->paymentIntents->create([
-                'amount' => $amount,
+                'amount' => $amount * 100,
                 'currency' => $currency,
-                'application_fee_amount' => $feeCollection['feeAmount'],
+                'application_fee_amount' => $feeCollection['feeAmount'] * 100,
                 'transfer_data' => [
                     'destination' => $feeCollection['connectedStripeAccount'],
                 ],
             ]);
         } else {
             $intent = $stripe->paymentIntents->create([
-                'amount' => $amount,
+                'amount' => $amount * 100,
                 'currency' => $currency,
             ]);
 
