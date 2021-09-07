@@ -55,6 +55,25 @@
 
             <TabItem name="Site Settings">
               <div class="row pl-2 pr-2 pb-2">
+                <div class="col-md-6">
+                  <div class="page-section pl-2 pr-2">
+                    <label for="buttonfont-option" class="mt-2" style="font-weight: bold">Buttons Font</label>
+                    <v-select class="mb-3" id="buttonfont-option" label="title" v-model="settings.buttonsFont" :options="buttonOptions" :clearable="false"></v-select>
+
+                    <label for="font-option" class="mt-2" style="font-weight: bold">Header Footer Font</label>
+                    <v-select class="mb-3" id="font-option" label="title" v-model="settings.headerFooterFont" :options="headerfooterOptions" :clearable="false"></v-select>
+                  </div><!-- End page section -->
+                </div>
+
+                <div class="col-md-6">
+                  <div class="page-section pl-2 pr-2">
+                    <label for="textfont-option" class="mt-2" style="font-weight: bold">Main Text Font</label>
+                    <v-select class="mb-3" id="textfont-option" label="title" v-model="settings.mainTextFont" :options="textOptions" :clearable="false"></v-select>
+
+                    <label for="parafont-option" class="mt-2" style="font-weight: bold">Paragraph Font</label>
+                    <v-select class="mb-3" id="parafont-option" label="title" v-model="settings.paragraphFont" :options="paraOptions" :clearable="false"></v-select>
+                  </div><!-- End page section -->
+                </div><!-- End col -->
                 <div class="col-md-6 mt-2">
                   <div class="page-section p-2">
                     <label  style="font-weight: bold">Site Logo</label>
@@ -92,38 +111,17 @@
                 </div>
               </div>
 
-          <div class="col-md-6">
-                <div class="page-section pl-2 pr-2">
-                  <label for="buttonfont-option" class="mt-2" style="font-weight: bold">Buttons Font</label>
-                  <v-select class="mb-3" id="buttonfont-option" label="title" v-model="settings.buttonsFont" :options="buttonOptions" :clearable="false"></v-select>
-                </div><!-- End page section -->
-              </div><!-- End col -->
-
-                <div class="col-md-6">
-                  <div class="page-section pl-2 pr-2">
-                    <label for="font-option" class="mt-2" style="font-weight: bold">Header Footer Font</label>
-                    <v-select class="mb-3" id="font-option" label="title" v-model="settings.headerFooterFont" :options="headerfooterOptions" :clearable="false"></v-select>
-                  </div><!-- End page section -->
-                </div><!-- End col -->
-
-                <div class="col-md-6">
-                  <div class="page-section pl-2 pr-2">
-                    <label for="textfont-option" class="mt-2" style="font-weight: bold">Main Text Font</label>
-                    <v-select class="mb-3" id="textfont-option" label="title" v-model="settings.mainTextFont" :options="textOptions" :clearable="false"></v-select>
-                  </div><!-- End page section -->
-                </div><!-- End col -->
-
-                <div class="col-md-6">
-                  <div class="page-section pl-2 pr-2">
-                    <label for="parafont-option" class="mt-2" style="font-weight: bold">Paragraph Font</label>
-                    <v-select class="mb-3" id="parafont-option" label="title" v-model="settings.paragraphFont" :options="paraOptions" :clearable="false"></v-select>
-                  </div><!-- End page section -->
-                </div><!-- End col -->
-
               </div>
 
             </TabItem>
           </Tabs>
+<!--        <div>-->
+<!--          <b-tabs content-class="mt-3">-->
+<!--            <b-tab title="First" active><p>I'm the first tab</p></b-tab>-->
+<!--            <b-tab title="Second"><p>I'm the second tab</p></b-tab>-->
+<!--            <b-tab title="Disabled" disabled><p>I'm a disabled tab!</p></b-tab>-->
+<!--          </b-tabs>-->
+<!--        </div>-->
 
             <div class="col-md-12 mt-2">
                 <div class="page-section p-4">

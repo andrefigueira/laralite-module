@@ -95,7 +95,7 @@
                             </template>
 
                             <template #cell(price)="data">
-                                ${{ (data.item.price / 100)*data.item.quantity }}
+                                ${{ (data.item.price)*data.item.quantity }}
                             </template>
 
                             <template #cell(quantity)="data">
