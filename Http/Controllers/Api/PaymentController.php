@@ -61,8 +61,8 @@ class PaymentController extends Controller
 
         // @todo: Load from settings
         $paymentDescription = 'TrapMusicMuseum Payment';
-        $currency = 'usd';
-
+        $settings = Settings::firstOrFail();
+        $currency = json_decode($settings->settings, true)['currency'];
         $fetchedCustomer = Customer::where('email', '=', $customerEmail)->get();
 
         if ($fetchedCustomer->isEmpty()) {
@@ -92,6 +92,7 @@ class PaymentController extends Controller
             'order' => $order,
             'customer' => $fetchedCustomer,
             'orderAssets' => $orderAssets,
+            'currency' =>  $currency
         ]));
 
         if($customer['subscribedToMailingList']) {
@@ -110,6 +111,7 @@ class PaymentController extends Controller
                     'basket' => $basket,
                     'stripe_result' => $result,
                     'order' => $order,
+                    'currency' => $currency,
                     'tickets' => $order->tickets,
                     'subscribed' =>$customer['subscribedToMailingList'],
                 ],

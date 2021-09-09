@@ -43,7 +43,7 @@
               <span>{{ data.item.category.name }}</span>
             </template>
             <template v-slot:cell(category_price)="data">
-              <span>${{ data.item.variants[0].pricing.price }}</span>
+              <span>{{ data.item.variants[0].pricing.price }}</span>
             </template>
             <template v-slot:cell(actions)="data">
                 <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right" style="width: 10%"><i class="ri-delete-bin-6-fill"></i></a>

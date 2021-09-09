@@ -31,18 +31,18 @@
                 <table border="1" cellpadding="20" cellspacing="0" width="100%" style="color: #fff;border-collapse: collapse; border:solid 1px #333333;">
                     <tr bgcolor="#333333">
                         <td>Order Id</td>
-                        <!--                        <td>Refund Id</td>-->
+                        <td>Quantity</td>
                         <td>Amount</td>
                     </tr>
                   @foreach($form['order']->basket->products as $product)
                     <tr>
                       <td align="left" width="75%">{{ $product->sku }}</td>
                       <td align="left" width="75%">&times;{{ $product->quantity }}</td>
-                      <td align="left" width="75%">${{ ($product->price) / 100 }}</td>
+                      <td align="left" width="75%" style="padding: 10px !important;">{{ $form['currency']['currency_symbol']  }} {{ $product->price }}</td>
                     </tr>
                   @endforeach
                   <tr>
-                    <td colspan="5" align="right">Subtotal: ${{ ($product->price / 100)*$product->quantity }}</td>
+                    <td colspan="5" align="right">Subtotal: {{ $form['currency']['currency_symbol']  }} {{ $product->price*$product->quantity }}</td>
                   </tr>
                 </table>
             </td>

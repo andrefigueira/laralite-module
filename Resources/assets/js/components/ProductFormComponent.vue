@@ -119,7 +119,7 @@
                                     </td>
                                     <td class="align-middle">
                                         <a href="#" :id="'pricing-edit-' + index" class="dark-link">
-                                            <span :class="{'strikethrough': variant.pricing.on_sale }">${{ variant.pricing.price }}</span>
+                                            <span :class="{'strikethrough': variant.pricing.on_sale }">{{ variant.pricing.price }}</span>
                                             <span>{{ variant.pricing.on_sale ? '$' + variant.pricing.sale_price : '' }}</span>
                                         </a>
 
