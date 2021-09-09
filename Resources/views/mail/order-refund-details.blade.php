@@ -40,11 +40,11 @@
                         <tr>
                             <td align="left" width="75%">{{ $product->sku }}</td>
                             <td align="left" width="75%">&times;{{ $product->quantity }}</td>
-                            <td align="left" width="75%">${{ ($product->price) / 100 }}</td>
+                            <td align="left" width="75%" style="padding: 10px !important;">{{ $form['currency']['currency_symbol']  }} {{ $product->price }}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="5" align="right">Subtotal: ${{ ($product->price / 100)*$product->quantity }}</td>
+                        <td colspan="5" align="right">Subtotal: {{ $form['currency']['currency_symbol']  }} {{ $product->price * $product->quantity }}</td>
                     </tr>
                 </table>
             </td>

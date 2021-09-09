@@ -100,7 +100,6 @@ class CmsController extends Controller
         }
 
         $settings = Settings::firstOrFail();
-        Log::info($template);
         return view($template, [
             'page' => $page,
             'settings' => [
@@ -109,6 +108,7 @@ class CmsController extends Controller
                 'buttonSecondaryColor'  =>  json_decode($settings->settings, true)['buttonSecondaryColor'],
                 'textPrimaryColor'   =>   json_decode($settings->settings, true)['textPrimaryColor'],
                 'textHighlightColor' =>   json_decode($settings->settings, true)['textHighlightColor'],
+                'currency'  =>  json_decode($settings->settings, true)['currency'],
             ]
         ]);
     }
