@@ -22,6 +22,9 @@
                       <template v-if="ticket.validated === 1">
                         <p><strong>Redeemed On:</strong> {{ timeFormat(ticket.updated_at) }}</p>
                       </template>
+                      <template v-else-if="ticket.order.order_status === 'cancel' && ticket.order.refunded === 1">
+                        <p><strong>Ticket is already cancelled or refunded.</strong></p>
+                      </template>
                       <template v-else>
                         <b-button class="mt-2" variant="warning" block @click="verifyTicket(result)">Reedem Ticket</b-button>
                       </template>
@@ -35,6 +38,10 @@
                     <div v-show="reedemProcessing" class="text-center">
                       <b-spinner label="Spinning"></b-spinner>
                     </div>
+                    <b-button class="mt-3" block @click="hideReedem">Exit</b-button>
+                  </template>
+                  <template v-else>
+                    <p>Ticket Not Found</p>
                     <b-button class="mt-3" block @click="hideReedem">Exit</b-button>
                   </template>
                 </b-modal>

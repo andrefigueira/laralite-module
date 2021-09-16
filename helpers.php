@@ -1,6 +1,7 @@
 <?php
 
 use Barryvdh\DomPDF\Facade as PDF;
+use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 
 if (! function_exists('generateTicketPDF')) {
@@ -26,12 +27,12 @@ if (! function_exists('generateTicketPDF')) {
 
         $products = $ticket->order->basket->products;
         $ticketPrice = 0;
+        $settings = Settings::firstOrFail();
+        $currency = json_decode($settings->settings, true)['currency']['currency_symbol'];
 
         foreach ($products as $product) {
-            if ($product->sku === 'TRAPMUSICTICKET') {
                 $ticketPrice = $product->price;
                 break;
-            }
         }
 
         // For Testing
@@ -53,6 +54,7 @@ if (! function_exists('generateTicketPDF')) {
                 'ticketQrCode',
                 'ticketPrice',
                 'ticketAdmitQuantity',
+                'currency'
             )
         );
 
