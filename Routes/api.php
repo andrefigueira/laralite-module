@@ -87,6 +87,7 @@ Route::group([], static function () {
     Route::post('/order/bulk-refunds', 'Api\OrderController@bulkRefunds');
 
     Route::get('/scan/ticket/{uuid}', 'Api\OrderController@scanTicket');
+    Route::get('/ticket/{uuid}', 'Api\OrderController@getTicketDetails');
 
     Route::get('/discount', 'Api\DiscountController@get');
     Route::post('/discount', 'Api\DiscountController@create');

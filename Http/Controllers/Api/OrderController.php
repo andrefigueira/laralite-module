@@ -10,6 +10,7 @@ use Modules\Laralite\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Laralite\Models\Order;
+use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 use Symfony\Component\HttpFoundation\Response;
 use Stripe\StripeClient;
@@ -55,6 +56,13 @@ class OrderController extends Controller
         }
     }
 
+    public function getTicketDetails($uuid)
+    {
+        $ticket = Ticket::with('order')->where('unique_id', '=', $uuid)->first();
+
+        return $ticket;
+    }
+
     public function scanTicket($uuid)
     {
 
@@ -62,9 +70,9 @@ class OrderController extends Controller
 
         $order = $ticket->order;
 
-        if($ticket && $order->order_status == 'complete' && $order->refunded == 0) {
+        if($ticket && $order->order_status == 'complete' && $order->refunded == 0 && $ticket->visited_counts != 1) {
             $ticket->validated = '1';
-            $ticket->visited_counts = $ticket->visited_counts + 1;
+            $ticket->visited_counts = '1';
             $ticket->save();
             return response()->json([
                 'success' => 'true',
