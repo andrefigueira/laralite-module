@@ -10,6 +10,7 @@ use Modules\Laralite\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Laralite\Models\Order;
+use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 use Symfony\Component\HttpFoundation\Response;
 use Stripe\StripeClient;
@@ -55,6 +56,13 @@ class OrderController extends Controller
         }
     }
 
+    public function getTicketDetails($uuid)
+    {
+        $ticket = Ticket::with('order')->where('unique_id', '=', $uuid)->first();
+
+        return $ticket;
+    }
+
     public function scanTicket($uuid)
     {
 
@@ -62,9 +70,9 @@ class OrderController extends Controller
 
         $order = $ticket->order;
 
-        if($ticket && $order->order_status == 'complete' && $order->refunded == 0) {
+        if($ticket && $order->order_status == 'complete' && $order->refunded == 0 && $ticket->visited_counts != 1) {
             $ticket->validated = '1';
-            $ticket->visited_counts = $ticket->visited_counts + 1;
+            $ticket->visited_counts = '1';
             $ticket->save();
             return response()->json([
                 'success' => 'true',
@@ -129,7 +137,8 @@ class OrderController extends Controller
 
         try {
             $result = $this->issueRefund($type, $paymentId);
-
+            $settings = Settings::firstOrFail();
+            $currency = json_decode($settings->settings, true)['currency'];
             if ($result->status == 'succeeded') {
                 $order->refunded = 1;
                 $order->save();
@@ -137,6 +146,7 @@ class OrderController extends Controller
                 Mail::to($order->customer->email)->send(new OrderRefundDetails([
                     'order' => $order,
                     'customer' => $order->customer,
+                    'currency' => $currency
                 ]));
             }
         } catch (\Stripe\Exception\InvalidRequestException $exception) {
@@ -189,10 +199,13 @@ class OrderController extends Controller
         $order->save();
 
         $status = $this->refundOrder($orderId);
+        $settings = Settings::firstOrFail();
+        $currency = json_decode($settings->settings, true)['currency'];
 
         Mail::to($order->customer->email)->send(new OrderCancellation([
             'order' => $order,
             'customer' => $order->customer,
+            'currency' =>   $currency
         ]));
 
         return response()->json([
