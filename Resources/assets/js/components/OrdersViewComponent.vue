@@ -7,7 +7,7 @@
         <h1 class="h2 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mt-2 mr-2" style="position: absolute; right: 0; top: 0">
-            <b-button class="mr-2" :disabled="order.refunded" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
+            <b-button class="mr-2" :disabled="order.refunded === 1" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
             <b-button :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
           </div>
         </div><!-- End toolbar -->
@@ -21,7 +21,7 @@
                 <button class="btn btn-danger mt-2 mr-1 float-right" block @click="toggleRefund">Issue Refund</button>
             </div>
             <div v-if="refundError === true">
-                <p>{{ refundErrorMessage }}</p>
+                <p>{{ refundErrorMessage.code }}</p>
             </div>
             <div v-if="refundSuccess === true">
                 <p>Successfully refunded order {{ order.unique_id }}</p>

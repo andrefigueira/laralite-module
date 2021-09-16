@@ -167,11 +167,13 @@ export default {
                 currencyOptions: [
                     {
                         title: '$ US Dollar',
-                        value: 'USD'
+                        value: 'USD',
+                        currency_symbol: '$'
                     },
                     {
                         title: '£ UK Sterling',
-                        value: 'GBP'
+                        value: 'GBP',
+                      currency_symbol: '£'
                     }
                 ],
               buttonOptions: ["Cinzel","Pacifico","Acme"],
