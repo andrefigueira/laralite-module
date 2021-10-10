@@ -58,20 +58,24 @@
                 <div class="col-md-6">
                   <div class="page-section pl-2 pr-2">
                     <label for="buttonfont-option" class="mt-2" style="font-weight: bold">Buttons Font</label>
-                    <v-select class="mb-3" id="buttonfont-option" label="title" v-model="settings.buttonsFont" :options="buttonOptions" :clearable="false"></v-select>
+                <v-select class="mb-3" id="buttonfont-option" label="title" v-model="settings.buttonsFont"
+                          :options="fonts" :clearable="false"></v-select>
 
                     <label for="font-option" class="mt-2" style="font-weight: bold">Header Footer Font</label>
-                    <v-select class="mb-3" id="font-option" label="title" v-model="settings.headerFooterFont" :options="headerfooterOptions" :clearable="false"></v-select>
+                <v-select class="mb-3" id="font-option" label="title" v-model="settings.headerFooterFont"
+                          :options="fonts" :clearable="false"></v-select>
                   </div><!-- End page section -->
                 </div>
 
                 <div class="col-md-6">
                   <div class="page-section pl-2 pr-2">
                     <label for="textfont-option" class="mt-2" style="font-weight: bold">Main Text Font</label>
-                    <v-select class="mb-3" id="textfont-option" label="title" v-model="settings.mainTextFont" :options="textOptions" :clearable="false"></v-select>
+                <v-select class="mb-3" id="textfont-option" label="title" v-model="settings.mainTextFont"
+                          :options="fonts" :clearable="false"></v-select>
 
                     <label for="parafont-option" class="mt-2" style="font-weight: bold">Paragraph Font</label>
-                    <v-select class="mb-3" id="parafont-option" label="title" v-model="settings.paragraphFont" :options="paraOptions" :clearable="false"></v-select>
+                <v-select class="mb-3" id="parafont-option" label="title" v-model="settings.paragraphFont"
+                          :options="fonts" :clearable="false"></v-select>
                   </div><!-- End page section -->
                 </div><!-- End col -->
                 <div class="col-md-6 mt-2">
@@ -176,6 +180,70 @@ export default {
                       currency_symbol: '£'
                     }
                 ],
+      fonts: [
+        "Cinzel",
+        "Pacifico",
+        "Padauk",
+        'Arial',
+        'Arial Black',
+        'Bahnschrift',
+        'Calibri',
+        'Cambria',
+        'Cambria Math',
+        'Candara',
+        'Comic Sans MS',
+        'Consolas',
+        'Constantia',
+        'Corbel',
+        'Courier New',
+        'Ebrima',
+        'Franklin Gothic Medium',
+        'Gabriola',
+        'Gadugi',
+        'Georgia',
+        'HoloLens MDL2 Assets',
+        'Impact',
+        'Ink Free',
+        'Javanese Text',
+        'Leelawadee UI',
+        'Lucida Console',
+        'Lucida Sans Unicode',
+        'Malgun Gothic',
+        'Marlett',
+        'Microsoft Himalaya',
+        'Microsoft JhengHei',
+        'Microsoft New Tai Lue',
+        'Microsoft PhagsPa',
+        'Microsoft Sans Serif',
+        'Microsoft Tai Le',
+        'Microsoft YaHei',
+        'Microsoft Yi Baiti',
+        'MingLiU-ExtB',
+        'Mongolian Baiti',
+        'MS Gothic',
+        'MV Boli',
+        'Myanmar Text',
+        'Nirmala UI',
+        'Palatino Linotype',
+        'Segoe MDL2 Assets',
+        'Segoe Print',
+        'Segoe Script',
+        'Segoe UI',
+        'Segoe UI Historic',
+        'Segoe UI Emoji',
+        'Segoe UI Symbol',
+        'SimSun',
+        'Sitka',
+        'Sylfaen',
+        'Symbol',
+        'Tahoma',
+        'Times New Roman',
+        'Trebuchet MS',
+        'Verdana',
+        'Webdings',
+        'Wingdings',
+        'Yu Gothic'
+      ],
               buttonOptions: ["Cinzel","Pacifico","Acme"],
               headerfooterOptions: ["Padauk","Cinzel","Oswald"],
               textOptions: ["Acme","Oswald","Gabriela"],

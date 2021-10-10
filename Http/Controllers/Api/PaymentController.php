@@ -6,13 +6,16 @@ use App\Http\Controllers\Controller;
 use Endroid\QrCode\QrCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Log;
+use Modules\Laralite\Http\Requests\PaymentProcess;
 use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
+use Modules\Laralite\Service\CustomerService;
 use Ramsey\Uuid\Uuid;
 use Stripe\StripeClient;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,11 +24,27 @@ use Spatie\Newsletter\NewsletterFacade;
 
 class PaymentController extends Controller
 {
+    /**
+     * @var CustomerService
+     */
+    protected $customerService;
+
+    public function __construct(CustomerService $customerService)
+    {
+        $this->customerService = $customerService;
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse|object
+     * @throws \Stripe\Exception\ApiErrorException
+     */
     public function processPayment(Request $request)
     {
         $token = $request->get('token');
         $basket = $request->get('basket');
-        $customer = $request->get('customer');
+        $customerData = $request->get('customer');
+        $customerData['subscribedToMailingList'] = $customerData['subscribedToMailingList'] ?? false;
         $discount = $request->get('discount');
 
         // @todo: Load stripe key from .env
@@ -44,7 +63,7 @@ class PaymentController extends Controller
 
         if(!$result){
             return response()->json([
-                'success' => 'false',
+                'success' => false,
                 'message' => "Error! PLease try again later."
             ], 400);
         }
@@ -52,10 +71,10 @@ class PaymentController extends Controller
         Log::info('Processing payment for basket', [
             'token' => $token,
             'basket' => $basket,
-            'customer' => $customer,
+            'customer' => $customerData,
         ]);
 
-        $customerEmail = $customer['email'];
+        $customerEmail = $customerData['email'];
 
         $basketTotal = $this->getBasketTotal($basket);
 
@@ -63,21 +82,53 @@ class PaymentController extends Controller
         $paymentDescription = 'TrapMusicMuseum Payment';
         $settings = Settings::firstOrFail();
         $currency = json_decode($settings->settings, true)['currency'];
-        $fetchedCustomer = Customer::where('email', '=', $customerEmail)->get();
+        $customer = Customer::where([
+            'email' => $customerEmail
+        ])->get();
 
-        if ($fetchedCustomer->isEmpty()) {
-            $fetchedCustomer = Customer::create([
-                'unique_id' => Uuid::uuid4(),
-                'name' => $customer['name'],
-                'email' => $customerEmail,
+        if ($customer->isEmpty()) {
+            $validator = \Validator::make($customerData, [
+                'email' => 'required|email',
+                'name' => 'required|max:255',
+                'password' => 'min:8|max:15|nullable',
+                'password_confirm' => [
+                    Rule::requiredIf(function () use ($customerData) {
+                        return (!empty($customerData['password']));
+                    }),
+                    'same:password'
+                ],
             ]);
-        }
 
-        $fetchedCustomer = $fetchedCustomer->first();
+            if ($validator->fails()) {
+                return new JsonResponse([
+                    'message' => $validator->messages()->first(),
+                    'validation' => false,
+                ], 400);
+            }
+
+            $newsLetterSubscription = json_encode([
+                'email' =>  $customerData['subscribedToMailingList']
+            ]);
+
+            $customer = Customer::create([
+                'unique_id' => Uuid::uuid4(),
+                'name' => $customerData['name'],
+                'email' => $customerEmail,
+                'password' => !empty($customerData['password']) ? \Hash::make($customerData['password']) : null,
+                'newsletter_subscription' => $newsLetterSubscription,
+            ]);
+        } else {
+            $customer = $customer->first();
+            $updateArray = ['newsletter_subscription->email' => $customerData['subscribedToMailingList']];
+            if (empty($customer->password) && !empty($customerData['password'])) {
+                $updateArray['password'] = \Hash::make($customerData['password']);
+            }
+            $customer->update($updateArray);
+        }
 
         $order = Order::create([
             'unique_id' => Uuid::uuid4(),
-            'customer_id' => $fetchedCustomer->id,
+            'customer_id' => $customer->id,
             'basket' => $basket,
             'status' => 1,
             'order_status' => "complete",
@@ -85,18 +136,18 @@ class PaymentController extends Controller
             'payment_processor_result' => $result,
         ]);
 
-        $orderAssets = $this->generateOrderAssets($order, $basket, $fetchedCustomer);
+        $orderAssets = $this->generateOrderAssets($order, $basket, $customer);
 
         // @todo: load from settings
         Mail::to($customerEmail)->send(new OrderConfirmation([
             'order' => $order,
-            'customer' => $fetchedCustomer,
+            'customer' => $customer,
             'orderAssets' => $orderAssets,
             'currency' =>  $currency
         ]));
 
-        if($customer['subscribedToMailingList']) {
-            $splitName = explode(' ', $customer['name']); // Restricts it to only 2 values, for names like Billy Bob Jones
+        if($customerData['subscribedToMailingList']) {
+            $splitName = explode(' ', $customer->name); // Restricts it to only 2 values, for names like Billy Bob Jones
 
             $first_name = $splitName[0];
             $last_name = !empty($splitName[1]) ? $splitName[1] : '';
