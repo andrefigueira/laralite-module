@@ -3,7 +3,7 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Traits\ApiResponses;
+use Modules\Laralite\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Auth;

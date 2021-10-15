@@ -6,45 +6,33 @@ use App\Http\Controllers\Controller;
 use Endroid\QrCode\QrCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Log;
-use Modules\Laralite\Http\Requests\PaymentProcess;
+use Mail;
+use Modules\Laralite\Http\Requests\PaymentRequest;
 use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
-use Modules\Laralite\Service\CustomerService;
 use Ramsey\Uuid\Uuid;
+use Spatie\Newsletter\NewsletterFacade;
+use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 use Symfony\Component\HttpFoundation\Response;
-use Mail;
-use Spatie\Newsletter\NewsletterFacade;
 
 class PaymentController extends Controller
 {
     /**
-     * @var CustomerService
-     */
-    protected $customerService;
-
-    public function __construct(CustomerService $customerService)
-    {
-        $this->customerService = $customerService;
-    }
-
-    /**
-     * @param Request $request
+     * @param PaymentRequest $request
      * @return JsonResponse|object
-     * @throws \Stripe\Exception\ApiErrorException
+     * @throws ApiErrorException
      */
-    public function processPayment(Request $request)
+    public function processPayment(PaymentRequest $request): JsonResponse
     {
         $token = $request->get('token');
         $basket = $request->get('basket');
         $customerData = $request->get('customer');
-        $customerData['subscribedToMailingList'] = $customerData['subscribedToMailingList'] ?? false;
         $discount = $request->get('discount');
 
         // @todo: Load stripe key from .env
@@ -82,48 +70,27 @@ class PaymentController extends Controller
         $paymentDescription = 'TrapMusicMuseum Payment';
         $settings = Settings::firstOrFail();
         $currency = json_decode($settings->settings, true)['currency'];
+        /** @var Customer $customer */
         $customer = Customer::where([
             'email' => $customerEmail
-        ])->get();
+        ])->first();
 
-        if ($customer->isEmpty()) {
-            $validator = \Validator::make($customerData, [
-                'email' => 'required|email',
-                'name' => 'required|max:255',
-                'password' => 'min:8|max:15|nullable',
-                'password_confirm' => [
-                    Rule::requiredIf(function () use ($customerData) {
-                        return (!empty($customerData['password']));
-                    }),
-                    'same:password'
-                ],
-            ]);
 
-            if ($validator->fails()) {
-                return new JsonResponse([
-                    'message' => $validator->messages()->first(),
-                    'validation' => false,
-                ], 400);
-            }
-
-            $newsLetterSubscription = json_encode([
-                'email' =>  $customerData['subscribedToMailingList']
-            ]);
-
+        if (!$customer) {
             $customer = Customer::create([
                 'unique_id' => Uuid::uuid4(),
                 'name' => $customerData['name'],
                 'email' => $customerEmail,
                 'password' => !empty($customerData['password']) ? \Hash::make($customerData['password']) : null,
-                'newsletter_subscription' => $newsLetterSubscription,
+                'newsletter_subscription' => $customerData['newsletter_subscription'],
             ]);
         } else {
-            $customer = $customer->first();
-            $updateArray = ['newsletter_subscription->email' => $customerData['subscribedToMailingList']];
+            $updateArray['newsletter_subscription->email'] = $customerData['newsletter_subscription']['email'];
             if (empty($customer->password) && !empty($customerData['password'])) {
                 $updateArray['password'] = \Hash::make($customerData['password']);
             }
             $customer->update($updateArray);
+            $customer->refresh();
         }
 
         $order = Order::create([
@@ -146,7 +113,7 @@ class PaymentController extends Controller
             'currency' =>  $currency
         ]));
 
-        if($customerData['subscribedToMailingList']) {
+        if($customerData['newsletter_subscription']['email']) {
             $splitName = explode(' ', $customer->name); // Restricts it to only 2 values, for names like Billy Bob Jones
 
             $first_name = $splitName[0];
@@ -164,7 +131,7 @@ class PaymentController extends Controller
                     'order' => $order,
                     'currency' => $currency,
                     'tickets' => $order->tickets,
-                    'subscribed' =>$customer['subscribedToMailingList'],
+                    'subscribed' =>$customer['newsletter_subscription']['email'],
                 ],
             ]))->setStatusCode(Response::HTTP_OK);
         } else {

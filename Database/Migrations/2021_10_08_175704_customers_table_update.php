@@ -16,6 +16,7 @@ class CustomersTableUpdate extends Migration
         Schema::table('customers', function (Blueprint $table) {
             $table->string('password')->nullable();
             $table->json('newsletter_subscription')->nullable();
+            $table->unique('email', 'unique_email');
         });
     }
 
@@ -29,6 +30,7 @@ class CustomersTableUpdate extends Migration
         Schema::table('customers', function (Blueprint $table) {
             $table->dropColumn('password');
             $table->dropColumn('newsletter_subscription');
+            $table->dropIndex('unique_email');
         });
     }
 }

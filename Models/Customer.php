@@ -16,18 +16,26 @@ class Customer extends Model
         'newsletter_subscription' => 'array'
     ];
 
+    protected $hidden = [
+        'password',
+    ];
+
     protected $fillable = [
         'unique_id',
         'name',
         'email',
         'password',
-        'registered',
-        'newsletter_subscription->email'
+        'newsletter_subscription',
+        'newsletter_subscription->email',
+        'newsletter_subscription->sms',
+        'newsletter_subscription->phone'
     ];
 
     protected $attributes = [
         'newsletter_subscription' => '{
-            "email": false
+            "email": false,
+            "sms": false,
+            "phone": false
         }'
     ];
 

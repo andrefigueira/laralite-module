@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace Modules\Laralite\Traits;
 
 use Illuminate\Http\JsonResponse;
 
