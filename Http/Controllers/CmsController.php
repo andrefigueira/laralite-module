@@ -74,7 +74,7 @@ class CmsController extends Controller
             return redirect('/login');
         }
 
-        if ($pageSlug === '/login' && Auth::guard('customers')->check()) {
+        if ($pageSlug === '/login' && auth('customers')->check()) {
             Log::debug('Authentication successful, redirecting to my-account');
 
             return redirect('my-account');
