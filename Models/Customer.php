@@ -2,22 +2,26 @@
 
 namespace Modules\Laralite\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Modules\Laralite\Entities\Ticket;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Class Customer
  * @package Modules\Laralite\Models
  */
-class Customer extends Model
+class Customer extends Authenticatable implements JWTSubject
 {
+    use Notifiable;
+
     protected $casts = [
-        'newsletter_subscription' => 'array'
+        'newsletter_subscription' => 'array',
+        'email_verified_at' => 'datetime',
     ];
 
     protected $hidden = [
-        'password',
+        'password', 'remember_token',
     ];
 
     protected $fillable = [
@@ -47,5 +51,23 @@ class Customer extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'customer_id', 'id');
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier() {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims() {
+        return [];
     }
 }

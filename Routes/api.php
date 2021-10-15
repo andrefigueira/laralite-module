@@ -100,8 +100,8 @@ Route::group([], static function () {
     Route::get('/oauth/clients', 'Api\ClientController@get');
     Route::get('/oauth/personal-access-tokens', 'Api\PersonalAccessTokenController@get');
 
-    Route::post('/login', 'Api\LoginController@login');
-    Route::post('/signup', 'Api\SignupController@signup');
+    Route::post('/login', 'Api\CustomerAuthController@login');
+    Route::post('/signup', 'Api\CustomerAuthController@signup');
 //    Route::post('/form', 'Api\FormController@submit');
 });
 
