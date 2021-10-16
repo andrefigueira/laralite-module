@@ -4,14 +4,13 @@ namespace Modules\Laralite\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Class Customer
  * @package Modules\Laralite\Models
  */
-class Customer extends Authenticatable implements JWTSubject
+class Customer extends Authenticatable
 {
     use Notifiable;
 
