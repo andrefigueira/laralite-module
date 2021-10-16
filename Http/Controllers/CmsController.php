@@ -91,10 +91,8 @@ class CmsController extends Controller
 
             /** @var User $authedUser */
             $authedUser = Auth::guard('customers')->user();
-            $authedUser->load('account');
             $page->authenticated = true;
             $page->authed_user = $authedUser;
-            $page->authed_user->token = $authedUser->createToken('access-token')->plainTextToken;
         }
 
         $settings = Settings::firstOrFail();
