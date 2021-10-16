@@ -15,8 +15,6 @@ class CmsController extends Controller
 {
     public function route(Request $request)
     {
-        $this->middleware('auth:sanctum');
-
         $requestSegments = $request->segments();
         $pageSlug = '/' . implode('/', $requestSegments);
 
