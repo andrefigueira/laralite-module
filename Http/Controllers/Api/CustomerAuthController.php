@@ -4,12 +4,13 @@ namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Modules\Laralite\Http\Requests\LoginRequest;
 use Modules\Laralite\Http\Requests\SignUpRequest;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Traits\ApiResponses;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\HttpFoundation\Response;
 use Auth;
 
 
@@ -21,11 +22,10 @@ class CustomerAuthController extends Controller
     {
         $data = $request->validated();
         if (!auth('customers')->attempt($data)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->error('Invalid email and password Please try again', 401);
         }
         /** @var Customer $customer */
         $customer = Customer::where('email', $data['email'])->first();
-        auth('customers')->login($customer);
 
         return $this->success([], 'Login Successful', '200');
     }
@@ -68,12 +68,13 @@ class CustomerAuthController extends Controller
     /**
      * Log the user out (Invalidate the token).
      *
-     * @return JsonResponse
+     * @param Request $request
+     * @return RedirectResponse
      */
-    public function logout(): JsonResponse
+    public function logout(Request $request): RedirectResponse
     {
-        auth()->logout();
+        auth('customers')->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return redirect('/');
     }
 }
