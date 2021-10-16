@@ -38,9 +38,11 @@ class CustomerAuthController extends Controller
     {
         try {
             $data = $request->validated();
+            /** @var Customer $customer */
+            $customer = Customer::firstOrNew([ 'email' => $data['email']]);
             $data['unique_id'] =  Uuid::uuid4();
             $data['password'] = \Hash::make($data['password']);
-            $customer = new Customer($data);
+            $customer->fill($data);
             $customer->save();
         } catch(\Throwable $e) {
             \Log::error('User Signup failure', [
