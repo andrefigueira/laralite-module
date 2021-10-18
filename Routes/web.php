@@ -83,6 +83,11 @@ Route::group(['middleware' => 'auth'], function () {
 //    Route::get('/home', 'HomeController@index')->name('home');
 });
 
+
+Route::post('/login', 'Auth\CustomerAuthController@login');
+Route::get('/logout', 'Auth\CustomerAuthController@logout');
+Route::post('/signup', 'Auth\CustomerAuthController@signup');
+
 Route::get('/ticket/{uuid}', 'TicketController@generateTicket');
 
 Route::get('/parallax', 'LaraliteController@parallax');

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Laralite\Http\Controllers\Api;
+namespace Modules\Laralite\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -24,8 +24,6 @@ class CustomerAuthController extends Controller
         if (!auth('customers')->attempt($data)) {
             return $this->error('Invalid email and password Please try again', 401);
         }
-        /** @var Customer $customer */
-        $customer = Customer::where('email', $data['email'])->first();
 
         return $this->success([], 'Login Successful', '200');
     }
