@@ -86,7 +86,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::post('/login', 'Auth\CustomerAuthController@login');
 Route::get('/logout', 'Auth\CustomerAuthController@logout');
-Route::post('/signup', 'Auth\CustomerAuthController@signup');
+Route::post('/signup', 'Auth\SignupController@signup');
 
 Route::get('/ticket/{uuid}', 'TicketController@generateTicket');
 
