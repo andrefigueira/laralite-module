@@ -86,7 +86,7 @@ class CmsController extends Controller
 
         $page->authenticated = false;
 
-        if (Auth::guard('customers')->check()) {
+        if (auth()->guard('customers')->check()) {
             Log::debug('Authenticated, attempting to create an access token and assigning to authed user');
 
             /** @var User $authedUser */
