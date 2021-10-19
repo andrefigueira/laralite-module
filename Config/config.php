@@ -115,5 +115,20 @@ return [
                 ],
             ],
         ],
+        [
+            'name' => 'My Account',
+            'slug' => 'my-account',
+            'settings' => [
+                'icon' => 'fa-user',
+            ],
+            'properties' => [
+                'items' => [
+                    [
+                        'name' => '',
+                        'url' => ''
+                    ]
+                ],
+            ],
+        ],
     ],
 ];
