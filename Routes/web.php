@@ -88,6 +88,7 @@ Route::post('/login', 'Auth\CustomerAuthController@login');
 Route::get('/logout', 'Auth\CustomerAuthController@logout');
 Route::get('/account', 'Auth\CustomerAuthController@account');
 Route::put('/account', 'Auth\CustomerAuthController@accountUpdate');
+Route::post('/change-password', 'Auth\CustomerAuthController@changePassword');
 Route::post('/signup', 'Auth\SignupController@signup');
 
 Route::get('/ticket/{uuid}', 'TicketController@generateTicket');
