@@ -130,5 +130,20 @@ return [
                 ],
             ],
         ],
+        [
+            'name' => 'My Orders',
+            'slug' => 'my-orders',
+            'settings' => [
+                'icon' => 'fa-shopping-cart',
+            ],
+            'properties' => [
+                'items' => [
+                    [
+                        'name' => '',
+                        'url' => ''
+                    ]
+                ],
+            ],
+        ],
     ],
 ];

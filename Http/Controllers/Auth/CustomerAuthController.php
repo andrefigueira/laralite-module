@@ -60,6 +60,19 @@ class CustomerAuthController extends Controller
         ], '');
     }
 
+    public function orders(): JsonResponse
+    {
+        if(!auth('customers')->id()) {
+            return $this->error('You are not authorized to access this', 403);
+        }
+
+        $customer = auth('customers')->user();
+
+        return $this->success([
+            'orders'    =>  $customer->orders,
+        ], '');
+    }
+
     public function accountUpdate(AccountUpdateRequest $request)
     {
         if(!auth('customers')->id()) {
