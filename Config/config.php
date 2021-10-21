@@ -115,5 +115,35 @@ return [
                 ],
             ],
         ],
+        [
+            'name' => 'My Account',
+            'slug' => 'my-account',
+            'settings' => [
+                'icon' => 'fa-user',
+            ],
+            'properties' => [
+                'items' => [
+                    [
+                        'name' => '',
+                        'url' => ''
+                    ]
+                ],
+            ],
+        ],
+        [
+            'name' => 'My Orders',
+            'slug' => 'my-orders',
+            'settings' => [
+                'icon' => 'fa-shopping-cart',
+            ],
+            'properties' => [
+                'items' => [
+                    [
+                        'name' => '',
+                        'url' => ''
+                    ]
+                ],
+            ],
+        ],
     ],
 ];

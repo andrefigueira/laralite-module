@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Modules\Laralite\Http\Requests\AccountUpdateRequest;
 use Modules\Laralite\Http\Requests\LoginRequest;
+use Modules\Laralite\Http\Requests\PasswordChangeRequest;
 use Modules\Laralite\Http\Requests\SignUpRequest;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Traits\ApiResponses;
@@ -40,4 +42,5 @@ class CustomerAuthController extends Controller
 
         return redirect('/');
     }
+
 }
