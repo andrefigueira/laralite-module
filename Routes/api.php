@@ -111,3 +111,8 @@ Route::get('/product', 'Api\ProductController@get');
 Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
 Route::post('/process-payment', 'Api\PaymentController@processPayment');
 Route::get('/discount/verify/{code}', 'Api\DiscountController@verify');
+
+Route::get('/orders', 'Controller\CustomerController@orders');
+Route::get('/account', 'Controller\CustomerController@account');
+Route::put('/account', 'Controller\CustomerController@accountUpdate');
+Route::post('/change-password', 'Controller\CustomerController@changePassword');
