@@ -9,10 +9,10 @@
                         <div class="col-lg-10">
                             <div class="text-center">
                                 <a href="/admin" class="logo">
-                                    <h3 style="text-decoration: none !important; color: black">LARALITE</h3>
+                                    <h3 style="text-decoration: none !important; color: black">{{ env('APP_NAME') ?? 'Admin' }} Portal</h3>
                                 </a>
                                 <h4 class="font-size-18 mt-4">Welcome Back !</h4>
-                                <p class="text-muted">Sign in to continue to Laralite.</p>
+                                <p class="text-muted">Sign in to continue to {{ env('APP_NAME') }}.</p>
                             </div>
 
                             <div class="mt-5">
@@ -55,7 +55,7 @@
                             </div>
                             <div class="mt-5 text-center">
                                 <p class="mb-3 text-center text-muted text-medium">
-                                    &copy; {{ date('Y') }} Laralite &middot; v{{ env('APP_VERSION') }}
+                                    &copy; {{ date('Y') }} {{ env('APP_NAME')  }} &middot; v{{ env('APP_VERSION') }}
                                     </p>
                             </div>
                         </div>
