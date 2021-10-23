@@ -6,14 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Modules\Laralite\Http\Requests\AccountUpdateRequest;
 use Modules\Laralite\Http\Requests\LoginRequest;
-use Modules\Laralite\Http\Requests\PasswordChangeRequest;
-use Modules\Laralite\Http\Requests\SignUpRequest;
-use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Traits\ApiResponses;
-use Ramsey\Uuid\Uuid;
-use Auth;
 
 
 class CustomerAuthController extends Controller
@@ -27,6 +21,10 @@ class CustomerAuthController extends Controller
             return $this->error('Invalid email and password Please try again', 401);
         }
 
+        if ($redirect = $request->post('redirect')) {
+            redirect($redirect)::back();
+        }
+
         return $this->success([], 'Login Successful', '200');
     }
 
@@ -36,7 +34,7 @@ class CustomerAuthController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-    public function logout(Request $request): RedirectResponse
+    public function logout(): RedirectResponse
     {
         auth('customers')->logout();
 

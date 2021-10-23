@@ -13,6 +13,6 @@ trait ApiFailedValidation
             'success'   => false,
             'message'   => 'Validation errors',
             'data'      => $validator->errors()
-        ], '400'));
+        ], '422'));
     }
 }

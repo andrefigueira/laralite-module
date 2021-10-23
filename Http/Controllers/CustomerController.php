@@ -1,18 +1,21 @@
 <?php
 
-namespace Modules\Laralite\Http\Controllers\Controller;
+namespace Modules\Laralite\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Modules\Laralite\Http\Requests\AccountUpdateRequest;
 use Modules\Laralite\Http\Requests\PasswordChangeRequest;
+use Modules\Laralite\Models\Customer;
+use Modules\Laralite\Traits\ApiFailedValidation;
 use Modules\Laralite\Traits\ApiResponses;
 
 
 class CustomerController extends Controller
 {
-    use ApiResponses;
+    use ApiResponses, ApiFailedValidation;
 
     public function account(Request $request): JsonResponse
     {
@@ -80,5 +83,29 @@ class CustomerController extends Controller
         ]);
 
         return $this->success([], 'Password updated successfully');
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws ValidationException
+     */
+    public function emailAvailable(Request $request): JsonResponse
+    {
+        $validator = \Validator::make($request->all(), [
+            'email' => 'required|email'
+        ]);
+
+        if ($validator->fails()) {
+            $this->failedValidation($validator);
+        }
+
+        $email = $request->get('email');
+        $customer = Customer::where('email', '=' , $email)->whereNotNull('password')->first();
+        $availability = $customer ? 'Unavailable' : 'Available';
+        return $this->success(
+            ['available' => !$customer],
+            'Email is ' . $availability
+        );
     }
 }
