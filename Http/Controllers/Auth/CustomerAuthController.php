@@ -21,11 +21,9 @@ class CustomerAuthController extends Controller
             return $this->error('Invalid email and password Please try again', 401);
         }
 
-        if ($redirect = $request->post('redirect')) {
-            redirect($redirect)::back();
-        }
-
-        return $this->success([], 'Login Successful', '200');
+        return $this->success([
+            'user' => auth('customers')->user()
+        ], 'Login Successful', '200');
     }
 
     /**
