@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>{{ env('APP_NAME') }} CMS</title>
+    <title>{{ config('app.name') }} CMS</title>
     <link href="/css/admin.css" rel="stylesheet">
     <link href="/css/custom.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">

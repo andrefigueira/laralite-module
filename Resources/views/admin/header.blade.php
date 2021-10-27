@@ -10,8 +10,8 @@
                 </button>
                 @include('laralite::admin.sidebar')
 <!--                <b-navbar-brand href="/admin/">
-                    {{ env('APP_NAME') }} CMS
-                    <span class="version-tag">v{{ env('APP_VERSION') }}
+                    {{ config('app.name') }} CMS
+                    <span class="version-tag">v{{ config('app.version') }}
                 </span></b-navbar-brand>-->
                 <!-- Right aligned nav items -->
 <!--                <b-navbar-nav class="ml-auto">
