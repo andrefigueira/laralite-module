@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Modules\Laralite\Http\Requests\LoginRequest;
 use Modules\Laralite\Traits\ApiResponses;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class CustomerAuthController extends Controller
@@ -23,7 +24,7 @@ class CustomerAuthController extends Controller
 
         return $this->success([
             'user' => auth('customers')->user()
-        ], 'Login Successful', '200');
+        ], 'Login Successful', Response::HTTP_ACCEPTED);
     }
 
     /**
