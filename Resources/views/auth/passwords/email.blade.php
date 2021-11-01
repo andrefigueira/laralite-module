@@ -9,10 +9,10 @@
                         <div class="col-lg-10">
                             <div class="text-center">
                                 <a href="/admin" class="logo">
-                                    <h3 style="text-decoration: none !important; color: black">LARALITE</h3>
+                                    <h3 style="text-decoration: none !important; color: black">{{ config('app.name')  }}</h3>
                                 </a>
                                 <h4 class="font-size-18 mt-4">Reset Password</h4>
-                                <p class="text-muted">Reset your password to Laralite.</p>
+                                <p class="text-muted">Reset your password to {{ config('app.name')  }}.</p>
                             </div>
 
                             @if (session('status'))
@@ -44,7 +44,7 @@
                             </div>
                             <div class="mt-5 text-center">
                                 <p class="mb-3 text-center text-muted text-medium">
-                                    &copy; {{ date('Y') }} Laralite &middot; v{{ env('APP_VERSION') }}
+                                    &copy; {{ date('Y') }} {{ config('app.name')  }} &middot; v{{ config('app.version') }}
                                 </p>
                             </div>
                         </div>

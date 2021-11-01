@@ -9,10 +9,10 @@
                         <div class="col-lg-10">
                             <div class="text-center">
                                 <a href="/admin" class="logo">
-                                    <h3 style="text-decoration: none !important; color: black">LARALITE</h3>
+                                    <h3 style="text-decoration: none !important; color: black">{{ config('app.name') ?? 'Admin' }} Portal</h3>
                                 </a>
                                 <h4 class="font-size-18 mt-4">Welcome Back !</h4>
-                                <p class="text-muted">Sign in to continue to Laralite.</p>
+                                <p class="text-muted">Sign in to continue to {{ config('app.name') }}.</p>
                             </div>
 
                             <div class="mt-5">
@@ -55,7 +55,7 @@
                             </div>
                             <div class="mt-5 text-center">
                                 <p class="mb-3 text-center text-muted text-medium">
-                                    &copy; {{ date('Y') }} Laralite &middot; v{{ env('APP_VERSION') }}
+                                    &copy; {{ date('Y') }} {{ config('app.name')  }} &middot; v{{ config('app.version') }}
                                     </p>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
             <div class="page-section p-4 mt-10">
                 <form class="form-signin" method="POST" action="{{ route('login') }}">
                     @csrf
-                    <h1 class="login-title">Login to {{ env('APP_NAME') }}</h1>
+                    <h1 class="login-title">Login to {{ config('app.name') }}</h1>
 
                     <label for="inputEmail" class="sr-only">Email address</label>
                     <input id="email" type="email" placeholder="Email address" class="form-control mb-2 @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
@@ -97,7 +97,7 @@
                 </form>
             </div>
 
-            <p class="mt-2 mb-3 text-center text-muted text-small">&copy; {{ date('Y') }} Laralite &middot; v{{ env('APP_VERSION') }}</p>
+            <p class="mt-2 mb-3 text-center text-muted text-small">&copy; {{ date('Y') }} Laralite &middot; v{{ config('app.version') }}</p>
         </div>
     </div>-->
 @endsection
