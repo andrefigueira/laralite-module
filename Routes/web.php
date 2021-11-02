@@ -100,4 +100,10 @@ Route::get('/parallax', 'LaraliteController@parallax');
  */
 Route::get('/dynamic', 'CmsController@dynamic');
 
+Route::get('/orders', 'CustomerController@orders');
+Route::get('/account', 'CustomerController@account');
+Route::put('/account', 'CustomerController@accountUpdate');
+Route::post('/change-password', 'CustomerController@changePassword');
+
 Route::any('/{any}', 'CmsController@route')->where('any', '.*');
+

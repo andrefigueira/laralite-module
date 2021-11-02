@@ -112,8 +112,4 @@ Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
 Route::post('/process-payment', 'Api\PaymentController@processPayment');
 Route::get('/discount/verify/{code}', 'Api\DiscountController@verify');
 
-Route::get('/orders', 'CustomerController@orders');
-Route::get('/account', 'CustomerController@account');
-Route::put('/account', 'CustomerController@accountUpdate');
 Route::get('/email-available', 'CustomerController@emailAvailable');
-Route::post('/change-password', 'CustomerController@changePassword');
