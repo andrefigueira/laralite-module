@@ -15,6 +15,7 @@ use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
+use Modules\Laralite\Traits\ApiResponses;
 use Ramsey\Uuid\Uuid;
 use Spatie\Newsletter\NewsletterFacade;
 use Stripe\Exception\ApiErrorException;
@@ -23,6 +24,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PaymentController extends Controller
 {
+    use ApiResponses;
+
     /**
      * @param PaymentRequest $request
      * @return JsonResponse|object
@@ -34,10 +37,7 @@ class PaymentController extends Controller
         $basket = $request->get('basket');
         $customerData = $request->get('customer');
         $discount = $request->get('discount');
-
-        // @todo: Load stripe key from .env
-        $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
-
+        $stripeKey = env('STRIPE_KEY');
         $stripe = new StripeClient($stripeKey);
 
         if(!$stripe){
@@ -63,18 +63,13 @@ class PaymentController extends Controller
         ]);
 
         $customerEmail = $customerData['email'];
-
         $basketTotal = $this->getBasketTotal($basket);
-
-        // @todo: Load from settings
-        $paymentDescription = 'TrapMusicMuseum Payment';
         $settings = Settings::firstOrFail();
         $currency = json_decode($settings->settings, true)['currency'];
         /** @var Customer $customer */
         $customer = Customer::where([
             'email' => $customerEmail
         ])->first();
-
 
         if (!$customer) {
             $customer = Customer::create([
