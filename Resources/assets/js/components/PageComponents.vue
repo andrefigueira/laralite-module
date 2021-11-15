@@ -154,6 +154,7 @@
                 });
 
                 this.toggleFeatureOptions();
+                this.$emit('input', this.components);
             },
             toggleFeatureOptions() {
                 this.showFeatureOptions = !this.showFeatureOptions;

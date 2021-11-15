@@ -65,7 +65,7 @@
                     return false;
                 }
 
-                if (page.children.length > 0) {
+                if (typeof page.children !== "undefined" &&  page.children.length > 0) {
                     this.$bvModal.msgBoxOk('Unable to delete page, children exist').then(value => {
                         return false;
                     }).catch(error => {
