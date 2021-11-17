@@ -37,7 +37,7 @@
             {{ data.item.description }}
           </template>
           <template v-slot:cell(actions)="data">
-            <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right" style="width: 5%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
+            <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right mr-2" style="width: 5%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
             <a v-b-tooltip:hover title="Edit" :href="'/admin/templates/edit/' + data.item.id" class="float-right mr-3" style="text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
           </template>
         </b-table>

@@ -34,8 +34,8 @@
                         {{ timeFormat(data.item.created_at) }}
                     </template>
                     <template v-slot:cell(actions)="data">
-                        <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right" style="width: 10%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
-                        <a v-b-tooltip:hover title="Edit" :href="'/admin/discounts/edit/' + data.item.id" class="float-right mr-3" style="width: 10%; text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
+                        <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right mr-2" style="width: 10%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
+                        <a v-b-tooltip:hover title="Edit" :href="'/admin/discounts/edit/' + data.item.id" class="float-right mr-4" style="width: 10%; text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
                     </template>
                 </b-table>
                 </div>
