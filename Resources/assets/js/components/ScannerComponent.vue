@@ -2,9 +2,15 @@
     <div>
         <div class="row">
             <div class="col-md-12">
+              <b-button class="btn btn-lg float-right" variant="warning" @click="turnCameraOn()" style="margin: 8px; font-size: 18px; ">
+                <i v-b-tooltip:hover title="Refresh" class="ri-restart-line" style="font-size: 18px;"></i>
+              </b-button>
+            </div>
+            <div class="col-md-12">
 <!--              <p class="alert" :class="{ 'alert-danger': this.error, 'alert-success': !this.error }" v-if="message !== ''">
                 <b>TICKET ID: </b>{{ ticket_id }} <b v-if="!this.error">Visits: </b> {{ count }} <br/>{{ message }}
               </p>-->
+
               <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit">
               </qrcode-stream>
               <div v-if="validationPending" class="validation-pending">
