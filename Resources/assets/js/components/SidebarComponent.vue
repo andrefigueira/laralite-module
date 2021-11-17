@@ -149,7 +149,7 @@
                 <a href="#" data-toggle="collapse" data-target="#collapseFour">Advanced
                   <i class="ri-arrow-down-s-line float-right"></i></a>
               </div><!-- End card header -->
-              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/variables') || request.match('admin/authentication') || request.match('admin/settings') }" aria-labelledby="headingThree" data-parent="#accordion">
+              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/variables') || request.match('admin/authentication') || request.match('admin/import') || request.match('admin/settings') }" aria-labelledby="headingThree" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav">
                     <li class="nav-item" v-if="role">

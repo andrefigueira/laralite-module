@@ -46,8 +46,8 @@
               <span>{{ data.item.variants[0].pricing.price }}</span>
             </template>
             <template v-slot:cell(actions)="data">
-                <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right" style="width: 10%"><i class="ri-delete-bin-6-fill"></i></a>
-                <a v-b-tooltip:hover title="Edit" :href="'/admin/product/edit/' + data.item.id" class="float-right mr-3" style="width: 10%"><i class="ri-pencil-fill"></i></a>
+                <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right mr-2" style="width: 10%"><i class="ri-delete-bin-6-fill"></i></a>
+                <a v-b-tooltip:hover title="Edit" :href="'/admin/product/edit/' + data.item.id" class="float-right mr-4" style="width: 10%"><i class="ri-pencil-fill"></i></a>
             </template>
           </b-table>
         </div>
