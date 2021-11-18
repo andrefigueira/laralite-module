@@ -28,7 +28,10 @@
         <tr>
             <td align="center" valign="top">
                 <p style="color: white; text-align: left !important;"><strong>Order Summary:</strong></p>
-                <table border="1" cellpadding="20" cellspacing="0" width="100%" style="background-color: #FFFFFF; color: #333;border-collapse: collapse; border:solid 1px #333333;">
+<!--                <h6>Admit Quantity: {{ $product->quantity }}</h6>
+                <h6>Ticket Price: {{ $form['currency']['currency_symbol']  }} {{ $product->price }}</h6>-->
+                <h6>Confirmation Code: </h6>
+<!--                <table border="1" cellpadding="20" cellspacing="0" width="100%" style="background-color: #FFFFFF; color: #333;border-collapse: collapse; border:solid 1px #333333;">
                     <tr bgcolor="#FFFFFF">
                         <td>SKU</td>
                         <td>Quantity</td>
@@ -44,7 +47,7 @@
                     <tr>
                         <td colspan="5" align="right">Subtotal:{{ $form['currency']['currency_symbol']  }} {{ $product->price * $product->quantity }}</td>
                     </tr>
-                    </table>
+                    </table>-->
             </td>
         </tr>
     </table>
