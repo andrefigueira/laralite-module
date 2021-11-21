@@ -23,7 +23,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web']], function () {
 /**
  * Admin Routes
  */
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/admin', 'Admin\AdminController@home');
     Route::get('/admin/home', 'Admin\AdminController@home');
 
@@ -77,10 +77,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/admin/settings', 'Admin\SettingsController@index');
     Route::get('/admin/import', 'Admin\DataImportController@index');
 
-
     Route::get('/admin/scanner', 'Admin\ScannerController@scanner');
-
-//    Route::get('/home', 'HomeController@index')->name('home');
 });
 
 
@@ -92,12 +89,6 @@ Route::get('/ticket/{uuid}', 'TicketController@generateTicket');
 
 Route::get('/parallax', 'LaraliteController@parallax');
 
-
-/**
- * CMS catch-all route
- *
- * !! DO NOT DEFINE ANY ROUTES BENEATH THIS, MUST ALL BE REGISTERED ABOVE
- */
 Route::get('/dynamic', 'CmsController@dynamic');
 
 Route::get('/orders', 'CustomerController@orders');
@@ -105,5 +96,10 @@ Route::get('/account', 'CustomerController@account');
 Route::put('/account', 'CustomerController@accountUpdate');
 Route::post('/change-password', 'CustomerController@changePassword');
 
+/**
+ * CMS catch-all route
+ *
+ * !! DO NOT DEFINE ANY ROUTES BENEATH THIS, MUST ALL BE REGISTERED ABOVE
+ */
 Route::any('/{any}', 'CmsController@route')->where('any', '.*');
 

@@ -3,15 +3,25 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Modules\Laralite\Http\Requests\Api\DiscountSave;
 use Modules\Laralite\Models\Discount;
+use Modules\Laralite\Traits\ApiResponses;
 use Symfony\Component\HttpFoundation\Response;
 use Log;
 
 class DiscountController extends Controller
 {
+    use ApiResponses;
+
+    public function __construct()
+    {
+        $this->middleware('auth:admin')->except('verify');
+    }
+
     public function get(Request $request)
     {
         $discounts = Discount::query();
@@ -36,30 +46,44 @@ class DiscountController extends Controller
         return $discounts->paginate($perPage);
     }
 
+    /**
+     * @param $code
+     * @return JsonResponse
+     */
     public function verify($code)
     {
         try {
-            return Discount::where('code', '=', $code)->firstOrFail();
+            return Discount::where('code', '=', $code)
+                ->where(function ($query) {
+                    $query->whereDate('end_date', '>=', Carbon::now())
+                        ->orWhereNull('end_date');
+                })
+                ->firstOrFail()
+                ->makeHidden(Discount::CUSTOMER_HIDDEN_ATTRIBUTES);
         } catch (ModelNotFoundException $exception) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Failed to verify discount',
-                'errors' => [
+            return $this->error(
+                'Failed to verify discount',
+                Response::HTTP_NOT_FOUND,
+                [
                     $exception->getMessage(),
-                ],
-            ], Response::HTTP_NOT_FOUND);
+                ]
+            );
         } catch (\Throwable $exception) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Failed to verify discount',
-                'errors' => [
+            return $this->error(
+                'Failed to verify discount',
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+                [
                     $exception->getMessage(),
-                ],
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                ]
+            );
         }
     }
 
-    public function getOne($id)
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getOne($id): JsonResponse
     {
         try {
             return Discount::where('id', '=', $id)->firstOrFail();
@@ -74,22 +98,14 @@ class DiscountController extends Controller
         }
     }
 
-    public function create(Request $request)
+    /**
+     * @param DiscountSave $request
+     * @return JsonResponse
+     */
+    public function create(DiscountSave $request): JsonResponse
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'code' => 'required',
-            'type' => 'required',
-            'value' => 'required',
-        ]);
-
         try {
-            $discount = Discount::create([
-                'name' => $request->get('name'),
-                'code' => $request->get('code'),
-                'type' => $request->get('type'),
-                'value' => $request->get('value'),
-            ]);
+            $discount = Discount::create($request->validated());
 
             Log::info('Created discount', [
                 'request' => $request->all(),
@@ -108,34 +124,24 @@ class DiscountController extends Controller
                 'message' => $exception->getMessage(),
             ]);
 
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Failed to create discount',
-                'errors' => [
-                    $exception->getMessage(),
-                ],
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->error(
+                'Failed to create discount',
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
-    public function update(Request $request, $id)
+    /**
+     * @param DiscountSave $request
+     * @param $id
+     * @return JsonResponse
+     */
+    public function update(DiscountSave $request, $id): JsonResponse
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'code' => 'required',
-            'type' => 'required',
-            'value' => 'required',
-        ]);
-
         try {
             $discount = Discount::where('id', '=', $id)->firstOrFail();
 
-            $discount->update([
-                'name' => $request->get('name'),
-                'code' => $request->get('code'),
-                'type' => $request->get('type'),
-                'value' => $request->get('value'),
-            ]);
+            $discount->update($request->validated());
 
             Log::info('Updated discount', [
                 'request' => $request->all(),
@@ -158,7 +164,11 @@ class DiscountController extends Controller
         }
     }
 
-    public function delete($id)
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function delete($id): JsonResponse
     {
         try {
             $discount = Discount::where('id', '=', $id)->firstOrFail();

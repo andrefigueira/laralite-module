@@ -3,12 +3,15 @@
 namespace Modules\Laralite\Http\Controllers\Admin;
 
 use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Laralite\Models\Discount;
+use Modules\Laralite\Traits\ApiResponses;
+use Symfony\Component\HttpFoundation\Response;
 
 class DiscountController extends Controller
 {
+    use ApiResponses;
+
     /**
      * Display a listing of the resource.
      * @return Renderable

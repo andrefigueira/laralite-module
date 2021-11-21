@@ -11,5 +11,16 @@ class Discount extends Model
         'code',
         'type',
         'value',
+        'end_date',
+        'start_date',
+    ];
+
+    public const CUSTOMER_HIDDEN_ATTRIBUTES = [
+        'updated_at',
+        'created_at',
+        'end_date',
+        'start_date',
+        'id',
+        'name'
     ];
 }
