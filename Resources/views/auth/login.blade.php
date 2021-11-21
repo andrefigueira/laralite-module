@@ -37,7 +37,7 @@
                                     </div>
 
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" id="customControlInline" class="custom-control-input">
+                                        <input type="checkbox" id="customControlInline" name="remember" value="1" class="custom-control-input">
                                         <label for="customControlInline" class="custom-control-label">Remember me</label>
                                     </div>
 
