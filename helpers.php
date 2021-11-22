@@ -1,6 +1,7 @@
 <?php
 
 use Barryvdh\DomPDF\Facade as PDF;
+use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 
@@ -24,6 +25,7 @@ if (! function_exists('generateTicketPDF')) {
         $ticketUuid = $ticket->unique_id;
         $ticketQrCode = $ticket->ticket->image;
         $ticketAdmitQuantity = $ticket->admit_quantity ?? 1;
+        $confirmation_code = $ticket->order->confirmation_code;
 
         $products = $ticket->order->basket->products;
         $ticketPrice = 0;
@@ -54,10 +56,27 @@ if (! function_exists('generateTicketPDF')) {
                 'ticketQrCode',
                 'ticketPrice',
                 'ticketAdmitQuantity',
-                'currency'
+                'currency',
+                'confirmation_code'
             )
         );
 
         return $pdf->stream();
+    }
+
+    function generateUniqueCode($prefix = '') {
+        $code = '';
+
+        $codeExists = false;
+        do {
+            $code = $prefix . substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
+            $order = Order::where('confirmation_code', $code)->first();
+
+            $codeExists = $order && $order->id;
+
+        } while ($codeExists);
+
+
+        return $code;
     }
 }

@@ -13,7 +13,8 @@ class Order extends Model
         'payment_processor_result',
         'status',
         'order_status',
-        'refunded'
+        'refunded',
+        'confirmation_code'
     ];
 
     protected $casts = [
