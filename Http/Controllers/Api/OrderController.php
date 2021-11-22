@@ -31,7 +31,7 @@ class OrderController extends Controller
         $orders->whereHas('customer', function ($q) use ($request) {
           $q->where('name', 'LIKE', '%' . $request->input('filter') . '%')
             ->orWhere('email', 'LIKE', '%' . $request->input('filter') . '%');
-        })->get();
+        })->orWhere('confirmation_code', 'LIKE' , '%' . $request->input('filter') . '%')->get();
       }
 
         if ($request->input('sortBy') !== null) {

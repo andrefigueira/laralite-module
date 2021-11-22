@@ -16,6 +16,10 @@ class UserController extends Controller
 {
     public function get(Request $request)
     {
+     /*   $code = generateUniqueCode('TRAP-');
+
+        dd($code);*/
+
         $users = User::query();
         $perPage = $request->get('perPage', 1);
 

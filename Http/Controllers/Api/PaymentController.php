@@ -3,6 +3,7 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Barryvdh\LaravelIdeHelper\Helpers;
 use Endroid\QrCode\QrCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class PaymentController extends Controller
 
     /**
      * @param PaymentRequest $request
+     * @param $order
      * @return JsonResponse|object
      * @throws ApiErrorException
      */
@@ -88,8 +90,13 @@ class PaymentController extends Controller
             $customer->refresh();
         }
 
+        $confirm_code = generateUniqueCode('TRAP-');
+
+        /*dd($code);*/
+
         $order = Order::create([
             'unique_id' => Uuid::uuid4(),
+            'confirmation_code' => generateUniqueCode('TRAP-'),
             'customer_id' => $customer->id,
             'basket' => $basket,
             'status' => 1,

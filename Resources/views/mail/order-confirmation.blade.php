@@ -27,24 +27,15 @@
         </tr>
         <tr>
             <td align="center" valign="top">
-                <p style="color: white; text-align: left !important;"><strong>Order Summary:</strong></p>
-               <table border="1" cellpadding="20" cellspacing="0" width="100%" style="background-color: #FFFFFF; color: #333;border-collapse: collapse; border:solid 1px #333333;">
-                    <tr bgcolor="#FFFFFF">
-                        <td>SKU</td>
-                        <td>Quantity</td>
-                        <td>Price</td>
-                    </tr>
-                    @foreach($form['order']->basket->products as $product)
-                        <tr>
-                            <td align="left" width="75%">{{ $product->sku }}</td>
-                            <td align="left" width="75%">&times;{{ $product->quantity }}</td>
-                            <td align="left" width="75%" style="padding: 10px !important;">{{ $form['currency']['currency_symbol']  }} {{ $product->price }}</td>
-                        </tr>
-                    @endforeach
-                    <tr>
-                        <td colspan="5" align="right">Subtotal:{{ $form['currency']['currency_symbol']  }} {{ $product->price * $product->quantity }}</td>
-                    </tr>
-                    </table>
+<!--                <h4 style="color: white; text-align: left !important;"><strong>Order Summary:</strong></h4>-->
+                @foreach($form['order']->basket->products as $product)
+                    <div style="color: white; text-align: center !important;">
+                        <h2>Confirmation Code: {{ $form['order']->confirmation_code }}</h2>
+                        <h2>Admit Quantity: {{ $product->quantity }}</h2>
+                        <h2>Total Amount: {{ $form['currency']['currency_symbol']  }} {{ $product->price * $product->quantity }}</h2>
+                        <h2>General Admission</h2>
+                    </div>
+                @endforeach
             </td>
         </tr>
     </table>
