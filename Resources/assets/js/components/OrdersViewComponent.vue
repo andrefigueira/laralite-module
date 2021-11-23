@@ -61,6 +61,10 @@
                                 <td width="40%"><strong>ID</strong></td>
                                 <td>{{ order.unique_id }}</td>
                             </tr>
+                          <tr>
+                            <td width="40%"><strong>Confirmation Code</strong></td>
+                            <td>{{ order.confirmation_code }}</td>
+                          </tr>
                             <tr>
                                 <td><strong>Customer</strong></td>
                                 <td>{{ order.payment_processor_result.receipt_email }}</td>
