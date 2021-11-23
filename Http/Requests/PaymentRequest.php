@@ -21,16 +21,12 @@ class PaymentRequest extends FormRequest
      */
     public function rules(): array
     {
+       // dd($this->input('customer.register'));
         return [
             'customer.email' => 'required|email',
             'customer.name' => 'required|max:255',
             'customer.password' => 'nullable|min:8|max:20',
-            'customer.password_confirm' => [
-                Rule::requiredIf(function () {
-                    return (!empty($this->input('customer.password')));
-                }),
-                'same:customer.password'
-            ],
+            'customer.password_confirm' => 'exclude_if:customer.register,false|required|same:customer.password',
             'customer.newsletter_subscription' => 'array:email,sms,phone'
         ];
     }
