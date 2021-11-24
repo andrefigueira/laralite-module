@@ -70,7 +70,7 @@
             const vm = this;
             if (confirm("You are about to import data into the Customers and Orders table, do you wish to proceed?")) {
                 this.busy = true;
-                axios.get('/api/squarespace/import').then(function (result) {
+                axios.get('/api/squarespace/import', { withCredentials: true }).then(function (result) {
                     vm.busy = false;
                     vm.importSuccess = result.data.success;
                     vm.importMessage = result.data.message;

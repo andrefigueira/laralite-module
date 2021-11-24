@@ -100,7 +100,8 @@
                 this.isBusy = true;
 
                 const promise = axios.get(
-                    '/api/discount?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
+                    '/api/discount?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
+                    { withCredentials: true }
                 );
 
                 return promise.then((data) => {

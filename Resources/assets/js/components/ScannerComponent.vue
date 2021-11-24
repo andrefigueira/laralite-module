@@ -140,7 +140,7 @@ export default {
         this.turnCameraOff()
       },
       verifyTicket(result) {
-          axios.get('/api/scan/ticket/' + this.result)
+          axios.get('/api/scan/ticket/' + this.result, { withCredentials: true })
               .then((response) => {
                 console.log(response.data.message)
                 this.message = response.data.message;
