@@ -87,7 +87,7 @@
              * Get all of the authorized tokens for the user.
              */
             getTokens() {
-                axios.get('/oauth/tokens')
+                axios.get('/oauth/tokens', { withCredentials: true})
                         .then(response => {
                             this.tokens = response.data;
                         });

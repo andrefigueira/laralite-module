@@ -91,7 +91,8 @@
             this.isBusy = true;
 
             const promise = axios.get(
-                '/api/template?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc
+                '/api/template?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
+                { withCredentials: true}
             );
 
             return promise.then((data) => {
