@@ -17,10 +17,10 @@ class DiscountController extends Controller
 {
     use ApiResponses;
 
-    public function __construct()
+    /*public function __construct()
     {
         $this->middleware('auth:admin')->except('verify');
-    }
+    }*/
 
     public function get(Request $request)
     {
