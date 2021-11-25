@@ -32,6 +32,12 @@ class ProductCategoryController extends Controller
 
         return $productCategory->paginate($perPage);
     }
+    public function getList(Request $request)
+    {
+        $categoryList = ProductCategory::where('active', '=', 1)->get();
+
+        return $categoryList;
+    }
 
     public function getOne($id)
     {
@@ -60,6 +66,7 @@ class ProductCategoryController extends Controller
                 'name' => $request->get('name'),
                 'slug' => $request->get('slug'),
                 'description' => $request->get('description'),
+                'active' => $request->get('active'),
                 'meta' => $request->get('meta'),
                 'images' => $request->get('images'),
             ]);
@@ -105,6 +112,7 @@ class ProductCategoryController extends Controller
                 'name' => $request->get('name'),
                 'slug' => $request->get('slug'),
                 'description' => $request->get('description'),
+                'active' => $request->get('active'),
                 'meta' => $request->get('meta'),
                 'images' => $request->get('images'),
             ]);
