@@ -156,7 +156,7 @@
                     this.form.name = this.productCategory.name;
                     this.form.slug = this.productCategory.slug;
                     this.form.description = this.productCategory.description;
-                    this.form.active = this.productCategory.active;
+                    this.form.active = this.productCategory.active === 1;
                 }
             },
             save() {
