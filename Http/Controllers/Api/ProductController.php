@@ -34,11 +34,27 @@ class ProductController extends Controller
         return response()->json($products->orderBy('created_at', 'DESC')->paginate($perPage));
     }
 
-    public function getList(Request $request)
+    public function getProducts(Request $request)
     {
-        $productList = Product::with(['category'])->where('active', '=', 1)->get();
+        $products = Product::with(['category'])->where('active', '=', 1);
+        $perPage = $request->get('perPage', 1);
 
-        return $productList;
+        if ($request->get('all') === 'true') {
+            return $products->get();
+        }
+
+        if ($request->input('filter') !== 'null' && $request->input('filter') != '') {
+            $products->whereHas('category', function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->input('filter') . '%');
+            })->orWhere('name', 'LIKE', '%' . $request->input('filter') . '%')
+                ->orWhere('slug', 'LIKE', '%' . $request->input('filter') . '%')->get();
+        }
+
+        if ($request->input('sortBy') !== null) {
+            $products->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
+        }
+
+        return response()->json($products->orderBy('created_at', 'DESC')->paginate($perPage));
     }
 
     public function getOne($id)

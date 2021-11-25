@@ -55,6 +55,7 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::delete('/permissions/{id}', 'Api\PermissionsController@delete');
     Route::patch('/permissions/{id}', 'Api\PermissionsController@update');
 
+    Route::get('/product', 'Api\ProductController@get');
     Route::post('/product', 'Api\ProductController@create');
     Route::get('/product/{id}', 'Api\ProductController@getOne');
     Route::delete('/product/{id}', 'Api\ProductController@delete');
@@ -108,7 +109,7 @@ Route::post('/intent-secret', 'Api\PaymentController@intentSecret');
 // need to figure out a way to protect this route
 Route::get('/stripe-connect', 'Api\SettingsController@stripeConnect');
 
-Route::get('/product', 'Api\ProductController@get');
+Route::get('/product-list', 'Api\ProductController@getProducts');
 
 Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
 Route::post('/process-payment', 'Api\PaymentController@processPayment');
