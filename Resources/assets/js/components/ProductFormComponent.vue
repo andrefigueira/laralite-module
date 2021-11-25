@@ -69,6 +69,11 @@
                                         ></ckeditor>
                                         <b-form-invalid-feedback>Enter a valid description</b-form-invalid-feedback>
                                     </b-form-group>
+                                      <b-form-group id="product-active-group" label="Activate" label-for="product-active" class="pt-md-3">
+                                        <b-form-checkbox v-model="form.active" name="check-button" switch>
+<!--                                          <b>(Checked: {{ form.active }})</b>-->
+                                        </b-form-checkbox>
+                                      </b-form-group>
                                     </div>
                                   </div>
                                 </div><!-- End col -->
@@ -255,7 +260,7 @@
                             <div class="wizard-footer-right">
                                 <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab()" class="btn btn-primary wizard-footer-right" :style="props.fillButtonStyle">Next <i class="fas fa-arrow-right"></i></wizard-button>
 
-                                <wizard-button v-else @click.native="save()" class=" btn btn-success wizard-footer-right finish-button" :style="props.fillButtonStyle">{{props.isLastStep ? 'Save & Publish' : 'Next'}}</wizard-button>
+                                <wizard-button v-else @click.native="save()" class="btn btn-success wizard-footer-right finish-button" :style="props.fillButtonStyle">{{props.isLastStep ? 'Save & Publish' : 'Next'}}</wizard-button>
                             </div>
                         </template>
                     </form-wizard>
@@ -308,6 +313,7 @@
                     id: '',
                     name: '',
                     description: this.product.description,
+                    active: false,
                     category_id: '',
                     meta: {
                         title: '',
@@ -401,6 +407,18 @@
                 }
 
                 return method;
+            },
+            isActive() {
+              return this.currentState;
+            },
+
+            checkedValue: {
+              get() {
+                return this.defaultState
+              },
+              set(newValue) {
+                this.currentState = newValue;
+              }
             }
         },
         methods: {
@@ -412,8 +430,9 @@
                 return $dirty ? !$error : null;
             },
             loadProductCategoryOptions(defaultOption) {
-              axios.get('/api/product-category').then(response => {
-                  this.categoryOptions = response.data.data;
+              axios.get('/api/product-category-list', { withCredentials: true }).then(response => {
+                  this.categoryOptions = response.data;
+                  console.log(this.categoryOptions);
 
                   if (this.product.category_id === undefined) {
                       this.category = this.categoryOptions[0];
@@ -427,12 +446,13 @@
               });
             },
             load() {
-                if (this.product.id !== undefined) {
+              if (this.product.id !== undefined) {
                     this.form.id = this.product.id;
                     this.category_id = this.category.id;
                     this.form.name = this.product.name;
                     this.form.slug = this.product.slug;
                     this.form.description = this.product.description;
+                    this.form.active = this.product.active === 1 ;
                     this.form.meta = this.product.meta;
                     this.form.images = this.product.images;
                     this.form.variants = this.product.variants;

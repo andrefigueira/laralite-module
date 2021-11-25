@@ -31,6 +31,11 @@
                                 ></b-form-input>
                                 <b-form-invalid-feedback>Enter a valid name with more than 3 characters</b-form-invalid-feedback>
                             </b-form-group>
+                          <b-form-group id="product-active-group" label="Activate" label-for="product-active" class="pt-md-3">
+                            <b-form-checkbox v-model="form.active" name="check-button" switch>
+<!--                              <b>(Checked: {{ form.active }})</b>-->
+                            </b-form-checkbox>
+                          </b-form-group>
                         </div><!-- End col -->
                         <div class="col-md-6">
                           <b-form-group id="product-category-slug-group" label="Product category slug" label-for="product-category-slug">
@@ -90,6 +95,7 @@
                     name: '',
                     slug: '',
                     description: '',
+                    active: false
                 }
             }
         },
@@ -150,6 +156,7 @@
                     this.form.name = this.productCategory.name;
                     this.form.slug = this.productCategory.slug;
                     this.form.description = this.productCategory.description;
+                    this.form.active = this.productCategory.active;
                 }
             },
             save() {
@@ -168,6 +175,7 @@
                         name: this.form.name,
                         slug: this.form.slug,
                         description: this.form.description,
+                        active: this.form.active
                     }
                 }).then(response => {
                     this.saving = false;

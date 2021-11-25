@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 /**
  * Admin API Routes
  */
-Route::group(['middleware'=>'auth:api'], static function () {
+Route::group(['middleware'=>'auth'], static function () {
 
     Route::post('/page', 'Api\PageController@create');
     Route::get('/page', 'Api\PageController@get');
@@ -56,7 +56,6 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::patch('/permissions/{id}', 'Api\PermissionsController@update');
 
     Route::post('/product', 'Api\ProductController@create');
-
     Route::get('/product/{id}', 'Api\ProductController@getOne');
     Route::delete('/product/{id}', 'Api\ProductController@delete');
     Route::patch('/product/{id}', 'Api\ProductController@update');
@@ -66,6 +65,8 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::get('/product-category/{id}', 'Api\ProductCategoryController@getOne');
     Route::delete('/product-category/{id}', 'Api\ProductCategoryController@delete');
     Route::patch('/product-category/{id}', 'Api\ProductCategoryController@update');
+    Route::get('/product-category-list', 'Api\ProductCategoryController@getList');
+
 
     Route::get('/component', 'Api\ComponentController@get');
     Route::patch('/component/{id}', 'Api\ComponentController@update');
@@ -108,6 +109,7 @@ Route::post('/intent-secret', 'Api\PaymentController@intentSecret');
 Route::get('/stripe-connect', 'Api\SettingsController@stripeConnect');
 
 Route::get('/product', 'Api\ProductController@get');
+
 Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
 Route::post('/process-payment', 'Api\PaymentController@processPayment');
 Route::get('/discount/verify/{code}', 'Api\DiscountController@verify');

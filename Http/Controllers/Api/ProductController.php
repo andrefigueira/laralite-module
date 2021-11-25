@@ -34,6 +34,13 @@ class ProductController extends Controller
         return response()->json($products->orderBy('created_at', 'DESC')->paginate($perPage));
     }
 
+    public function getList(Request $request)
+    {
+        $productList = Product::with(['category'])->where('active', '=', 1)->get();
+
+        return $productList;
+    }
+
     public function getOne($id)
     {
         try {
@@ -76,6 +83,7 @@ class ProductController extends Controller
                 'name' => $request->get('name'),
                 'slug' => $request->get('slug'),
                 'description' => $request->get('description'),
+                'active' =>$request->get('active'),
                 'meta' => $request->get('meta'),
                 'images' => $request->get('images'),
                 'variants' => $request->get('variants'),
@@ -123,6 +131,7 @@ class ProductController extends Controller
                 'name' => $request->get('name'),
                 'slug' => $request->get('slug'),
                 'description' => $request->get('description'),
+                'active' => $request->get('active'),
                 'meta' => $request->get('meta'),
                 'images' => $request->get('images'),
                 'variants' => $request->get('variants'),

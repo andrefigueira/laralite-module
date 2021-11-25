@@ -120,7 +120,7 @@
             })
           },
             load() {
-                axios.get('/api/product').then(response => {
+                axios.get('/api/product', { withCredentials: true }).then(response => {
                     this.products = response.data.data;
 
                     if (this.products.length > 0) {

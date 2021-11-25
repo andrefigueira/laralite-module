@@ -10,5 +10,6 @@ class ProductCategory extends Model
         'name',
         'slug',
         'description',
+        'active'
     ];
 }
