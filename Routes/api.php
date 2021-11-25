@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 /**
  * Admin API Routes
  */
-Route::group(['middleware'=>'auth'], static function () {
+Route::group(['middleware'=>'auth:api'], static function () {
 
     Route::post('/page', 'Api\PageController@create');
     Route::get('/page', 'Api\PageController@get');
