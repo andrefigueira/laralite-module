@@ -35,6 +35,7 @@
             </template>
             <template v-slot:cell(name)="data">
               <span>{{ data.item.name }}</span>
+              <b-badge class="badge-soft-danger ml-2" v-if="!data.item.active"><i class="fas fa-check-circle"></i>InActive</b-badge>
             </template>
             <template v-slot:cell(slug)="data">
               <span>{{ data.item.slug }}</span>
