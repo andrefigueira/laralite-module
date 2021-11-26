@@ -78,6 +78,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/admin/import', 'Admin\DataImportController@index');
 
     Route::get('/admin/scanner', 'Admin\ScannerController@scanner');
+    Route::get('/admin/reporting', 'Admin\ReportingController@index');
+
 });
 
 

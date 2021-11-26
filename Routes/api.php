@@ -97,6 +97,8 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::delete('/discount/{id}', 'Api\DiscountController@delete');
     Route::patch('/discount/{id}', 'Api\DiscountController@update');
 
+    Route::get('/reporting', 'Api\ReportingController@get');
+
     Route::patch('/settings', 'Api\SettingsController@update');
 
     Route::get('/oauth/clients', 'Api\ClientController@get');

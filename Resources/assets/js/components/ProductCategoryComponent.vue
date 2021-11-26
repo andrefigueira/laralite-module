@@ -30,6 +30,10 @@
             :per-page="perPage"
             :current-page="currentPage"
             :filter="filter">
+          <template v-slot:cell(name)="data">
+            <span>{{ data.item.name }}</span>
+            <b-badge class="badge-soft-danger ml-2" v-if="!data.item.active"><i class="fas fa-check-circle"></i>InActive</b-badge>
+          </template>
           <template v-slot:cell(actions)="data">
             <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right" style="text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
             <a v-b-tooltip:hover title="Edit" :href="'/admin/product-category/edit/' + data.item.id" class="float-right mr-3" style="text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
