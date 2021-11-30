@@ -170,8 +170,13 @@ class OrderController extends Controller
 
     private function issueRefund ($type, $paymentId)
     {
+        // @todo: Load stripe key from DB
+        $settings = Settings::firstOrFail();
+
+        $stripeKey = json_decode($settings->settings, true)['connectedStripeAccount'];
+
         // @todo: Load stripe key from .env
-        $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
+        /*$stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';*/
 
         $stripe = new StripeClient($stripeKey);
 

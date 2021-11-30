@@ -39,7 +39,11 @@ class PaymentController extends Controller
         $basket = $request->get('basket');
         $customerData = $request->get('customer');
         $discount = $request->get('discount');
-        $stripeKey = env('STRIPE_KEY');
+
+        $settings = Settings::firstOrFail();
+
+        $stripeKey = json_decode($settings->settings, true)['connectedStripeAccount'];
+
         $stripe = new StripeClient($stripeKey);
 
         if(!$stripe){
@@ -66,7 +70,6 @@ class PaymentController extends Controller
 
         $customerEmail = $customerData['email'];
         $basketTotal = $this->getBasketTotal($basket);
-        $settings = Settings::firstOrFail();
         $currency = json_decode($settings->settings, true)['currency'];
         /** @var Customer $customer */
         $customer = Customer::where([
@@ -273,9 +276,12 @@ class PaymentController extends Controller
     {
         $amount = $request->get('amount');
         $currency = $request->get('currency');
+        $settings = Settings::firstOrFail();
+
+        $stripeKey = json_decode($settings->settings, true)['connectedStripeAccount'];
 
         // @todo: Load stripe key from .env
-        $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
+        /*$stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';*/
 
         $stripe = new StripeClient($stripeKey);
 
