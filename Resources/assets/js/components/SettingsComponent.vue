@@ -344,7 +344,7 @@ export default {
                 this.alertMessage = 'Saved Stripe Account Details';
                 this.alertType = 'success';
                 this.hideSecretKeyInfo();
-                window.open('https://connect.stripe.com/oauth/v2/authorize?response_type=code&client_id=' + process.env.STRIPE_CLIENT_ID + '&scope=read_write&redirect_uri=' + process.env.APP_URL);
+                window.open('https://connect.stripe.com/oauth/v2/authorize?response_type=code&client_id=' + process.env.MIX_STRIPE_CLIENT_ID + '&scope=read_write&redirect_uri=' + process.env.MIX_APP_URL);
               }).catch(error => {
                 this.saving = false;
                 this.alertShow = true;
