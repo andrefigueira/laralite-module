@@ -18,24 +18,33 @@
                 </div>
             </div><!-- End col -->
 
-
           <Tabs>
-            <TabItem name="Finance Settings">
-              <div class="row p-2">
-              <div class="col-md-6">
+            <TabItem>
+              <template #name>
+                <span>Finance Settings</span>
+              </template>
+
+              <div class="row p-3 pb-5">
+              <div class="col-md-3">
                 <div class="page-section pl-2 pr-2">
                   <label for="currency-option" class="mt-2" style="font-weight: bold">Currency</label>
                   <v-select class="mb-3" id="currency-option" label="title" v-model="settings.currency" :options="currencyOptions" :clearable="false"></v-select>
                 </div><!-- End page section -->
               </div><!-- End col -->
-              <div class="col-md-6">
-                <div class="page-section pl-2 pr-2 pb-2">
-                  <label for= "connected-stripe-account" class="mt-2" style="font-weight: bold">Connected Stripe Account</label>
-                  <b-form-input id="connected-stripe-account" v-model="settings.connectedStripeAccount" placeholder="Connected Stripe Account ID"></b-form-input>
-                  <br/>
-                  <a @click="connectStripeAccount()" class="btn btn-primary" style="width:100%;"><i class="fas fa-external-link-alt"></i> CONNECT STRIPE ACCOUNT</a>
-
-                  <div class="mt-4" v-if="settings.connectedStripeAccount !== ''">
+              <div class="col-md-9">
+                <div class="page-section p-2">
+                   <div class="mt-2" style="display: inline-block"><strong>Connected Stripe Account</strong></div>
+                   <a v-b-modal.secretKeyInfo class="btn btn-primary mb-2 float-right" v-if="settings.stripeSecretKey === ' '"><i class="fas fa-external-link-alt"></i>CONNECT STRIPE ACCOUNT</a>
+                   <a v-b-modal.secretKeyInfo class="btn btn-primary mb-2 float-right" v-else><i class="fas fa-external-link-alt"></i>RECONNECT STRIPE ACCOUNT</a>
+                  <div class="pt-4 mt-1 pl-2" v-if="settings.stripeSecretKey">
+                    <div>
+                      <p><strong>Secret Key:</strong> {{ hideSecretKey(settings.stripeSecretKey) }}</p>
+                      <p><strong>Account Id:</strong> {{ settings.stripeAccountId }}</p>
+                      <p><strong>Live Account:</strong> {{ settings.stripeLiveAccount  }}</p>
+                      <p><strong>Publisher Key:</strong> {{ settings.stripePublishKey }}</p>
+                    </div>
+                  </div>
+                  <div class="mt-4" v-if="settings.stripeSecretKey !== ''">
                     <b-form-checkbox
                         id="feeActive"
                         v-model="settings.feeActive"
@@ -44,16 +53,30 @@
                         :unchecked-value="false">
                       Activate fee take
                     </b-form-checkbox>
-
                     <label class="mt-2">Fee Amount</label>
                     <b-form-input v-model="settings.feeAmount" placeholder="100"></b-form-input>
                   </div>
                 </div><!-- End page section -->
               </div><!-- End col -->
               </div>
+
+              <b-modal size="lg" ref="secretKeyInfo" id="secretKeyInfo" title="Connected Stripe Account" class="mt-5" hide-footer no-close-on-backdrop>
+                <div>
+                  <label for= "connected-stripe-account" class="mt-1" style="font-weight: bold">Stripe Account Secret Key</label>
+                  <a target="_blank" class="float-right mt-2" style="font-size: 10px; cursor: pointer" href="https://stripe.com/docs/keys"><i class="fas fa-external-link-alt"></i>Find your Secret and Publishable Key</a>
+                  <b-form-input id="connected-stripe-account" v-model="settings.stripeSecretKey" placeholder="Connected Stripe Account ID"></b-form-input>
+                  <b-button class="mt-2" variant="warning" block @click="connectStripeAccount()" :disabled="settings.stripeSecretKey.length == 0">Connect Stripe Account</b-button>
+                  <b-button class="mt-3" block @click="hideSecretKeyInfo">Exit</b-button>
+                </div>
+              </b-modal>
+
             </TabItem>
 
-            <TabItem name="Site Settings">
+            <TabItem>
+              <template #name>
+                <span>Site Settings</span>
+              </template>
+
               <div class="row pl-2 pr-2 pb-2">
                 <div class="col-md-6">
                   <div class="page-section pl-2 pr-2">
@@ -137,7 +160,6 @@
 </template>
 
 <script>
-
 import {minLength, required} from "vuelidate/lib/validators";
 export default {
   mounted() {
@@ -152,9 +174,14 @@ export default {
                 alertType: 'primary',
                 alertMessage: '',
                 currentSettings: this.currentSettings,
+                hideDetails: true,
+                connectedStripePublishKey: '',
                 settings: {
                     currency: '$ US Dollar',
-                    connectedStripeAccount: '',
+                    stripeSecretKey: '',
+                    stripeAccountId: '',
+                    stripeLiveAccount: '',
+                    stripePublishKey: '',
                     feeActive: false,
                     feeAmount: '',
                     siteLogo: '',
@@ -177,7 +204,7 @@ export default {
                     {
                         title: '£ UK Sterling',
                         value: 'GBP',
-                      currency_symbol: '£'
+                        currency_symbol: '£'
                     }
                 ],
       fonts: [
@@ -281,6 +308,17 @@ export default {
           },
         },
         methods: {
+          hideSecretKey: function(secretKey) {
+            return secretKey.replace(/(.{10})(.*)(?=.2)/,
+                function(gp1, gp2, gp3) {
+                  for(let i = 0; i < gp3.length; i++) {
+                    gp2+= "*";
+                  } return gp2;
+                })
+          },
+          hideSecretKeyInfo() {
+            this.$refs['secretKeyInfo'].hide();
+          },
           onOpen() {
             console.log("open");
           },
@@ -294,15 +332,42 @@ export default {
             this.settings.siteLogo = '';
           },
             connectStripeAccount () {
-                window.open('https://connect.stripe.com/oauth/v2/authorize?response_type=code&client_id=ca_IEPc14SDbZBo3sYKSYnRAl733RTB6oPM&scope=read_write&redirect_uri=http://trapmusicmuseum.test/api/stripe-connect');
+              this.saving = true;
+
+              axios({
+                method: 'patch',
+                url: '/api/settings',
+                data: this.settings
+              }).then(response => {
+                this.saving = false;
+                this.alertShow = true;
+                this.alertMessage = 'Saved Stripe Account Details';
+                this.alertType = 'success';
+                this.hideSecretKeyInfo();
+                window.open('https://connect.stripe.com/oauth/v2/authorize?response_type=code&client_id=' + process.env.STRIPE_CLIENT_ID + '&scope=read_write&redirect_uri=' + process.env.APP_URL);
+              }).catch(error => {
+                this.saving = false;
+                this.alertShow = true;
+                this.alertType = 'danger';
+                this.alertMessage = 'Failed to save Stripe Account Details';
+              });
             },
             load () {
                 const settingsObject = JSON.parse(this.currentSettings)
                 if (settingsObject.currency) {
                     this.settings.currency = settingsObject.currency;
                 }
-                if (settingsObject.connectedStripeAccount) {
-                    this.settings.connectedStripeAccount = settingsObject.connectedStripeAccount;
+                if (settingsObject.stripeSecretKey) {
+                    this.settings.stripeSecretKey = settingsObject.stripeSecretKey;
+                }
+                if (settingsObject.stripeAccountId) {
+                  this.settings.stripeAccountId = settingsObject.stripeAccountId;
+                }
+
+                this.settings.stripeLiveAccount = settingsObject.stripeLiveAccount ? 'Yes' : 'No';
+
+                if (settingsObject.stripePublishKey) {
+                  this.settings.stripePublishKey = settingsObject.stripePublishKey;
                 }
                 if (settingsObject.feeActive) {
                     this.settings.feeActive = settingsObject.feeActive;
@@ -339,7 +404,7 @@ export default {
               }
                 var connectedAccount = this.getUrlParameter('connectedAccountId');
                 if (connectedAccount !== false) {
-                    this.settings.connectedStripeAccount = connectedAccount;
+                    this.settings.stripeSecretKey = connectedAccount;
                 }
             },
             getUrlParameter (sParam) {

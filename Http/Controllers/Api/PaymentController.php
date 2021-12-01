@@ -42,7 +42,7 @@ class PaymentController extends Controller
 
         $settings = Settings::firstOrFail();
 
-        $stripeKey = json_decode($settings->settings, true)['connectedStripeAccount'];
+        $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
 
         $stripe = new StripeClient($stripeKey);
 
@@ -257,10 +257,10 @@ class PaymentController extends Controller
             if (
                 $settings->feeActive === true &&
                 !empty($settings->feeAmount) &&
-                !empty($settings->connectedStripeAccount)
+                !empty($settings->stripeSecretKey)
             ) {
                 return [
-                    'connectedStripeAccount' => $settings->connectedStripeAccount,
+                    'stripeSecretKey' => $settings->stripeSecretKey,
                     'feeAmount' => $settings->feeAmount,
                 ];
             }
@@ -278,7 +278,7 @@ class PaymentController extends Controller
         $currency = $request->get('currency');
         $settings = Settings::firstOrFail();
 
-        $stripeKey = json_decode($settings->settings, true)['connectedStripeAccount'];
+        $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
 
         // @todo: Load stripe key from .env
         /*$stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';*/
@@ -299,7 +299,7 @@ class PaymentController extends Controller
                 'currency' => $currency,
                 'application_fee_amount' => $feeCollection['feeAmount'] * 100,
                 'transfer_data' => [
-                    'destination' => $feeCollection['connectedStripeAccount'],
+                    'destination' => $feeCollection['stripeSecretKey'],
                 ],
             ]);
         } else {
