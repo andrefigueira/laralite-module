@@ -15,9 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SettingsController extends Controller
 {
-    public function update(Request $request) 
+    public function update(Request $request)
     {
-        $connectedStripeAccount = $request->get('connectedStripeAccount');
+        $stripeSecretKey = $request->get('stripeSecretKey');
+        $stripeAccountId = $request->get('stripeAccountId');
+        $stripeLiveAccount = $request->get('stripeLiveAccount');
+        $stripePublishKey = $request->get('stripePublishKey');
         $currency = $request->get('currency');
         $feeActive = $request->get('feeActive');
         $feeAmount = $request->get('feeAmount');
@@ -34,7 +37,10 @@ class SettingsController extends Controller
 
         $settings = [
             'currency' => $currency,
-            'connectedStripeAccount' => $connectedStripeAccount,
+            'stripeSecretKey' => $stripeSecretKey,
+            'stripeAccountId' => $stripeAccountId,
+            'stripeLiveAccount' => $stripeLiveAccount,
+            'stripePublishKey' => $stripePublishKey,
             'feeActive' => $feeActive,
             'feeAmount' => $feeAmount,
             'siteLogo'  => $siteLogo,
@@ -76,10 +82,10 @@ class SettingsController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return $request->get('connectedStripeAccount');
+        return $request->get('stripeSecretKey');
     }
 
-    public function stripeConnect(Request $request)
+    public function stripeConnect(Request $request): JsonResponse
     {
         if ($request->has('error')) {
             return new JsonResponse([
@@ -96,10 +102,13 @@ class SettingsController extends Controller
             'code' => 'required',
         ]);
 
+
         try {
+            $settings = Settings::firstOrFail();
+            $settingsValue = json_decode($settings->settings);
             // Set your secret key. Remember to switch to your live secret key in production!
             // See your keys here: https://dashboard.stripe.com/account/apikeys
-            \Stripe\Stripe::setApiKey('sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK');
+            \Stripe\Stripe::setApiKey($settingsValue->stripeSecretKey);
 
             $stripeResponse = \Stripe\OAuth::token([
                 'grant_type' => 'authorization_code',
@@ -108,6 +117,13 @@ class SettingsController extends Controller
 
             // Access the connected account id in the response
             $connectedAccountId = $stripeResponse->stripe_user_id;
+
+            $settingsValue->stripeAccountId = $stripeResponse->stripe_user_id;
+            $settingsValue->stripeLiveAccount = $stripeResponse->livemode;
+            $settingsValue->stripePublishKey = $stripeResponse->stripe_publishable_key;
+            $settings->settings = json_encode($settingsValue);
+
+            $settings->save();
 
             return Redirect::to('admin/settings?connectedAccountId=' . $connectedAccountId);
         } catch (\Throwable $exception) {

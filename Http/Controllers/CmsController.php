@@ -105,6 +105,7 @@ class CmsController extends Controller
                 'textPrimaryColor'   =>   json_decode($settings->settings, true)['textPrimaryColor'],
                 'textHighlightColor' =>   json_decode($settings->settings, true)['textHighlightColor'],
                 'currency'  =>  json_decode($settings->settings, true)['currency'],
+                'stripePublishKey'  =>  json_decode($settings->settings, true)['stripePublishKey'],
             ]
         ]);
     }

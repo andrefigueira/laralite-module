@@ -11,7 +11,7 @@ window.Vue = require('vue');
 /**
  * Bootstrap vue brought in for majority of frontend
  */
-import {BootstrapVue, IconsPlugin} from 'bootstrap-vue'
+import {BootstrapVue, BTabs, IconsPlugin} from 'bootstrap-vue'
 /**
  * CKEditor used in one of the components
  */
@@ -39,7 +39,6 @@ import ColorPicker from "vue-color-picker-simple";
 import Tabs from "vue-material-tabs";
 import "vue-color-picker-simple/dist/index.css";
 
-
 import VueCurrencyFilter from 'vue-currency-filter'
 
 Vue.use(VueCurrencyFilter,
@@ -58,7 +57,6 @@ Vue.use(IconsPlugin);
 Vue.use(ColorPicker);
 Vue.use(Tabs);
 Vue.use(CKEditor);
-
 Vue.use(Vuelidate);
 
 Vue.use(VueFormWizard);
