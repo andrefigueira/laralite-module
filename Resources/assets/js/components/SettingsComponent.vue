@@ -38,7 +38,9 @@
                    <a v-b-modal.secretKeyInfo class="btn btn-primary mb-2 float-right" v-else><i class="fas fa-external-link-alt"></i>RECONNECT STRIPE ACCOUNT</a>
                   <div class="pt-4 mt-1 pl-2" v-if="settings.stripeSecretKey">
                     <div>
+                      <p><strong>Client Id:</strong> {{ settings.stripeClientId }}</p>
                       <p><strong>Secret Key:</strong> {{ hideSecretKey(settings.stripeSecretKey) }}</p>
+                      <p><strong>Access Token:</strong> {{ hideSecretKey(settings.stripeAccessToken) }}</p>
                       <p><strong>Account Id:</strong> {{ settings.stripeAccountId }}</p>
                       <p><strong>Live Account:</strong> {{ settings.stripeLiveAccount  }}</p>
                       <p><strong>Publisher Key:</strong> {{ settings.stripePublishKey }}</p>
@@ -367,7 +369,12 @@ export default {
                 if (settingsObject.stripeAccountId) {
                   this.settings.stripeAccountId = settingsObject.stripeAccountId;
                 }
-
+                if (settingsObject.stripeAccessToken) {
+                  this.settings.stripeAccessToken = settingsObject.stripeAccessToken;
+                }
+                if (settingsObject.stripeClientId) {
+                  this.settings.stripeClientId = settingsObject.stripeClientId;
+                }
                 this.settings.stripeLiveAccount = settingsObject.stripeLiveAccount ? 'Yes' : 'No';
 
                 if (settingsObject.stripePublishKey) {
