@@ -62,10 +62,13 @@
 
               <b-modal size="lg" ref="secretKeyInfo" id="secretKeyInfo" title="Connected Stripe Account" class="mt-5" hide-footer no-close-on-backdrop>
                 <div>
+                  <label for= "connected-stripe-clientId" class="mt-1" style="font-weight: bold">Stripe Account Client Id</label>
+                  <a target="_blank" class="float-right mt-2" style="font-size: 10px; cursor: pointer" href="https://docs.cs-cart.com/latest/user_guide/addons/stripe_connect/credentials.html#getting-client-id-and-defining-redirect-uri"><i class="fas fa-external-link-alt"></i>Find your StripeClient Id</a>
+                  <b-form-input id="connected-stripe-clientId" v-model="settings.stripeClientId" placeholder="Connected Stripe Client ID"></b-form-input>
                   <label for= "connected-stripe-account" class="mt-1" style="font-weight: bold">Stripe Account Secret Key</label>
-                  <a target="_blank" class="float-right mt-2" style="font-size: 10px; cursor: pointer" href="https://stripe.com/docs/keys"><i class="fas fa-external-link-alt"></i>Find your Secret and Publishable Key</a>
+                  <a target="_blank" class="float-right mt-3" style="font-size: 10px; cursor: pointer" href="https://docs.cs-cart.com/latest/user_guide/addons/stripe_connect/credentials.html#getting-publishable-key-and-secret-key"><i class="fas fa-external-link-alt"></i>Find your Secret and Publishable Key</a>
                   <b-form-input id="connected-stripe-account" v-model="settings.stripeSecretKey" placeholder="Connected Stripe Account ID"></b-form-input>
-                  <b-button class="mt-2" variant="warning" block @click="connectStripeAccount()" :disabled="settings.stripeSecretKey.length == 0">Connect Stripe Account</b-button>
+                  <b-button class="mt-2" variant="warning" block @click="connectStripeAccount()" :disabled="settings.stripeSecretKey.length == 0 && settings.stripeClientId.length == 0">Connect Stripe Account</b-button>
                   <b-button class="mt-3" block @click="hideSecretKeyInfo">Exit</b-button>
                 </div>
               </b-modal>
@@ -179,6 +182,7 @@ export default {
                 settings: {
                     currency: '$ US Dollar',
                     stripeSecretKey: '',
+                    stripeClientId: '',
                     stripeAccountId: '',
                     stripeLiveAccount: '',
                     stripePublishKey: '',
@@ -344,7 +348,7 @@ export default {
                 this.alertMessage = 'Saved Stripe Account Details';
                 this.alertType = 'success';
                 this.hideSecretKeyInfo();
-                window.open('https://connect.stripe.com/oauth/v2/authorize?response_type=code&client_id=' + process.env.MIX_STRIPE_CLIENT_ID + '&scope=read_write&redirect_uri=' + process.env.MIX_APP_URL);
+                window.open('https://connect.stripe.com/oauth/v2/authorize?response_type=code&client_id=' + this.settings.stripeClientId + '&scope=read_write&redirect_uri=' + process.env.MIX_APP_URL + '/api/stripe-connect');
               }).catch(error => {
                 this.saving = false;
                 this.alertShow = true;

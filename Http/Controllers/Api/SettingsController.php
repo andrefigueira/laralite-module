@@ -18,6 +18,8 @@ class SettingsController extends Controller
     public function update(Request $request)
     {
         $stripeSecretKey = $request->get('stripeSecretKey');
+        $stripeAccessToken = $request->get('stripeAccessToken');
+        $stripeClientId = $request->get('stripeClientId');
         $stripeAccountId = $request->get('stripeAccountId');
         $stripeLiveAccount = $request->get('stripeLiveAccount');
         $stripePublishKey = $request->get('stripePublishKey');
@@ -38,6 +40,8 @@ class SettingsController extends Controller
         $settings = [
             'currency' => $currency,
             'stripeSecretKey' => $stripeSecretKey,
+            'stripeClientId' => $stripeClientId,
+            'stripeAccessToken' => $stripeAccessToken,
             'stripeAccountId' => $stripeAccountId,
             'stripeLiveAccount' => $stripeLiveAccount,
             'stripePublishKey' => $stripePublishKey,
@@ -85,7 +89,7 @@ class SettingsController extends Controller
         return $request->get('stripeSecretKey');
     }
 
-    public function stripeConnect(Request $request): JsonResponse
+    public function stripeConnect(Request $request)
     {
         if ($request->has('error')) {
             return new JsonResponse([
@@ -119,13 +123,14 @@ class SettingsController extends Controller
             $connectedAccountId = $stripeResponse->stripe_user_id;
 
             $settingsValue->stripeAccountId = $stripeResponse->stripe_user_id;
+            $settingsValue->stripeAccessToken = $stripeResponse->access_token;
             $settingsValue->stripeLiveAccount = $stripeResponse->livemode;
             $settingsValue->stripePublishKey = $stripeResponse->stripe_publishable_key;
             $settings->settings = json_encode($settingsValue);
 
             $settings->save();
 
-            return Redirect::to('admin/settings?connectedAccountId=' . $connectedAccountId);
+            return Redirect::to('admin/settings');
         } catch (\Throwable $exception) {
             return new JsonResponse([
                 'success' => false,
