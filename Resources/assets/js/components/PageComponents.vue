@@ -102,7 +102,7 @@
               this.isEditing = newValue
             },
             isEditing (newValue, oldValue) {
-              console.log('isEditing', newValue)
+              // console.log('isEditing', newValue)
               bus.$emit('pageEdited', newValue)
             }
         },

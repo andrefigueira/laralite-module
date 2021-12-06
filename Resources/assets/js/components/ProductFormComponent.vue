@@ -432,7 +432,7 @@
             loadProductCategoryOptions(defaultOption) {
               axios.get('/api/product-category-list', { withCredentials: true }).then(response => {
                   this.categoryOptions = response.data;
-                  console.log(this.categoryOptions);
+                  // console.log(this.categoryOptions);
 
                   if (this.product.category_id === undefined) {
                       this.category = this.categoryOptions[0];
