@@ -234,7 +234,7 @@
       },
       methods: {
         editUpdated(event) {
-          console.log('InPAGESFORM', event.target.value)
+          // console.log('InPAGESFORM', event.target.value)
           this.isEditing = event.target.value
         },
         leaving: function () {

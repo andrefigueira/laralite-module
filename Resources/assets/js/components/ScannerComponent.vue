@@ -142,7 +142,7 @@ export default {
       verifyTicket(result) {
           axios.get('/api/scan/ticket/' + this.result, { withCredentials: true })
               .then((response) => {
-                console.log(response.data.message)
+                // console.log(response.data.message)
                 this.message = response.data.message;
                 this.reedemError = false;
                 this.reedemSuccess = true;
@@ -159,7 +159,7 @@ export default {
       getTicketDetails($uuid) {
           axios.get('/api/ticket/' + this.result)
               .then((response) => {
-                console.log(response.data)
+                // console.log(response.data)
                 this.ticket = response.data
               })
               .catch(error => {
