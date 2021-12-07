@@ -34,7 +34,9 @@
                         {{ timeFormat(data.item.created_at) }}
                     </template>
                     <template v-slot:cell(actions)="data">
-                        <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right mr-2" style="width: 10%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
+                      <a v-b-tooltip:hover title="Delete" class="float-right mr-2" style="width: 10%; cursor: pointer" @click="doDelete(data.item)"><i class="ri-delete-bin-6-fill"></i></a>
+                      <confirm-dialogue-component ref="confirmDialogue"></confirm-dialogue-component>
+<!--                        <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right mr-2" style="width: 10%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>-->
                         <a v-b-tooltip:hover title="Edit" :href="'/admin/discounts/edit/' + data.item.id" class="float-right mr-4" style="width: 10%; text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
                     </template>
                 </b-table>
@@ -56,9 +58,11 @@
 
 <script>
     import * as moment from "moment";
+    import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
 
     export default {
-        data() {
+      components: {ConfirmDialogueComponent},
+      data() {
             return {
                 // Alert settings
                 alert: {
@@ -92,6 +96,29 @@
             }
         },
         methods: {
+          async doDelete(discount) {
+            const ok = await this.$refs.confirmDialogue.show({
+              title: 'Delete Discount: ' + discount.name,
+              message: 'Are you sure you want to delete this discount? It cannot be undone.',
+              okButton: 'Delete',
+            })
+            // If you throw an error, the method will terminate here unless you surround it wil try/catch
+            if (ok) {
+              console.log(discount);
+              axios.delete('/api/discount/' + discount.id).then(response => {
+                this.discount = response.data
+                if (this.discount.length > 0) {
+                  this.showResults = true;
+                }
+                location.reload();
+              }).catch(error => {
+                alert("Error in deleting Discount: " + discount.name)
+              });
+            } else {
+              /*alert('You chose not to delete this page. Doing nothing now.')*/
+              console.log(discount)
+            }
+          },
             timeFormat(time) {
                 return moment(time).fromNow();
             },

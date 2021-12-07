@@ -35,7 +35,9 @@
             <b-badge class="badge-soft-danger ml-2" v-if="!data.item.active"><i class="fas fa-check-circle"></i>InActive</b-badge>
           </template>
           <template v-slot:cell(actions)="data">
-            <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right" style="text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
+            <a v-b-tooltip:hover title="Delete" class="float-right mr-2" style="width: 10%; cursor: pointer" @click="doDelete(data.item)"><i class="ri-delete-bin-6-fill"></i></a>
+            <confirm-dialogue-component ref="confirmDialogue"></confirm-dialogue-component>
+<!--            <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right" style="text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>-->
             <a v-b-tooltip:hover title="Edit" :href="'/admin/product-category/edit/' + data.item.id" class="float-right mr-3" style="text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
           </template>
         </b-table>
@@ -54,8 +56,10 @@
 </template>
 
 <script>
+    import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
     export default {
-        mounted() {
+      components: {ConfirmDialogueComponent},
+      mounted() {
             console.log('Component mounted.');
 
             this.load();
@@ -84,6 +88,29 @@
             }
         },
         methods: {
+          async doDelete(productCategory) {
+            const ok = await this.$refs.confirmDialogue.show({
+              title: 'Delete Product Category: ' + productCategory.name,
+              message: 'Are you sure you want to delete this product category? It cannot be undone.',
+              okButton: 'Delete',
+            })
+            // If you throw an error, the method will terminate here unless you surround it wil try/catch
+            if (ok) {
+              console.log(productCategory);
+              axios.delete('/api/product-category/' + productCategory.id).then(response => {
+                this.productCategory = response.data
+                if (this.productCategory.length > 0) {
+                  this.showResults = true;
+                }
+                location.reload();
+              }).catch(error => {
+                alert("Error in deleting Product Category: " + productCategory.name)
+              });
+            } else {
+              /*alert('You chose not to delete this page. Doing nothing now.')*/
+              console.log(productCategory)
+            }
+          },
           tableDataProvider(context) {
             this.isBusy = true;
 

@@ -37,7 +37,9 @@
             {{ data.item.description }}
           </template>
           <template v-slot:cell(actions)="data">
-            <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right mr-2" style="width: 5%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>
+            <a v-b-tooltip:hover title="Delete" class="float-right mr-2" style="width: 10%; cursor: pointer" @click="doDelete(data.item)"><i class="ri-delete-bin-6-fill"></i></a>
+            <confirm-dialogue-component ref="confirmDialogue"></confirm-dialogue-component>
+<!--            <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right mr-2" style="width: 5%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>-->
             <a v-b-tooltip:hover title="Edit" :href="'/admin/templates/edit/' + data.item.id" class="float-right mr-3" style="text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
           </template>
         </b-table>
@@ -57,8 +59,10 @@
 </template>
 
 <script>
+    import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
     export default {
-        mounted() {
+      components: {ConfirmDialogueComponent},
+      mounted() {
             console.log('Component mounted.');
 
             this.load();
@@ -87,6 +91,29 @@
             }
         },
         methods: {
+          async doDelete(template) {
+            const ok = await this.$refs.confirmDialogue.show({
+              title: 'Delete Template: ' + template.name,
+              message: 'Are you sure you want to delete this template? It cannot be undone.',
+              okButton: 'Delete',
+            })
+            // If you throw an error, the method will terminate here unless you surround it wil try/catch
+            if (ok) {
+              console.log(template);
+              axios.delete('/api/template/' + template.id).then(response => {
+                this.template = response.data
+                if (this.template.length > 0) {
+                  this.showResults = true;
+                }
+                location.reload();
+              }).catch(error => {
+                alert("Error in deleting Template: " + template.name)
+              });
+            } else {
+              /*alert('You chose not to delete this page. Doing nothing now.')*/
+              console.log(template)
+            }
+          },
           tableDataProvider(context) {
             this.isBusy = true;
 
