@@ -47,8 +47,10 @@
               <span>{{ data.item.variants[0].pricing.price }}</span>
             </template>
             <template v-slot:cell(actions)="data">
-                <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right mr-2" style="width: 10%"><i class="ri-delete-bin-6-fill"></i></a>
-                <a v-b-tooltip:hover title="Edit" :href="'/admin/product/edit/' + data.item.id" class="float-right mr-4" style="width: 10%"><i class="ri-pencil-fill"></i></a>
+              <a v-b-tooltip:hover title="Delete" class="float-right mr-2" style="width: 10%; cursor: pointer" @click="doDelete(data.item)"><i class="ri-delete-bin-6-fill"></i></a>
+              <confirm-dialogue-component ref="confirmDialogue"></confirm-dialogue-component>
+<!--          <a v-b-tooltip:hover title="Delete" :data-id="data.item.id" data-toggle="modal"  data-target="#confirmDelete" class="float-right mr-2" style="width: 10%"><i class="ri-delete-bin-6-fill"></i></a>-->
+              <a v-b-tooltip:hover title="Edit" :href="'/admin/product/edit/' + data.item.id" class="float-right mr-4" style="width: 10%"><i class="ri-pencil-fill"></i></a>
             </template>
           </b-table>
         </div>
@@ -66,8 +68,10 @@
 </template>
 
 <script>
+    import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
     export default {
-        mounted() {
+      components: {ConfirmDialogueComponent},
+      mounted() {
             console.log('Component mounted.');
 
             this.load();
@@ -98,6 +102,29 @@
             }
         },
         methods: {
+          async doDelete(product) {
+            const ok = await this.$refs.confirmDialogue.show({
+              title: 'Delete Product: ' + product.name,
+              message: 'Are you sure you want to delete this product? It cannot be undone.',
+              okButton: 'Delete',
+            })
+            // If you throw an error, the method will terminate here unless you surround it wil try/catch
+            if (ok) {
+              console.log(product);
+              axios.delete('/api/product/' + product.id).then(response => {
+                this.product = response.data
+                if (this.product.length > 0) {
+                  this.showResults = true;
+                }
+                location.reload();
+              }).catch(error => {
+                alert("Error in deleting Product" + product.name)
+              });
+            } else {
+              /*alert('You chose not to delete this page. Doing nothing now.')*/
+              console.log(product)
+            }
+          },
           tableDataProvider(context) {
             this.isBusy = true;
 
@@ -120,7 +147,7 @@
               return [];
             })
           },
-            load() {
+          load() {
                 axios.get('/api/product', { withCredentials: true }).then(response => {
                     this.products = response.data.data;
 
@@ -133,25 +160,28 @@
                     // handle error
                 });
             },
-            confirmDelete(product) {
-                this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
-                    if (value) {
-                        let index = this.products.indexOf(product);
-                        let self = this;
+          hideDelete() {
+            this.$refs['confirmDelete'].hide();
+          },
+          confirmDelete(product) {
+            this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
+              if (value) {
+                let index = this.products.indexOf(product);
+                let self = this;
 
-                        axios.delete('/api/product/' + product.id).then(response => {
-                            self.products.splice(index, 1);
+                axios.delete('/api/product/' + product.id).then(response => {
+                  self.products.splice(index, 1);
 
-                            if (self.products.length < 1) {
-                                self.showResults = false;
-                            }
-                        }).catch(error => {
-                            // handle error
-                        });
-                    }
+                  if (self.products.length < 1) {
+                      self.showResults = false;
+                  }
                 }).catch(error => {
-                    // An error occurred
+                    // handle error
                 });
+              }
+            }).catch(error => {
+                // An error occurred
+            });
             }
         }
     }
