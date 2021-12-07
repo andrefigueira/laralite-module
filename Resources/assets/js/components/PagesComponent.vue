@@ -40,7 +40,9 @@
               <b-badge class="badge badge-soft-primary">{{ data.item.template.name }}</b-badge>
             </template>
             <template v-slot:cell(actions)="data">
-              <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right row-button mr-2" style="width: 10%"><i class="ri-delete-bin-6-fill"></i></a>
+              <a v-b-tooltip:hover title="Delete" class="float-right mr-2" style="width: 10%; cursor: pointer" @click="doDelete(data.item)"><i class="ri-delete-bin-6-fill"></i></a>
+              <confirm-dialogue-component ref="confirmDialogue"></confirm-dialogue-component>
+<!--              <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right row-button mr-2" style="width: 10%"><i class="ri-delete-bin-6-fill"></i></a>-->
               <a v-b-tooltip:hover title="Edit" :href="'/admin/pages/edit/' + data.item.id" class="float-right mr-4 row-button" style="width: 10%"><i class="ri-pencil-fill"></i></a>
             </template>
           </b-table>
@@ -62,8 +64,10 @@
 
 <script>
 import * as moment from "moment";
+import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
 
 export default {
+  components: {ConfirmDialogueComponent},
   data() {
     return {
       // Alert settings
@@ -98,6 +102,29 @@ export default {
     }
   },
   methods: {
+    async doDelete(page) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: 'Delete Page: ' + page.name,
+        message: 'Are you sure you want to delete this page? It cannot be undone.',
+        okButton: 'Delete',
+      })
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        console.log(page);
+        axios.delete('/api/page/' + page.id).then(response => {
+          this.page = response.data
+          if (this.page.length > 0) {
+            this.showResults = true;
+          }
+          location.reload();
+        }).catch(error => {
+          alert("Error in deleting Page: " + page.name)
+        });
+      } else {
+        /*alert('You chose not to delete this page. Doing nothing now.')*/
+        console.log(page)
+      }
+    },
     timeFormat(time) {
       return moment(time).fromNow();
     },
