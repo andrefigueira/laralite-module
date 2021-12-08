@@ -33,7 +33,9 @@
                                 <h4>{{ pageComponent.frontendName }}</h4>
                             </div><!-- End col -->
                             <div class="col-md-6">
-                                <a @click="removeComponent(pageComponent)" class="ri-close-fill float-right align-middle" v-b-tooltip.hover title="Click to remove from page"></a>
+                              <a v-b-tooltip:hover title="Click to remove from page" class="ri-close-fill float-right align-middle mr-2" style="width: 10%; cursor: pointer" @click="doDelete(pageComponent)"></a>
+                              <confirm-dialogue-component ref="confirmDialogue"></confirm-dialogue-component>
+<!--                                <a @click="removeComponent(pageComponent)" class="ri-close-fill float-right align-middle" v-b-tooltip.hover title="Click to remove from page"></a>-->
                             </div><!-- End col -->
                         </div><!-- End row -->
 
@@ -55,9 +57,11 @@
 <script>
     import { bus } from '../admin'
     import helpers from '../helpers'
+    import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
 
     export default {
-        mounted() {
+      components: {ConfirmDialogueComponent},
+      mounted() {
             console.log('Component mounted.');
             window.addEventListener('beforeunload', (event) => {
               if (!this.isEditing) return
@@ -115,7 +119,28 @@
                     alert('Failed to load component options');
                 });
             },
-            removeComponent(component) {
+          async doDelete(component) {
+            const ok = await this.$refs.confirmDialogue[0].show({
+              title: 'Delete Component: ' + component.name,
+              message: 'Are you sure you want to delete this component? It cannot be undone.',
+              okButton: 'Delete',
+            })
+            // If you throw an error, the method will terminate here unless you surround it wil try/catch
+            if (ok) {
+              console.log(component);
+              if (component) {
+                let index = this.components.indexOf(component);
+                this.components.splice(index, 1);
+                // location.reload();
+              } else {
+                alert('Failed to remove component');
+                console.log(component);
+              }
+            } else {
+              /*alert('You chose not to delete this page. Doing nothing now.')*/
+              console.log(component)
+            }},
+           /* removeComponent(component) {
                 this.isEditing = true
                 this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
                     if (value) {
@@ -126,7 +151,7 @@
                 }).catch(error => {
                     alert('Failed to remove component');
                 });
-            },
+            },*/
             addComponent(component) {
               this.isEditing = true
               let componentId = helpers.uuidv4();
