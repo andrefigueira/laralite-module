@@ -21,7 +21,3 @@
         </div>
 </header>
 
-
-<script>
-
-</script>
