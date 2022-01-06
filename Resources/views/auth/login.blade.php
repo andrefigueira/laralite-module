@@ -8,8 +8,9 @@
                     <div class="row justify-content-center">
                         <div class="col-lg-10">
                             <div class="text-center">
-                                <a href="/admin" class="logo">
-                                    <h3 style="text-decoration: none !important; color: black">{{ config('app.name') ?? 'Admin' }} Portal</h3>
+                               <a href="/admin" class="logo">
+                                    <img src="{{URL::asset('images/logo.png')}}" class="logoImage" style="max-width: 100%; width: 100px">
+{{--                                    <h3 style="text-decoration: none !important; color: black">{{ config('app.name') ?? 'Admin' }} Portal</h3>--}}
                                 </a>
                                 <h4 class="font-size-18 mt-4">Welcome Back !</h4>
                                 <p class="text-muted">Sign in to continue to {{ config('app.name') }}.</p>
