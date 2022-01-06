@@ -53,7 +53,7 @@
             ref="table"
             :busy.sync="isBusy"
             :items="tableDataProvider"
-            :fields="fields"
+            :fields="filteredFields"
             :per-page="perPage"
             :current-page="currentPage"
             :filter="filter"
@@ -64,16 +64,16 @@
               <b-badge class="badge-soft-danger" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
             </template>
             <template v-slot:cell(confirmation_code)="data">
-              <span>{{ data.item.confirmation_code }}</span>
+              <span class="d-sm-none d-md-block">{{ data.item.confirmation_code }}</span>
             </template>
             <template v-slot:cell(customer_id)="data">
-              <span>{{ data.item.customer.name }}</span>
+              <span class="d-sm-none d-md-block">{{ data.item.customer.name }}</span>
             </template>
-            <template v-slot:cell(customer_email)="data">
-              <span>{{ data.item.customer.email }}</span>
+            <template v-slot:cell(customer_email)="data" class="d-sm-none d-md-block">
+              <span class="d-sm-none d-md-block">{{ data.item.customer.email }}</span>
             </template>
-            <template v-slot:cell(created_at)="data">
-              {{ timeFormat(data.item.created_at) }}
+            <template v-slot:cell(created_at)="data" class="d-none d-sm-block d-md-none">
+              <span class="d-sm-none d-md-block">{{ timeFormat(data.item.created_at) }}</span>
             </template>
             <template v-slot:cell(actions)="data">
               <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="float-right mr-1" style="font-size: 20px"><i class="ri-eye-fill"></i></a>
@@ -101,8 +101,28 @@ import AlertComponent from "./AlertComponent";
 
 export default {
   components: {AlertComponent},
+  computed: {
+    filteredFields() {
+      if(!this.visible) {
+        return [
+          {key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc'},
+          {key: 'confirmation_code', label: 'Confirmation Code', sortable: true, sortDirection: 'desc'},
+          {key: 'customer_id', label: 'Customer Name', sortable: true, sortDirection: 'desc'},
+          {key: 'customer_email', label: 'Customer Email'},
+          {key: 'created_at', label: 'Order Date', sortable: true, sortDirection: 'desc'},
+          {key: 'actions', label: ''}
+        ]
+      } else {
+        return [
+          {key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc'},
+          {key: 'actions', label: ''}
+        ]
+      }
+    }
+  },
   data() {
     return {
+      visible: true,
       disabled: false,
       refundProcessing: false,
       refundError: false,
@@ -122,12 +142,12 @@ export default {
 
       // Table settings
       fields: [
-        { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
-        { key: 'confirmation_code', label: 'Confirmation Code', sortable: true, sortDirection: 'desc' },
-        { key: 'customer_id', label: 'Customer Name', sortable: true, sortDirection: 'desc' },
-        { key: 'customer_email', label: 'Customer Email'},
-        { key: 'created_at', label: 'Order Date', sortable: true, sortDirection: 'desc' },
-        { key: 'actions', label: '' }
+        {key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc'},
+        {key: 'confirmation_code', label: 'Confirmation Code', sortable: true, sortDirection: 'desc'},
+        {key: 'customer_id', label: 'Customer Name', sortable: true, sortDirection: 'desc'},
+        {key: 'customer_email', label: 'Customer Email'},
+        {key: 'created_at', label: 'Order Date', sortable: true, sortDirection: 'desc'},
+        {key: 'actions', label: ''}
       ],
       totalRows: 1,
       currentPage: 1,
@@ -142,10 +162,13 @@ export default {
     }
   },
   methods: {
-    uncheckAll () {
+    onResize() {
+      this.visible = window.innerWidth <= 700;
+    },
+    uncheckAll() {
       this.checkedOrders = []
     },
-    check: function(e) {
+    check: function (e) {
       if (e.target.checked) {
         console.log(e.target.value)
       }
@@ -157,8 +180,8 @@ export default {
       this.isBusy = true;
 
       const promise = axios.get(
-        '/api/order?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
-          { withCredentials: true } );
+          '/api/order?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
+          {withCredentials: true});
 
       return promise.then((data) => {
         const items = data.data.data;
@@ -205,6 +228,16 @@ export default {
       });
     },
   },
+
+  created() {
+    this.onResize();
+    // window.addEventListener('resize', this.onResize)
+  },
+
+  beforeDestroy() {
+    !this.onResize();
+    // window.removeEventListener('resize', this.onResize)
+  },
 }
 
 </script>
@@ -214,5 +247,11 @@ input[type="checkbox"]{
   width: 18px; /*Desired width*/
   height: 18px; /*Desired height*/
   cursor: pointer;
+}
+
+@media screen and (max-width: 800px) {
+  .hideDiv {
+    display: none!important;
+  }
 }
 </style>

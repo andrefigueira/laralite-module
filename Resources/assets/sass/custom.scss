@@ -390,3 +390,12 @@ body .container-fluid {
 .tabs__content {
     padding-bottom: 10px !important;
 }
+
+.container-fluid .authentication-page-content .logo {
+  background-image: url("/images/logo.png");
+}
+
+.container-fluid .authentication-page-content .logo .logoImage {
+  max-width: 100%;
+  width: 100px;
+}
