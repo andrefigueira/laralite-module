@@ -1,17 +1,31 @@
 <template>
     <div class="customer-details">
-      <div class="d-flex flex-wrap flex-md-nowrap align-items-center mb-2 border-bottom">
+      <div class="row">
+        <div class="col-md-9 col-sm-12">
+          <a @click="goBack" class="back-btn p-0 mr-3">
+            <b-icon icon="arrow-left" font-scale="1"></b-icon>
+          </a>
+          <h1 class="h2 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
+        </div>
+        <div class="col-md-3 col-sm-12 mt-md-3 mb-sm-2" style="text-align-last: right;">
+          <div class="btn-group mt-md-2 mr-2">
+            <b-button class="mr-2" :disabled="order.refunded === 1" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
+            <b-button :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
+          </div>
+        </div>
+      </div>
+<!--      <div class="d-flex flex-wrap flex-md-nowrap align-items-center mb-2 border-bottom">
         <a @click="goBack" class="back-btn p-0 mr-3">
           <b-icon icon="arrow-left" font-scale="1"></b-icon>
         </a>
         <h1 class="h2 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
         <div class="btn-toolbar mb-2 mb-md-0">
-          <div class="btn-group mt-2 mr-2" style="position: absolute; right: 0; top: 0">
+&lt;!&ndash;          <div class="btn-group mt-md-2 mr-2 btnStyle">
             <b-button class="mr-2" :disabled="order.refunded === 1" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
             <b-button :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
-          </div>
-        </div><!-- End toolbar -->
-      </div>
+          </div>&ndash;&gt;
+        </div>&lt;!&ndash; End toolbar &ndash;&gt;
+      </div>-->
 
         <b-modal ref="issueRefund" id="issueRefund" title="Issue a Refund" hide-footer>
             <div v-if="refundProcessing === false && refundError === false && refundSuccess !== true">
@@ -309,5 +323,15 @@
             margin-bottom: 0;
             font-size: 1.1rem;
         }
+    }
+    @media screen and (min-width: 800px) {
+      .btnStyle {
+        position: absolute; right: 0; top: 0;
+      }
+    }
+    @media screen and (max-width: 800px) {
+      .btnStyle {
+        position: absolute; right: 0; top: 68 !important;
+      }
     }
 </style>
