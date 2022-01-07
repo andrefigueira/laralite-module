@@ -7,31 +7,42 @@
               </b-button>
             </div>
             <div class="col-md-12">
-<!--              <p class="alert" :class="{ 'alert-danger': this.error, 'alert-success': !this.error }" v-if="message !== ''">
-                <b>TICKET ID: </b>{{ ticket_id }} <b v-if="!this.error">Visits: </b> {{ count }} <br/>{{ message }}
-              </p>-->
-
               <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit">
               </qrcode-stream>
               <div v-if="validationPending" class="validation-pending">
-                <b-modal ref="reedemTicket" id="reedemTicket" hide-footer no-close-on-backdrop @hide="ticket = null">
+                <b-modal size="lg" ref="reedemTicket" id="reedemTicket" hide-footer no-close-on-backdrop @hide="ticket = null">
                   <template #modal-header>
                     <h5 v-if="ticket.validated === 1">Already Reedemed</h5>
                     <h5 v-else>Reedem Ticket</h5>
                   </template>
                   <template v-if="ticket !== null">
-                    <p><strong>Ticket Id:</strong> {{ ticket.unique_id }}</p>
-                    <p><strong>Order Id:</strong> {{ ticket.order.unique_id }}</p>
-                    <p><strong>Members Per Ticket:</strong> {{ ticket.admit_quantity }}</p>
-                    <p><strong>Purchased On:</strong> {{ timeFormat(ticket.created_at) }}</p>
+                    <table class="table table-bordered">
+                      <tr>
+                        <th scope="row">Order Number</th>
+                        <td>{{ ticket.order.unique_id }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Customer Name</th>
+                        <td>{{ ticket.order.customer.name }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Purchase Date</th>
+                        <td>{{ timeFormat(ticket.created_at) }}</td>
+                      </tr>
+                      <tr v-if="ticket.validated === 1">
+                        <th scope="row">Redemption Date</th>
+                        <td>{{ timeFormat(ticket.updated_at) }}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Members Per Ticket</th>
+                        <td>{{ ticket.admit_quantity }}</td>
+                      </tr>
+                    </table>
                     <div v-if="reedemProcessing === false && reedemError === false && reedemSuccess !== true">
-                      <template v-if="ticket.validated === 1">
-                        <p><strong>Redeemed On:</strong> {{ timeFormat(ticket.updated_at) }}</p>
-                      </template>
-                      <template v-else-if="ticket.order.order_status === 'cancel' && ticket.order.refunded === 1">
+                      <template v-if="ticket.order.order_status === 'cancel' && ticket.order.refunded === 1">
                         <p><strong>Ticket is already cancelled or refunded.</strong></p>
                       </template>
-                      <template v-else>
+                      <template v-else-if="ticket.validated === 0">
                         <b-button class="mt-2" variant="warning" block @click="verifyTicket(result)">Reedem Ticket</b-button>
                       </template>
                     </div>
@@ -88,13 +99,11 @@ export default {
         if (newValue != null && newValue !== '')
         {
           this.result = newValue;
-          this.getTicketDetails(this.result)
-          // this.verifyTicket(this.result);
+          this.getTicketDetails(this.result);
         }
       },
       ticket (newValue, oldValue) {
         if (newValue !== null) {
-          // Show modal
           this.$bvModal.show('reedemTicket')
         } else {
           this.result = null
@@ -142,7 +151,6 @@ export default {
       verifyTicket(result) {
           axios.get('/api/scan/ticket/' + this.result, { withCredentials: true })
               .then((response) => {
-                // console.log(response.data.message)
                 this.message = response.data.message;
                 this.reedemError = false;
                 this.reedemSuccess = true;
@@ -156,7 +164,7 @@ export default {
                 this.reedemProcessing = false;
               })
       },
-      getTicketDetails($uuid) {
+      getTicketDetails() {
           axios.get('/api/ticket/' + this.result)
               .then((response) => {
                 // console.log(response.data)
@@ -166,24 +174,6 @@ export default {
                 console.log(error);
               })
       },
-        /*verifyTicket(result) {
-          axios.get('/api/scan/ticket/' + this.result)
-          .then((response) => {
-            console.log(response.data.message)
-            this.message = response.data.message
-            this.error = false
-            this.count = response.data.ticket.visited_counts
-            this.result = ''
-            this.ticket_id = response.data.ticket.unique_id
-          }).catch(error => {
-            console.log(error.response.data.message)
-            this.message = error.response.data.message
-            this.error = true
-            this.result = ''
-            this.count = ''
-            this.ticket_id = result
-          });
-        },*/
       onInit (promise) {
         promise
             .catch(console.error)
