@@ -159,14 +159,6 @@ ul.errors {
     font-size: 0.8rem;
 }
 
-.btn {
-    border-radius: 0!important;
-}
-
-.vs__dropdown-toggle {
-    border-radius: 0!important;
-}
-
 .form-control-dark {
     color: #fff;
     background-color: rgba(255, 255, 255, .1);
@@ -352,4 +344,11 @@ ul.pagination {
 
 .badge {
     border-radius: 0!important;
+}
+
+.admin-logo {
+    display: block;
+    width: 60%;
+    margin: 1rem 1.2rem;
+    height: auto;
 }

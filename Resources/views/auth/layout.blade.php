@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Login</title>
+    <title>TrapMusicMuseum Admin Login</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link href="/css/admin.css" rel="stylesheet">
     <link href="/css/custom.css" rel="stylesheet">
