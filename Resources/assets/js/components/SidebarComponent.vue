@@ -3,7 +3,7 @@
     <!--    <b-button v-b-toggle.sidebar-1 class="button" style="background-color: transparent !important; border: initial !important;">
           <i data-icon="list" class="ri-menu-2-fill align-middle" style="font-size: 28px; color: #5664D2"></i>
         </b-button>-->
-    <b-sidebar id="sidebar-1" :visible="visible" no-close-on-route-change class="sidebar hide-menu"  :title="appName" sidebar-class="border-right border-dark" aria-expanded="true" style="border: none !important; display: block !important;">
+    <b-sidebar id="sidebar-1" :visible="visible" no-close-on-route-change class="sidebar hide-menu" title="TMM Portal" sidebar-class="border-right border-dark" aria-expanded="true" style="border: none !important; display: block !important;">
       <div class="py-2">
         <nav class="d-block pr-3 pl-2">
           <div class="menu-title mb-1">MENU</div>

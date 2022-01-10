@@ -64,7 +64,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-8 col-sm-0">
+        <div class="col-lg-8 col-sm-0 p-0">
             <div class="authentication-bg">
                 <div class="bg-overlay"></div>
             </div>
