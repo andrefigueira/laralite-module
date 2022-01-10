@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Laralite\Http\Controllers;
+namespace Modules\Laralite\Http\Controllers\Auth;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
