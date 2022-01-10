@@ -58,10 +58,15 @@
             :current-page="currentPage"
             :filter="filter"
             sortDesc>
-            <template v-slot:cell(unique_id)="data" class="min-width-0" style="width: 10%">
-              <input type="checkbox" class="" :value="data.item" :id="data.item.unique_id" v-model="checkedOrders">&nbsp;&nbsp;
-              <span>{{ data.item.unique_id }}</span>
-              <b-badge class="badge-soft-danger" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
+            <template v-slot:cell(unique_id)="data" class="min-width-0">
+              <div class="row">
+                <div class="col-1"><input type="checkbox" class="" :value="data.item" :id="data.item.unique_id" v-model="checkedOrders"></div>
+                <div class="col-10">
+                  <span style="font-size: 0.7rem">{{ data.item.unique_id }}</span><br>
+                  <b-badge class="badge-soft-info">{{ data.item.customer.email }}</b-badge>
+                  <b-badge class="badge-soft-danger" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
+                </div>
+              </div>
             </template>
             <template v-slot:cell(confirmation_code)="data">
               <span class="d-sm-none d-md-block">{{ data.item.confirmation_code }}</span>
@@ -69,8 +74,8 @@
             <template v-slot:cell(customer_id)="data">
               <span class="d-sm-none d-md-block">{{ data.item.customer.name }}</span>
             </template>
-            <template v-slot:cell(customer_email)="data" class="d-sm-none d-md-block">
-              <span class="d-sm-none d-md-block">{{ data.item.customer.email }}</span>
+            <template v-slot:cell(customer_email)="data" class="d-md-block">
+              <span class="d-md-block">{{ data.item.customer.email }}</span>
             </template>
             <template v-slot:cell(created_at)="data" class="d-none d-sm-block d-md-none">
               <span class="d-sm-none d-md-block">{{ timeFormat(data.item.created_at) }}</span>

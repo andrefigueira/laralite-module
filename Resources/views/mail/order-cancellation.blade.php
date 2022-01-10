@@ -47,16 +47,5 @@
                 </table>
             </td>
         </tr>
-        <tr>
-            <td align="center" valign="top">
-                <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailFooter">
-                    <tr>
-                        <td align="center" valign="top" style="color: #fff;">
-                            This is where my footer content goes.
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
     </table>
 @endsection

@@ -23,7 +23,6 @@
             <div class="col-12">
                 @include('laralite::admin.content')
             </div>
-
         </div><!-- End row -->
     </div><!-- End container -->
 </div><!-- End app -->
