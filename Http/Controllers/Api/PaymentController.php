@@ -283,7 +283,7 @@ class PaymentController extends Controller
         $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
 
         // @todo: Load stripe key from .env
-//        $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
+        // $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
 
         $stripe = new StripeClient($stripeKey);
 
@@ -306,7 +306,7 @@ class PaymentController extends Controller
             $intent = $stripe->paymentIntents->create([
                 'amount' => $totalAmount,
                 'currency' => $currency,
-                'application_fee_amount' => ($feeCollection['feeAmount']  / 100) * $totalAmount ,
+                'application_fee_amount' => round(($feeCollection['feeAmount'] / 100) * $totalAmount),
                 'transfer_data' => [
                     'destination' => $feeCollection['connectedAccountId'],
                 ],

@@ -92,20 +92,20 @@
                   class="fas fa-external-link-alt"></i>Find your StripeClient Id</a>
               <b-form-input id="connected-stripe-clientId" v-model="settings.stripeClientId"
                             placeholder="Connected Stripe Client ID"></b-form-input>
-
+                </br>
               <label for="connected-stripe-account" class="mt-1" style="font-weight: bold">Stripe Account Secret
                 Key</label>
               <a target="_blank" class="float-right mt-3" style="font-size: 10px; cursor: pointer"
                  href="https://docs.cs-cart.com/latest/user_guide/addons/stripe_connect/credentials.html#getting-publishable-key-and-secret-key"><i
-                  class="fas fa-external-link-alt"></i>Find your Secret and Publishable Key</a>
+                  class="fas fa-external-link-alt"></i>Find your Secret Key</a>
               <b-form-input id="connected-stripe-account" v-model="settings.stripeSecretKey"
                             placeholder="Connected Stripe Account ID"></b-form-input>
-
-              <label for="connected-stripe-publishkey" class="mt-1" style="font-weight: bold">Stripe Account Secret
+              </br>
+              <label for="connected-stripe-publishkey" class="mt-1" style="font-weight: bold">Stripe Account Publish
                 Key</label>
               <a target="_blank" class="float-right mt-3" style="font-size: 10px; cursor: pointer"
                  href="https://docs.cs-cart.com/latest/user_guide/addons/stripe_connect/credentials.html#getting-publishable-key-and-secret-key"><i
-                  class="fas fa-external-link-alt"></i>Find your Secret and Publishable Key</a>
+                  class="fas fa-external-link-alt"></i>Find your Publish Key</a>
               <b-form-input id="connected-stripe-account" v-model="settings.stripePublishKey"
                             placeholder="Connected Stripe Publish Key"></b-form-input>
               <b-button class="mt-2" variant="warning" block @click="connectStripeAccount()"
