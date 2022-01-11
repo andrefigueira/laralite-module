@@ -46,7 +46,7 @@ class PaymentController extends Controller
 
         $stripe = new StripeClient($stripeKey);
 
-        if(!$stripe){
+        if (!$stripe) {
             return response()->json([
                 'success' => 'false',
                 'message' => "Error in Payment Processing. Try again later!"
@@ -55,7 +55,7 @@ class PaymentController extends Controller
 
         $result = $stripe->paymentIntents->retrieve($token, []);
 
-        if(!$result){
+        if (!$result) {
             return response()->json([
                 'success' => false,
                 'message' => "Error! PLease try again later."
@@ -104,7 +104,7 @@ class PaymentController extends Controller
             'basket' => $basket,
             'status' => 1,
             'order_status' => "complete",
-            'refunded'  => 0,
+            'refunded' => 0,
             'payment_processor_result' => $result,
         ]);
 
@@ -115,18 +115,18 @@ class PaymentController extends Controller
             'order' => $order,
             'customer' => $customer,
             'orderAssets' => $orderAssets,
-            'currency' =>  $currency
+            'currency' => $currency
         ]));
 
-        if($customerData['newsletter_subscription']['email']) {
+        if ($customerData['newsletter_subscription']['email']) {
             $splitName = explode(' ', $customer->name); // Restricts it to only 2 values, for names like Billy Bob Jones
 
             $first_name = $splitName[0];
             $last_name = !empty($splitName[1]) ? $splitName[1] : '';
-            NewsletterFacade::subscribe($customer['email'], ['FNAME'=>$first_name, 'LNAME'=>$last_name]);
+            NewsletterFacade::subscribe($customer['email'], ['FNAME' => $first_name, 'LNAME' => $last_name]);
         }
 
-        if($orderAssets){
+        if ($orderAssets) {
             return (new JsonResponse([
                 'success' => true,
                 'message' => 'Processed payment',
@@ -136,7 +136,7 @@ class PaymentController extends Controller
                     'order' => $order,
                     'currency' => $currency,
                     'tickets' => $order->tickets,
-                    'subscribed' =>$customer['newsletter_subscription']['email'],
+                    'subscribed' => $customer['newsletter_subscription']['email'],
                 ],
             ]))->setStatusCode(Response::HTTP_OK);
         } else {
@@ -196,9 +196,7 @@ class PaymentController extends Controller
         $generatedTickets = [];
 
         foreach ($basket['products'] as $index => $product) {
-//            if ($product['sku'] === 'TRAPMUSICTICKET') {
-                $generatedTickets = $this->getGeneratedTickets($index, $product, $order, $customer);
-//            }
+            $generatedTickets[] = $this->getGeneratedTickets($index, $product, $order, $customer);
         }
 
         return $generatedTickets;
@@ -215,7 +213,8 @@ class PaymentController extends Controller
             $ticketUuid = Uuid::uuid4();
             $generatedTicket = $this->generateTicket($ticketUuid);
 
-            $generatedTickets[] = Ticket::create([
+            $generatedTickets = Ticket::create([
+                'sku' => $product['sku'],
                 'unique_id' => $ticketUuid,
                 'customer_id' => $customer->id,
                 'order_id' => $order->id,
@@ -224,13 +223,14 @@ class PaymentController extends Controller
                 ],
                 'admit_quantity' => $quantityToGenerate,
             ]);
-        // else create each individual ticket
+            // else create each individual ticket
         } else {
             while ($quantityGenerated < $quantityToGenerate) {
                 $ticketUuid = Uuid::uuid4();
                 $generatedTicket = $this->generateTicket($ticketUuid);
 
                 $generatedTickets[] = Ticket::create([
+                    'sku' => $product['sku'],
                     'unique_id' => $ticketUuid,
                     'customer_id' => $customer->id,
                     'order_id' => $order->id,
@@ -247,7 +247,7 @@ class PaymentController extends Controller
         return $generatedTickets;
     }
 
-    private function isFeeCollectionActive ()
+    private function isFeeCollectionActive()
     {
         try {
             $settings = Settings::where('id', 1);
@@ -268,13 +268,13 @@ class PaymentController extends Controller
             }
 
         } catch (\Throwable $exception) {
-           return false;
+            return false;
         }
 
         return false;
     }
 
-    protected function intentSecret (Request $request)
+    protected function intentSecret(Request $request)
     {
         $amount = $request->get('amount');
         $currency = $request->get('currency');
@@ -283,7 +283,7 @@ class PaymentController extends Controller
         $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
 
         // @todo: Load stripe key from .env
-//        $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
+        // $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
 
         $stripe = new StripeClient($stripeKey);
 
@@ -306,7 +306,7 @@ class PaymentController extends Controller
             $intent = $stripe->paymentIntents->create([
                 'amount' => $totalAmount,
                 'currency' => $currency,
-                'application_fee_amount' => ($feeCollection['feeAmount']  / 100) * $totalAmount ,
+                'application_fee_amount' => round(($feeCollection['feeAmount'] / 100) * $totalAmount),
                 'transfer_data' => [
                     'destination' => $feeCollection['connectedAccountId'],
                 ],
