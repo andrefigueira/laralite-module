@@ -1,7 +1,7 @@
 <template>
     <div class="customer-details">
       <div class="row">
-        <div class="col-md-9 col-sm-12">
+<!--        <div class="col-md-9 col-sm-12">
           <a @click="goBack" class="back-btn p-0 mr-3">
             <b-icon icon="arrow-left" font-scale="1"></b-icon>
           </a>
@@ -12,7 +12,7 @@
             <b-button class="mr-2" :disabled="order.refunded === 1" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
             <b-button :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
           </div>
-        </div>
+        </div>-->
       </div>
 <!--      <div class="d-flex flex-wrap flex-md-nowrap align-items-center mb-2 border-bottom">
         <a @click="goBack" class="back-btn p-0 mr-3">
