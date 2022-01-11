@@ -61,60 +61,74 @@
         </div>
       </b-modal>
 
-        <div v-show="loading" class="text-center">
-            <b-spinner label="Spinning"></b-spinner>
+      <div v-show="loading" class="text-center">
+          <b-spinner label="Spinning"></b-spinner>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+          <h1 class="h6 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
         </div>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+          <b-button size="sm" class="mr-1 float-right" :disabled="order.refunded === 1" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
+          <b-button size="sm" class="mr-1 float-right" :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
+        </div>
+      </div>
 
-        <div class="row">
-            <div class="col-sm-12 col-md-6">
-                <b-card>
-                    <b-card-text>
-                        <h5 class="heading-style"><i class="fas fa-user"></i> Order Details</h5>
-                        <table class="table table-striped">
-                            <tr>
-                                <td width="40%"><strong>ID</strong></td>
-                                <td>{{ order.unique_id }}</td>
-                            </tr>
+      <div class="row mt-2">
+        <div class="col-12"><b-button size="sm" class="w-100 mr-1" @click="goBack">&larr; Back to orders</b-button></div>
+      </div>
+
+      <div class="row mt-2">
+          <div class="col-sm-12 col-md-6 mb-2">
+              <b-card>
+                  <b-card-text>
+                      <h5 class="heading-style"><i class="fas fa-user"></i> Order Details</h5>
+                      <table class="table table-striped">
                           <tr>
-                            <td width="40%"><strong>Confirmation Code</strong></td>
-                            <td>{{ order.confirmation_code }}</td>
+                              <td width="40%"><strong>ID</strong></td>
+                              <td>{{ order.unique_id }}</td>
                           </tr>
-                            <tr>
-                                <td><strong>Customer</strong></td>
-                                <td>{{ order.payment_processor_result.receipt_email }}</td>
-                            </tr>
-                            <tr v-if="order.refunded">
-                                <td><strong>Status</strong></td>
-                                <td><b-badge class="badge-soft-warning"><i class="fas fa-check-circle"></i>Refunded</b-badge></td>
-                            </tr>
-                          <tr v-if="order.order_status === 'complete' || order.order_status === null">
-                            <td><strong>Status</strong></td>
-                            <td><b-badge class="badge-soft-primary" v-if="order.order_status === 'complete' || order.order_status === null"><i class="fas fa-check-circle"></i>Accepted</b-badge></td>
+                        <tr>
+                          <td width="40%"><strong>Confirmation Code</strong></td>
+                          <td>{{ order.confirmation_code }}</td>
+                        </tr>
+                          <tr>
+                              <td><strong>Customer</strong></td>
+                              <td>{{ order.payment_processor_result.receipt_email }}</td>
                           </tr>
-                            <tr>
-                                <td><strong>Date</strong></td>
-                                <td>{{ order.created_at }}</td>
-                            </tr>
-                        </table>
-                    </b-card-text>
-                </b-card>
-            </div><!-- End col -->
-            <div class="col-sm-12 col-md-6">
-                <b-card>
-                    <b-card-text>
-                        <h5 class="heading-style"><i class="ri-shopping-basket-fill" style="font-size: 20px"></i> Order Basket</h5>
-                        <b-table striped :fields="productFields" :items="order.basket.products" responsive="sm">
-                            <template #cell(image)="data">
-                                 <b-img thumbnail fluid :src="data.item.image" :alt="data.item.sku" style="max-width: 80px;"></b-img>
-                            </template>
+                          <tr v-if="order.refunded">
+                              <td><strong>Status</strong></td>
+                              <td><b-badge class="badge-soft-warning"><i class="fas fa-check-circle"></i>Refunded</b-badge></td>
+                          </tr>
+                        <tr v-if="order.order_status === 'complete' || order.order_status === null">
+                          <td><strong>Status</strong></td>
+                          <td><b-badge class="badge-soft-primary" v-if="order.order_status === 'complete' || order.order_status === null"><i class="fas fa-check-circle"></i>Accepted</b-badge></td>
+                        </tr>
+                          <tr>
+                              <td><strong>Date</strong></td>
+                              <td>{{ order.created_at }}</td>
+                          </tr>
+                      </table>
+                  </b-card-text>
+              </b-card>
+          </div><!-- End col -->
+          <div class="col-sm-12 col-md-6">
+              <b-card>
+                  <b-card-text>
+                      <h5 class="heading-style"><i class="ri-shopping-basket-fill" style="font-size: 20px"></i> Order Basket</h5>
+                      <b-table striped :fields="productFields" :items="order.basket.products" responsive="sm">
+                          <template #cell(image)="data">
+                               <b-img thumbnail fluid :src="data.item.image" :alt="data.item.sku" style="max-width: 80px;"></b-img>
+                          </template>
 
-                            <template #cell(sku)="data">
-                                {{ data.item.sku }}
-                            </template>
+                          <template #cell(sku)="data">
+                              {{ data.item.sku }}
+                          </template>
 
-                            <template #cell(price)="data">
-                                ${{ (data.item.price)*data.item.quantity }}
-                            </template>
+                          <template #cell(price)="data">
+                              ${{ (data.item.price)*data.item.quantity }}
+                          </template>
 
                             <template #cell(quantity)="data">
                                 {{ data.item.quantity }}

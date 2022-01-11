@@ -58,7 +58,7 @@ class OrderController extends Controller
 
     public function getTicketDetails($uuid)
     {
-        $ticket = Ticket::with('order')->where('unique_id', '=', $uuid)->first();
+        $ticket = Ticket::with('order.customer')->where('unique_id', '=', $uuid)->first();
 
         return $ticket;
     }
@@ -66,7 +66,7 @@ class OrderController extends Controller
     public function scanTicket($uuid)
     {
 
-        $ticket = Ticket::where('unique_id', '=', $uuid)->first();
+        $ticket = Ticket::with('order')->where('unique_id', '=', $uuid)->first();
 
         $order = $ticket->order;
 

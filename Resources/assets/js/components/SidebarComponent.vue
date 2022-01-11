@@ -10,7 +10,9 @@
 <!--          <b-img src="~assets/images/logo.png" class="logoImage" alt=""></b-img>-->
         </div>
         <nav class="d-block pr-3 pl-2">
-          <div class="menu-title mb-1">MENU</div>
+          <div class="mb-1">
+            <img class="admin-logo" src="/images/trap-music-museum-logo.png" alt="TrapMusicMuseum Logo">
+          </div>
           <ul class="nav">
             <li class="nav-item">
               <a class="nav-link" :class="{ 'active': request === 'admin' || request.match('admin/home') }" href="/admin/home">

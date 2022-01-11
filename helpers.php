@@ -2,14 +2,15 @@
 
 use Barryvdh\DomPDF\Facade as PDF;
 use Modules\Laralite\Models\Order;
+use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 
-if (! function_exists('generateTicketPDF')) {
+if (!function_exists('generateTicketPDF')) {
     /**
      * Create a collection from the given value.
      *
-     * @param  mixed  $value
+     * @param mixed $value
      * @return \Illuminate\Support\Collection
      */
     function generateTicketPDF(string $uuid)
@@ -22,10 +23,14 @@ if (! function_exists('generateTicketPDF')) {
             return abort(404);
         }
 
+        $product = Product::whereJsonContains('variants', ['sku' => $ticket->sku])->firstOrFail();
+
+        $productName = $product->name;
         $ticketUuid = $ticket->unique_id;
         $ticketQrCode = $ticket->ticket->image;
         $ticketAdmitQuantity = $ticket->admit_quantity ?? 1;
         $confirmation_code = $ticket->order->confirmation_code;
+
 
         $products = $ticket->order->basket->products;
         $ticketPrice = 0;
@@ -33,8 +38,10 @@ if (! function_exists('generateTicketPDF')) {
         $currency = json_decode($settings->settings, true)['currency']['currency_symbol'];
 
         foreach ($products as $product) {
+            if ($ticket->sku === $product->sku) {
                 $ticketPrice = $product->price;
                 break;
+            }
         }
 
         // For Testing
@@ -43,7 +50,7 @@ if (! function_exists('generateTicketPDF')) {
             'ssl' => [
                 'verify_peer' => false,
                 'verify_peer_name' => false,
-                'allow_self_signed'=> true,
+                'allow_self_signed' => true,
             ]
         ]);
 
@@ -57,14 +64,16 @@ if (! function_exists('generateTicketPDF')) {
                 'ticketPrice',
                 'ticketAdmitQuantity',
                 'currency',
-                'confirmation_code'
+                'confirmation_code',
+                'productName'
             )
         );
 
         return $pdf->stream();
     }
 
-    function generateUniqueCode($prefix = '') {
+    function generateUniqueCode($prefix = '')
+    {
         $code = '';
 
         $codeExists = false;

@@ -11,6 +11,7 @@ class Ticket extends Model
     protected $fillable = [
         'unique_id',
         'customer_id',
+        'sku',
         'order_id',
         'ticket',
         'validated',
