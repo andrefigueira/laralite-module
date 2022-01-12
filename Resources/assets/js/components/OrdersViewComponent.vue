@@ -155,16 +155,20 @@
                                 <td>{{ order.payment_processor_result.description }}</td>
                             </tr>
                             <tr>
-                                <td><strong>Amount</strong></td>
+                                <td><strong>Total Amount</strong></td>
                                 <td>${{ order.payment_processor_result.amount / 100 }}</td>
                             </tr>
                           <tr>
                             <td><strong>Tax Applied</strong></td>
                             <td>${{ order.basket.subtotals[0]["taxAmount"] ? order.basket.subtotals[0]["taxAmount"] : 'n/a'}} ({{ order.basket.subtotals[0]["tax"] + '%' ? order.basket.subtotals[0]["tax"] + '%' : 'n/a'}})</td>
                           </tr>
+                          <tr>
+                            <td><strong>Service Fee</strong></td>
+                            <td>${{ order.basket.subtotals[0]["serviceFee"] ? order.basket.subtotals[0]["serviceFee"] : 'n/a'}}</td>
+                          </tr>
                             <tr>
                                 <td><strong>Fee</strong></td>
-                                <td>{{ order.payment_processor_result.application_fee_amount ? order.payment_processor_result.application_fee_amount : 'n/a' }}</td>
+                                <td>{{ order.payment_processor_result.application_fee_amount ? order.payment_processor_result.application_fee_amount/100 : 'n/a' }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Balance Transaction</strong></td>
