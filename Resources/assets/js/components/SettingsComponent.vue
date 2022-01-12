@@ -52,29 +52,43 @@
                 </div>
                 <div class="mt-4" v-if="settings.stripeSecretKey !== ''">
                   <div class="row">
-                    <div class="col-6">
+                    <div class="col-md-4 col-sm-12">
                       <b-form-checkbox
                           id="feeActive"
                           v-model="settings.feeActive"
                           name="feeActive"
                           :value="true"
                           :unchecked-value="false">
-                        Activate fee take
+                        Activate Fee take
                       </b-form-checkbox>
-                      <label class="mt-2">Fee Amount</label>
-                      <b-form-input v-model="settings.feeAmount" placeholder="100"></b-form-input>
+                      <label class="mt-2">Fee Amount <span style="color: darkgray; font-size: 10px">(In Percent)</span></label>
+                      <b-form-input v-model="settings.feeAmount" placeholder="10%"></b-form-input>
                     </div>
-                    <div class="col-6">
+
+                    <div class="col-md-4 col-sm-12">
                       <b-form-checkbox
                           id="taxActive"
                           v-model="settings.taxActive"
                           name="taxActive"
                           :value="true"
                           :unchecked-value="false">
-                        Activate tax
+                        Activate Tax
                       </b-form-checkbox>
-                      <label class="mt-2">Tax Amount</label>
-                      <b-form-input v-model="settings.taxAmount" placeholder="100"></b-form-input>
+                      <label class="mt-2">Tax Amount <span style="color: darkgray; font-size: 10px">(In Percent)</span></label>
+                      <b-form-input v-model="settings.taxAmount" placeholder="10%"></b-form-input>
+                    </div>
+
+                    <div class="col-md-4 col-sm-12">
+                      <b-form-checkbox
+                          id="serviceFeeActive"
+                          v-model="settings.serviceFeeActive"
+                          name="serviceFeeActive"
+                          :value="true"
+                          :unchecked-value="false">
+                        Activate Service Fee
+                      </b-form-checkbox>
+                      <label class="mt-2">Service Fee <span style="color: darkgray; font-size: 10px"></span></label>
+                      <b-form-input v-model="settings.serviceFeeAmount" placeholder="100"></b-form-input>
                     </div>
                   </div>
                 </div>
@@ -274,6 +288,10 @@ export default {
         stripePublishKey: '',
         feeActive: false,
         feeAmount: '',
+        taxActive: false,
+        taxAmount: '',
+        serviceFeeActive: false,
+        serviceFeeAmount: '',
         siteLogo: '',
         buttonPrimaryColor: "#36A3B8",
         buttonSecondaryColor: "#28a745",
@@ -436,6 +454,12 @@ export default {
       }
       if (settingsObject.taxAmount) {
         this.settings.taxAmount = settingsObject.taxAmount;
+      }
+      if (settingsObject.serviceFeeActive) {
+        this.settings.serviceFeeActive = settingsObject.serviceFeeActive;
+      }
+      if (settingsObject.serviceFeeAmount) {
+        this.settings.serviceFeeAmount = settingsObject.serviceFeeAmount;
       }
       if (settingsObject.siteLogo) {
         this.settings.siteLogo = settingsObject.siteLogo;
