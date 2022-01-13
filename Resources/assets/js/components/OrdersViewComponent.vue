@@ -1,32 +1,7 @@
 <template>
     <div class="customer-details">
       <div class="row">
-<!--        <div class="col-md-9 col-sm-12">
-          <a @click="goBack" class="back-btn p-0 mr-3">
-            <b-icon icon="arrow-left" font-scale="1"></b-icon>
-          </a>
-          <h1 class="h2 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
-        </div>
-        <div class="col-md-3 col-sm-12 mt-md-3 mb-sm-2" style="text-align-last: right;">
-          <div class="btn-group mt-md-2 mr-2">
-            <b-button class="mr-2" :disabled="order.refunded === 1" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
-            <b-button :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
-          </div>
-        </div>-->
       </div>
-<!--      <div class="d-flex flex-wrap flex-md-nowrap align-items-center mb-2 border-bottom">
-        <a @click="goBack" class="back-btn p-0 mr-3">
-          <b-icon icon="arrow-left" font-scale="1"></b-icon>
-        </a>
-        <h1 class="h2 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-&lt;!&ndash;          <div class="btn-group mt-md-2 mr-2 btnStyle">
-            <b-button class="mr-2" :disabled="order.refunded === 1" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
-            <b-button :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
-          </div>&ndash;&gt;
-        </div>&lt;!&ndash; End toolbar &ndash;&gt;
-      </div>-->
-
         <b-modal ref="issueRefund" id="issueRefund" title="Issue a Refund" hide-footer>
             <div v-if="refundProcessing === false && refundError === false && refundSuccess !== true">
                 <label> Please select a reason for the refund:</label>
@@ -44,7 +19,7 @@
                 <b-spinner label="Spinning"></b-spinner>
             </div>
         </b-modal>
-      <b-modal ref="cancelOrder" id="cancelOrder" title="Cancel Order" hide-footer>
+        <b-modal ref="cancelOrder" id ="cancelOrder" title="Cancel Order" hide-footer>
         <div v-if="cancelProcessing === false && cancelError === false && cancelSuccess !== true">
           <p>Are You Sure?? <br/> <strong>Order Id </strong>:- {{ order.unique_id}}</p>
           <button class="btn btn-default mt-2 float-right" block @click="hideCancel">Exit</button>
@@ -60,6 +35,22 @@
           <b-spinner label="Spinning"></b-spinner>
         </div>
       </b-modal>
+        <b-modal ref="reedemOrder" id ="reedemOrder" title="Reedem Order" hide-footer>
+        <div v-if="reedemProcessing === false && reedemError === false && reedemSuccess !== true">
+          <p>Are You Sure?? <br/> <strong>Order Id </strong>:- {{ order.unique_id}}</p>
+          <button class="btn btn-default mt-2 float-right" block @click="hideReedem">Exit</button>
+          <button class="btn btn-danger mt-2 mr-1 float-right" variant="warning" block @click="toggleReedem">Reedem Order</button>
+        </div>
+        <div v-if="reedemError === true">
+          <p>{{ reedemErrorMessage }}</p>
+        </div>
+        <div v-if="reedemSuccess === true">
+          <p>Successfully canceled order {{ order.unique_id }}</p>
+        </div>
+        <div v-show="reedemProcessing" class="text-center">
+          <b-spinner label="Spinning"></b-spinner>
+        </div>
+      </b-modal>
 
       <div v-show="loading" class="text-center">
           <b-spinner label="Spinning"></b-spinner>
@@ -70,8 +61,9 @@
           <h1 class="h6 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
         </div>
         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
-          <b-button size="sm" class="mr-1 float-right" :disabled="order.refunded === 1" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
-          <b-button size="sm" class="mr-1 float-right" :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
+          <b-button size="sm" class="mr-1 float-right" :disabled="order.refunded === 1 || (order.tickets[0]['validated'] === 1 && order.tickets[0]['visited_counts'] != null)" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
+          <b-button size="sm" class="mr-1 float-right" :disabled="order.order_status === 'cancel' || (order.tickets[0]['validated'] === 1 && order.tickets[0]['visited_counts'] != null)" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
+          <b-button size="sm" class="mr-1 float-right" variant="warning" :disabled="order.refunded === 1 || order.order_status === 'cancel' || (order.tickets[0]['validated'] === 1 && order.tickets[0]['visited_counts'] != null)"  v-b-modal.reedemOrder>Reedem Order</b-button>
         </div>
       </div>
 
@@ -241,7 +233,7 @@
         props: {
             order: {
                 type: Object
-            }
+            },
         },
         data() {
             return {
@@ -270,6 +262,11 @@
               cancelSuccess: false,
               cancelErrorMessage: '',
               cancelSuccessMessage: '',
+              reedemProcessing: false,
+              reedemError: false,
+              reedemSuccess: false,
+              reedemErrorMessage: '',
+              reedemSuccessMessage: '',
             }
         },
         methods: {
@@ -308,30 +305,57 @@
             hideCancel() {
               this.$refs['cancelOrder'].hide()
             },
-          toggleCancel() {
-            let self = this;
-            self.cancelProcessing = true;
+            toggleCancel() {
+              let self = this;
+              self.cancelProcessing = true;
 
-            let formData = {
-              orderId: this.order.id,
-            };
+              let formData = {
+                orderId: this.order.id,
+              };
 
-            axios.post('/api/order/cancel', formData).then(function (result) {
-              self.cancelError = false;
-              self.cancelSuccess = true;
-              self.cancelProcessing = false;
-              location.reload();
-            }).catch(function (error) {
-              console.log('cancel failed', {
-                error: error.response.data
+              axios.post('/api/order/cancel', formData).then(function (result) {
+                self.cancelError = false;
+                self.cancelSuccess = true;
+                self.cancelProcessing = false;
+                location.reload();
+              }).catch(function (error) {
+                console.log('cancel failed', {
+                  error: error.response.data
+                });
+
+                self.cancelError = true;
+                self.cancelSuccess = false;
+                self.cancelErrorMessage = error.response.data.message;
+                self.cancelProcessing = false;
               });
+            },
+            hideReedem() {
+              this.$refs['reedemOrder'].hide()
+            },
+            toggleReedem() {
+              let self = this;
+              self.reedemProcessing = true;
 
-              self.cancelError = true;
-              self.cancelSuccess = false;
-              self.cancelErrorMessage = error.response.data.message;
-              self.cancelProcessing = false;
-            });
-          }
+              let formData = {
+                orderId: this.order.id,
+              };
+
+              axios.post('/api/order/reedem', formData).then(function (result) {
+                self.reedemError = false;
+                self.reedemSuccess = true;
+                self.reedemProcessing = false;
+                location.reload();
+              }).catch(function (error) {
+                console.log('reedem failed', {
+                  error: error.response.data
+                });
+
+                self.reedemError = true;
+                self.reedemSuccess = false;
+                self.reedemErrorMessage = error.response.data.message;
+                self.reedemProcessing = false;
+              });
+            }
         }
     }
 </script>
