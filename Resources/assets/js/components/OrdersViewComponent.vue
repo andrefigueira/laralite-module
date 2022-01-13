@@ -45,7 +45,7 @@
           <p>{{ reedemErrorMessage }}</p>
         </div>
         <div v-if="reedemSuccess === true">
-          <p>Successfully canceled order {{ order.unique_id }}</p>
+          <p>Successfully reedemed order {{ order.unique_id }}</p>
         </div>
         <div v-show="reedemProcessing" class="text-center">
           <b-spinner label="Spinning"></b-spinner>
@@ -292,7 +292,7 @@
                     self.refundProcessing = false;
                     location.reload();
                 }).catch(function (error) {
-                    console.log('Canceling Order failed', {
+                    console.log('Refund Order failed', {
                         error: error.response.data
                     });
 
