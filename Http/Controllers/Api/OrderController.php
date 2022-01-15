@@ -27,12 +27,12 @@ class OrderController extends Controller
             return $orders->get();
         }
 
-      if ($request->input('filter') !== 'null' && $request->input('filter') != '') {
-        $orders->whereHas('customer', function ($q) use ($request) {
-          $q->where('name', 'LIKE', '%' . $request->input('filter') . '%')
-            ->orWhere('email', 'LIKE', '%' . $request->input('filter') . '%');
-        })->orWhere('confirmation_code', 'LIKE' , '%' . $request->input('filter') . '%')->get();
-      }
+        if ($request->input('filter') !== 'null' && $request->input('filter') != '') {
+            $orders->whereHas('customer', function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->input('filter') . '%')
+                    ->orWhere('email', 'LIKE', '%' . $request->input('filter') . '%');
+            })->orWhere('confirmation_code', 'LIKE', '%' . $request->input('filter') . '%')->get();
+        }
 
         if ($request->input('sortBy') !== null) {
             $orders->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
@@ -82,7 +82,8 @@ class OrderController extends Controller
         }
     }
 
-    private function refundOrder ($orderId) {
+    private function refundOrder($orderId)
+    {
         $order = $this->getOne($orderId);
         $paymentProcessorResult = $order->payment_processor_result;
         $paymentId = $paymentProcessorResult->id;
@@ -138,12 +139,12 @@ class OrderController extends Controller
         ];
     }
 
-    private function issueRefund ($type, $paymentId)
+    private function issueRefund($type, $paymentId)
     {
         // @todo: Load stripe key from DB
         $settings = Settings::firstOrFail();
 
-        $stripeKey = json_decode($settings->settings, true)['stripeAccessToken'];
+        $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
 
         // @todo: Load stripe key from .env
         /*$stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';*/
@@ -180,7 +181,7 @@ class OrderController extends Controller
         Mail::to($order->customer->email)->send(new OrderCancellation([
             'order' => $order,
             'customer' => $order->customer,
-            'currency' =>   $currency
+            'currency' => $currency
         ]));
 
         return response()->json([
@@ -208,31 +209,61 @@ class OrderController extends Controller
 
     public function bulkRefunds(Request $request)
     {
-      $orders = $request->get('orders', null);
+        $orders = $request->get('orders', null);
 
-      foreach ($orders as $order) {
+        foreach ($orders as $order) {
 
-        $orderId = $order['id'];
+            $orderId = $order['id'];
 
-        if (!$orderId) {
-          return response()->json([
+            if (!$orderId) {
+                return response()->json([
+                    'success' => 'false',
+                    'message' => "Error: No order ID given"
+                ], 400);
+            }
+
+            $response = $this->refundOrder($orderId);
+        }
+        if ($response['success']) {
+            return new JsonResponse([
+                'success' => true,
+                'message' => $response['message'],
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'success' => 'false',
+                'message' => $response['message']
+            ], 400);
+        }
+    }
+
+    public function reedem(Request $request) {
+        $orderId = $request->get('orderId', null);
+
+    if (!$orderId) {
+        return response()->json([
             'success' => 'false',
             'message' => "Error: No order ID given"
-          ], 400);
-        }
-
-        $response = $this->refundOrder($orderId);
-        }
-      if ($response['success']) {
-        return new JsonResponse([
-          'success' => true,
-          'message' => $response['message'],
-        ], Response::HTTP_OK);
-      } else {
-        return response()->json([
-          'success' => 'false',
-          'message' => $response['message']
         ], 400);
-      }
     }
+
+    $order = Order::where('id', '=', $orderId)->first();
+
+    $ticket = $order->tickets()->first();
+
+        if ($ticket && $order->order_status == 'complete' && $order->refunded == 0 && ($ticket->visited_counts != 1 || $ticket->visited_counts == null)) {
+            $ticket->validated = '1';
+            $ticket->visited_counts = '1';
+            $ticket->save();
+            return response()->json([
+                'success' => 'true',
+                'message' => "Tickets table updated successfully",
+                'ticket' => $ticket]);
+        } else {
+            return response()->json([
+                'success' => 'false',
+                'message' => "Error: Invalid Ticket"
+            ], 404);
+        }
+}
 }

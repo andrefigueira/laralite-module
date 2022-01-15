@@ -26,6 +26,10 @@ class SettingsController extends Controller
         $currency = $request->get('currency');
         $feeActive = $request->get('feeActive');
         $feeAmount = $request->get('feeAmount');
+        $taxActive = $request->get('taxActive');
+        $taxAmount = $request->get('taxAmount');
+        $serviceFeeActive = $request->get('serviceFeeActive');
+        $serviceFeeAmount = $request->get('serviceFeeAmount');
         $siteLogo = $request->get('siteLogo');
         $buttonPrimaryColor = $request->get('buttonPrimaryColor');
         $buttonSecondaryColor = $request->get('buttonSecondaryColor');
@@ -47,6 +51,10 @@ class SettingsController extends Controller
             'stripePublishKey' => $stripePublishKey,
             'feeActive' => $feeActive,
             'feeAmount' => $feeAmount,
+            'taxActive' => $taxActive,
+            'taxAmount' => $taxAmount,
+            'serviceFeeActive' => $serviceFeeActive,
+            'serviceFeeAmount' => $serviceFeeAmount,
             'siteLogo'  => $siteLogo,
             'buttonPrimaryColor'    =>  $buttonPrimaryColor,
             'textPrimaryColor'     =>  $textPrimaryColor,
@@ -125,7 +133,7 @@ class SettingsController extends Controller
             $settingsValue->stripeAccountId = $stripeResponse->stripe_user_id;
             $settingsValue->stripeAccessToken = $stripeResponse->access_token;
             $settingsValue->stripeLiveAccount = $stripeResponse->livemode;
-            $settingsValue->stripePublishKey = $stripeResponse->stripe_publishable_key;
+//          $settingsValue->stripePublishKey = $stripeResponse->stripe_publishable_key;
             $settings->settings = json_encode($settingsValue);
 
             $settings->save();

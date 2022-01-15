@@ -51,16 +51,46 @@
                   </div>
                 </div>
                 <div class="mt-4" v-if="settings.stripeSecretKey !== ''">
-                  <b-form-checkbox
-                      id="feeActive"
-                      v-model="settings.feeActive"
-                      name="feeActive"
-                      :value="true"
-                      :unchecked-value="false">
-                    Activate fee take
-                  </b-form-checkbox>
-                  <label class="mt-2">Fee Amount</label>
-                  <b-form-input v-model="settings.feeAmount" placeholder="100"></b-form-input>
+                  <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                      <b-form-checkbox
+                          id="feeActive"
+                          v-model="settings.feeActive"
+                          name="feeActive"
+                          :value="true"
+                          :unchecked-value="false">
+                        Activate Fee take
+                      </b-form-checkbox>
+                      <label class="mt-2">Fee Amount <span style="color: darkgray; font-size: 10px">(In Percent)</span></label>
+                      <b-form-input v-model="settings.feeAmount" placeholder="10%"></b-form-input>
+                    </div>
+
+                    <div class="col-md-4 col-sm-12">
+                      <b-form-checkbox
+                          id="taxActive"
+                          v-model="settings.taxActive"
+                          name="taxActive"
+                          :value="true"
+                          :unchecked-value="false">
+                        Activate Tax
+                      </b-form-checkbox>
+                      <label class="mt-2">Tax Amount <span style="color: darkgray; font-size: 10px">(In Percent)</span></label>
+                      <b-form-input v-model="settings.taxAmount" placeholder="10%"></b-form-input>
+                    </div>
+
+                    <div class="col-md-4 col-sm-12">
+                      <b-form-checkbox
+                          id="serviceFeeActive"
+                          v-model="settings.serviceFeeActive"
+                          name="serviceFeeActive"
+                          :value="true"
+                          :unchecked-value="false">
+                        Activate Service Fee
+                      </b-form-checkbox>
+                      <label class="mt-2">Service Fee <span style="color: darkgray; font-size: 10px"></span></label>
+                      <b-form-input v-model="settings.serviceFeeAmount" placeholder="100"></b-form-input>
+                    </div>
+                  </div>
                 </div>
               </div><!-- End page section -->
             </div><!-- End col -->
@@ -76,15 +106,24 @@
                   class="fas fa-external-link-alt"></i>Find your StripeClient Id</a>
               <b-form-input id="connected-stripe-clientId" v-model="settings.stripeClientId"
                             placeholder="Connected Stripe Client ID"></b-form-input>
+                </br>
               <label for="connected-stripe-account" class="mt-1" style="font-weight: bold">Stripe Account Secret
                 Key</label>
               <a target="_blank" class="float-right mt-3" style="font-size: 10px; cursor: pointer"
                  href="https://docs.cs-cart.com/latest/user_guide/addons/stripe_connect/credentials.html#getting-publishable-key-and-secret-key"><i
-                  class="fas fa-external-link-alt"></i>Find your Secret and Publishable Key</a>
+                  class="fas fa-external-link-alt"></i>Find your Secret Key</a>
               <b-form-input id="connected-stripe-account" v-model="settings.stripeSecretKey"
                             placeholder="Connected Stripe Account ID"></b-form-input>
+              </br>
+              <label for="connected-stripe-publishkey" class="mt-1" style="font-weight: bold">Stripe Account Publish
+                Key</label>
+              <a target="_blank" class="float-right mt-3" style="font-size: 10px; cursor: pointer"
+                 href="https://docs.cs-cart.com/latest/user_guide/addons/stripe_connect/credentials.html#getting-publishable-key-and-secret-key"><i
+                  class="fas fa-external-link-alt"></i>Find your Publish Key</a>
+              <b-form-input id="connected-stripe-account" v-model="settings.stripePublishKey"
+                            placeholder="Connected Stripe Publish Key"></b-form-input>
               <b-button class="mt-2" variant="warning" block @click="connectStripeAccount()"
-                        :disabled="settings.stripeSecretKey.length == 0 && settings.stripeClientId.length == 0">Connect
+                        :disabled="settings.stripeSecretKey.length == 0 && settings.stripeClientId.length == 0 && settings.stripePublishKey.length == 0">Connect
                 Stripe Account
               </b-button>
               <b-button class="mt-3" block @click="hideSecretKeyInfo">Exit</b-button>
@@ -249,6 +288,10 @@ export default {
         stripePublishKey: '',
         feeActive: false,
         feeAmount: '',
+        taxActive: false,
+        taxAmount: '',
+        serviceFeeActive: false,
+        serviceFeeAmount: '',
         siteLogo: '',
         buttonPrimaryColor: "#36A3B8",
         buttonSecondaryColor: "#28a745",
@@ -405,6 +448,18 @@ export default {
       }
       if (settingsObject.feeAmount) {
         this.settings.feeAmount = settingsObject.feeAmount;
+      }
+      if (settingsObject.taxActive) {
+        this.settings.taxActive = settingsObject.taxActive;
+      }
+      if (settingsObject.taxAmount) {
+        this.settings.taxAmount = settingsObject.taxAmount;
+      }
+      if (settingsObject.serviceFeeActive) {
+        this.settings.serviceFeeActive = settingsObject.serviceFeeActive;
+      }
+      if (settingsObject.serviceFeeAmount) {
+        this.settings.serviceFeeAmount = settingsObject.serviceFeeAmount;
       }
       if (settingsObject.siteLogo) {
         this.settings.siteLogo = settingsObject.siteLogo;

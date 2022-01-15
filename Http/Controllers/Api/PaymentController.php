@@ -42,7 +42,7 @@ class PaymentController extends Controller
 
         $settings = Settings::firstOrFail();
 
-        $stripeKey = json_decode($settings->settings, true)['stripeAccessToken'];
+        $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
 
         $stripe = new StripeClient($stripeKey);
 
@@ -264,6 +264,8 @@ class PaymentController extends Controller
                 return [
                     'stripeSecretKey' => $settings->stripeSecretKey,
                     'feeAmount' => $settings->feeAmount,
+                    'stripeAccessToken' => $settings->stripeAccessToken,
+                    'connectedAccountId' => $settings->stripeAccountId
                 ];
             }
 
@@ -280,15 +282,22 @@ class PaymentController extends Controller
         $currency = $request->get('currency');
         $settings = Settings::firstOrFail();
 
-        $stripeKey = json_decode($settings->settings, true)['stripeAccessToken'];
+        $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
 
         // @todo: Load stripe key from .env
-        /*$stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';*/
+        // $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
 
         $stripe = new StripeClient($stripeKey);
 
         // Fees
         $feeCollection = $this->isFeeCollectionActive();
+
+        /*$intent = $stripe->paymentIntents->create([
+            'amount' => $amount * 100,
+            'currency' => $currency,
+        ]);*/
+
+        $totalAmount = $amount * 100;
 
         // @todo: This is now using the PaymentIntents API
         // Customer details are not being sent to stripe here, we need to do add additional details to the PI creation.
@@ -297,16 +306,17 @@ class PaymentController extends Controller
             // `feeAmount` is the amount set in the settings
             // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
             $intent = $stripe->paymentIntents->create([
-                'amount' => $amount * 100,
+                'amount' => $totalAmount,
                 'currency' => $currency,
-                'application_fee_amount' => $feeCollection['feeAmount'] * 100,
+                'application_fee_amount' => round(($feeCollection['feeAmount'] / 100) * $totalAmount),
                 'transfer_data' => [
-                    'destination' => $feeCollection['stripeSecretKey'],
+                    'destination' => $feeCollection['connectedAccountId'],
                 ],
+                'on_behalf_of' => $feeCollection['connectedAccountId']
             ]);
         } else {
             $intent = $stripe->paymentIntents->create([
-                'amount' => $amount * 100,
+                'amount' => $totalAmount,
                 'currency' => $currency,
             ]);
 

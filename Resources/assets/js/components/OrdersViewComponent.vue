@@ -1,23 +1,25 @@
 <template>
     <div class="customer-details">
-      <b-modal ref="issueRefund" id="issueRefund" title="Issue a Refund" hide-footer>
-          <div v-if="refundProcessing === false && refundError === false && refundSuccess !== true">
-              <label> Please select a reason for the refund:</label>
-              <b-form-select v-model="reason" :options="reasonOptions"></b-form-select>
-              <button class="btn btn-default mt-2 float-right" @click="hideRefund">Exit</button>
-              <button class="btn btn-danger mt-2 mr-1 float-right" block @click="toggleRefund">Issue Refund</button>
-          </div>
-          <div v-if="refundError === true">
-              <p>{{ refundErrorMessage.code }}</p>
-          </div>
-          <div v-if="refundSuccess === true">
-              <p>Successfully refunded order {{ order.unique_id }}</p>
-          </div>
-          <div v-show="refundProcessing" class="text-center">
-              <b-spinner label="Spinning"></b-spinner>
-          </div>
-      </b-modal>
-      <b-modal ref="cancelOrder" id="cancelOrder" title="Cancel Order" hide-footer>
+      <div class="row">
+      </div>
+        <b-modal ref="issueRefund" id="issueRefund" title="Issue a Refund" hide-footer>
+            <div v-if="refundProcessing === false && refundError === false && refundSuccess !== true">
+                <label> Please select a reason for the refund:</label>
+                <b-form-select v-model="reason" :options="reasonOptions"></b-form-select>
+                <button class="btn btn-default mt-2 float-right" @click="hideRefund">Exit</button>
+                <button class="btn btn-danger mt-2 mr-1 float-right" block @click="toggleRefund">Issue Refund</button>
+            </div>
+            <div v-if="refundError === true">
+                <p>{{ refundErrorMessage.code }}</p>
+            </div>
+            <div v-if="refundSuccess === true">
+                <p>Successfully refunded order {{ order.unique_id }}</p>
+            </div>
+            <div v-show="refundProcessing" class="text-center">
+                <b-spinner label="Spinning"></b-spinner>
+            </div>
+        </b-modal>
+        <b-modal ref="cancelOrder" id ="cancelOrder" title="Cancel Order" hide-footer>
         <div v-if="cancelProcessing === false && cancelError === false && cancelSuccess !== true">
           <p>Are You Sure?? <br/> <strong>Order Id </strong>:- {{ order.unique_id}}</p>
           <button class="btn btn-default mt-2 float-right" block @click="hideCancel">Exit</button>
@@ -33,6 +35,22 @@
           <b-spinner label="Spinning"></b-spinner>
         </div>
       </b-modal>
+        <b-modal ref="reedemOrder" id ="reedemOrder" title="Reedem Order" hide-footer>
+        <div v-if="reedemProcessing === false && reedemError === false && reedemSuccess !== true">
+          <p>Are You Sure?? <br/> <strong>Order Id </strong>:- {{ order.unique_id}}</p>
+          <button class="btn btn-default mt-2 float-right" block @click="hideReedem">Exit</button>
+          <button class="btn btn-danger mt-2 mr-1 float-right" variant="warning" block @click="toggleReedem">Reedem Order</button>
+        </div>
+        <div v-if="reedemError === true">
+          <p>{{ reedemErrorMessage }}</p>
+        </div>
+        <div v-if="reedemSuccess === true">
+          <p>Successfully reedemed order {{ order.unique_id }}</p>
+        </div>
+        <div v-show="reedemProcessing" class="text-center">
+          <b-spinner label="Spinning"></b-spinner>
+        </div>
+      </b-modal>
 
       <div v-show="loading" class="text-center">
           <b-spinner label="Spinning"></b-spinner>
@@ -43,8 +61,9 @@
           <h1 class="h6 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
         </div>
         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
-          <b-button size="sm" class="mr-1 float-right" :disabled="order.refunded === 1" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
-          <b-button size="sm" class="mr-1 float-right" :disabled="order.order_status === 'cancel'" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
+          <b-button size="sm" class="mr-1 float-right" :disabled="order.refunded === 1 || (order.tickets[0]['validated'] === 1 && order.tickets[0]['visited_counts'] != null)" variant="warning" v-b-modal.issueRefund>Issue Refund</b-button>
+          <b-button size="sm" class="mr-1 float-right" :disabled="order.order_status === 'cancel' || (order.tickets[0]['validated'] === 1 && order.tickets[0]['visited_counts'] != null)" variant="warning" v-b-modal.cancelOrder>Cancel Order</b-button>
+          <b-button size="sm" class="mr-1 float-right" variant="warning" :disabled="order.refunded === 1 || order.order_status === 'cancel' || (order.tickets[0]['validated'] === 1 && order.tickets[0]['visited_counts'] != null)"  v-b-modal.reedemOrder>Reedem Order</b-button>
         </div>
       </div>
 
@@ -103,96 +122,104 @@
                               ${{ (data.item.price)*data.item.quantity }}
                           </template>
 
-                          <template #cell(quantity)="data">
-                              {{ data.item.quantity }}
-                          </template>
-                      </b-table>
-                  </b-card-text>
-              </b-card>
-          </div><!-- End col -->
-          <div class="col-sm-12 col-md-6 mt-2">
-              <b-card>
-                  <b-card-text>
-                      <h5 class="heading-style"><i class="ri-bank-card-fill" style="font-size: 20px"></i> Payment Details</h5>
-                      <table class="table table-striped">
+                            <template #cell(quantity)="data">
+                                {{ data.item.quantity }}
+                            </template>
+                        </b-table>
+                    </b-card-text>
+                </b-card>
+            </div><!-- End col -->
+            <div class="col-sm-12 col-md-6 mt-2">
+                <b-card>
+                    <b-card-text>
+                        <h5 class="heading-style"><i class="ri-bank-card-fill" style="font-size: 20px"></i> Payment Details</h5>
+                        <table class="table table-striped">
+                            <tr>
+                                <td><strong>ID</strong></td>
+                                <td>{{ order.payment_processor_result.id }}</td>
+                            </tr>
+                            <tr>
+                                <td width="40%"><strong>Payment Descriptor</strong></td>
+                                <td>{{ order.payment_processor_result.calculated_statement_descriptor }}</td>
+                            </tr>
+                            <tr>
+                                <td width="40%"><strong>Description</strong></td>
+                                <td>{{ order.payment_processor_result.description }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Amount</strong></td>
+                                <td>${{ order.payment_processor_result.amount / 100 }}</td>
+                            </tr>
                           <tr>
-                              <td><strong>ID</strong></td>
-                              <td>{{ order.payment_processor_result.id }}</td>
+                            <td><strong>Tax Applied</strong></td>
+                            <td>${{ order.basket.subtotals[0]["taxAmount"] ? order.basket.subtotals[0]["taxAmount"] : 'n/a'}} ({{ order.basket.subtotals[0]["tax"] + '%' ? order.basket.subtotals[0]["tax"] + '%' : 'n/a'}})</td>
                           </tr>
                           <tr>
-                              <td width="40%"><strong>Payment Descriptor</strong></td>
-                              <td>{{ order.payment_processor_result.calculated_statement_descriptor }}</td>
+                            <td><strong>Service Fee</strong></td>
+                            <td>${{ order.basket.subtotals[0]["serviceFee"] ? order.basket.subtotals[0]["serviceFee"] : 'n/a'}}</td>
                           </tr>
-                          <tr>
-                              <td width="40%"><strong>Description</strong></td>
-                              <td>{{ order.payment_processor_result.description }}</td>
-                          </tr>
-                          <tr>
-                              <td><strong>Amount</strong></td>
-                              <td>${{ order.payment_processor_result.amount / 100 }}</td>
-                          </tr>
-                          <tr>
-                              <td><strong>Fee</strong></td>
-                              <td>{{ order.payment_processor_result.application_fee_amount === '' ? order.payment_processor_result.application_fee_amount : 'n/a' }}</td>
-                          </tr>
-                          <tr>
-                              <td><strong>Balance Transaction</strong></td>
-                              <td>{{ order.payment_processor_result.balance_transaction }}</td>
-                          </tr>
-                      </table>
-                  </b-card-text>
-              </b-card>
-          </div><!-- End col -->
-          <div class="col-sm-12 col-md-6 mt-2">
-              <b-card>
-                  <b-card-text>
-                      <h5 class="heading-style"><i class="fas fa-user"></i> Payment Method</h5>
-                      <table class="table table-striped">
-                          <tr v-if="order.payment_processor_result.payment_method">
-                              <td width="40%"><strong>ID</strong></td>
-                              <td>{{ order.payment_processor_result.payment_method }}</td>
-                          </tr>
-                          <tr v-if="order.payment_processor_result.payment_method_details">
-                              <td width="40%"><strong>Number</strong></td>
-                              <td>**** **** **** {{ order.payment_processor_result.payment_method_details.card.last4 }}</td>
-                          </tr>
-                          <tr v-if="order.payment_processor_result.payment_method_details">
-                              <td width="40%"><strong>Fingerprint</strong></td>
-                              <td>{{ order.payment_processor_result.payment_method_details.card.fingerprint }}</td>
-                          </tr>
-                          <tr v-if="order.payment_processor_result.payment_method_details">
-                              <td width="40%"><strong>Expires</strong></td>
-                              <td>{{ order.payment_processor_result.payment_method_details.card.exp_month }} / {{ order.payment_processor_result.payment_method_details.card.exp_year }}</td>
-                          </tr>
-                          <tr v-if="order.payment_processor_result.payment_method_details">
-                              <td width="40%"><strong>Type</strong></td>
-                              <td>{{ order.payment_processor_result.payment_method_details.card.brand }}</td>
-                          </tr>
-                          <tr v-if="order.payment_processor_result.billing_details">
-                              <td width="40%"><strong>Owner</strong></td>
-                              <td>{{ order.payment_processor_result.billing_details.name }}</td>
-                          </tr>
-                          <tr v-if="order.payment_processor_result.billing_details">
-                              <td width="40%"><strong>Post Code</strong></td>
-                              <td>{{ order.payment_processor_result.billing_details.address.postal_code }}</td>
-                          </tr>
-                          <tr v-if="order.payment_processor_result.billing_details">
-                              <td width="40%"><strong>Origin</strong></td>
-                              <td>{{ order.payment_processor_result.billing_details.address.country }}</td>
-                          </tr>
-                          <tr v-if="order.payment_processor_result.payment_method_details">
-                              <td width="40%"><strong>CVC Check</strong></td>
-                              <td>{{ order.payment_processor_result.payment_method_details.card.checks.cvc_check }}</td>
-                          </tr>
-                          <tr v-if="order.payment_processor_result.payment_method_details">
-                              <td width="40%"><strong>Postal Check</strong></td>
-                              <td>{{ order.payment_processor_result.payment_method_details.card.checks.address_postal_code_check }}</td>
-                          </tr>
-                      </table>
-                  </b-card-text>
-              </b-card>
-          </div><!-- End col -->
-    </div><!-- End row -->
+                            <tr>
+                                <td><strong>Fee</strong></td>
+                                <td>{{ order.payment_processor_result.application_fee_amount ? order.payment_processor_result.application_fee_amount/100 : 'n/a' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Balance Transaction</strong></td>
+                                <td>{{ order.payment_processor_result.balance_transaction }}</td>
+                            </tr>
+                        </table>
+                    </b-card-text>
+                </b-card>
+            </div><!-- End col -->
+            <div class="col-sm-12 col-md-6 mt-2">
+                <b-card>
+                    <b-card-text>
+                        <h5 class="heading-style"><i class="fas fa-user"></i> Payment Method</h5>
+                        <table class="table table-striped">
+                            <tr v-if="order.payment_processor_result.payment_method">
+                                <td width="40%"><strong>ID</strong></td>
+                                <td>{{ order.payment_processor_result.payment_method }}</td>
+                            </tr>
+                            <tr v-if="order.payment_processor_result.payment_method_details">
+                                <td width="40%"><strong>Number</strong></td>
+                                <td>**** **** **** {{ order.payment_processor_result.payment_method_details.card.last4 }}</td>
+                            </tr>
+                            <tr v-if="order.payment_processor_result.payment_method_details">
+                                <td width="40%"><strong>Fingerprint</strong></td>
+                                <td>{{ order.payment_processor_result.payment_method_details.card.fingerprint }}</td>
+                            </tr>
+                            <tr v-if="order.payment_processor_result.payment_method_details">
+                                <td width="40%"><strong>Expires</strong></td>
+                                <td>{{ order.payment_processor_result.payment_method_details.card.exp_month }} / {{ order.payment_processor_result.payment_method_details.card.exp_year }}</td>
+                            </tr>
+                            <tr v-if="order.payment_processor_result.payment_method_details">
+                                <td width="40%"><strong>Type</strong></td>
+                                <td>{{ order.payment_processor_result.payment_method_details.card.brand }}</td>
+                            </tr>
+                            <tr v-if="order.payment_processor_result.billing_details">
+                                <td width="40%"><strong>Owner</strong></td>
+                                <td>{{ order.payment_processor_result.billing_details.name }}</td>
+                            </tr>
+                            <tr v-if="order.payment_processor_result.billing_details">
+                                <td width="40%"><strong>Post Code</strong></td>
+                                <td>{{ order.payment_processor_result.billing_details.address.postal_code }}</td>
+                            </tr>
+                            <tr v-if="order.payment_processor_result.billing_details">
+                                <td width="40%"><strong>Origin</strong></td>
+                                <td>{{ order.payment_processor_result.billing_details.address.country }}</td>
+                            </tr>
+                            <tr v-if="order.payment_processor_result.payment_method_details">
+                                <td width="40%"><strong>CVC Check</strong></td>
+                                <td>{{ order.payment_processor_result.payment_method_details.card.checks.cvc_check }}</td>
+                            </tr>
+                            <tr v-if="order.payment_processor_result.payment_method_details">
+                                <td width="40%"><strong>Postal Check</strong></td>
+                                <td>{{ order.payment_processor_result.payment_method_details.card.checks.address_postal_code_check }}</td>
+                            </tr>
+                        </table>
+                    </b-card-text>
+                </b-card>
+            </div><!-- End col -->
+        </div><!-- End row -->
     </div>
 </template>
 
@@ -206,7 +233,7 @@
         props: {
             order: {
                 type: Object
-            }
+            },
         },
         data() {
             return {
@@ -235,6 +262,11 @@
               cancelSuccess: false,
               cancelErrorMessage: '',
               cancelSuccessMessage: '',
+              reedemProcessing: false,
+              reedemError: false,
+              reedemSuccess: false,
+              reedemErrorMessage: '',
+              reedemSuccessMessage: '',
             }
         },
         methods: {
@@ -260,7 +292,7 @@
                     self.refundProcessing = false;
                     location.reload();
                 }).catch(function (error) {
-                    console.log('Canceling Order failed', {
+                    console.log('Refund Order failed', {
                         error: error.response.data
                     });
 
@@ -273,33 +305,79 @@
             hideCancel() {
               this.$refs['cancelOrder'].hide()
             },
-          toggleCancel() {
-            let self = this;
-            self.cancelProcessing = true;
+            toggleCancel() {
+              let self = this;
+              self.cancelProcessing = true;
 
-            let formData = {
-              orderId: this.order.id,
-            };
+              let formData = {
+                orderId: this.order.id,
+              };
 
-            axios.post('/api/order/cancel', formData).then(function (result) {
-              self.cancelError = false;
-              self.cancelSuccess = true;
-              self.cancelProcessing = false;
-              location.reload();
-            }).catch(function (error) {
-              console.log('cancel failed', {
-                error: error.response.data
+              axios.post('/api/order/cancel', formData).then(function (result) {
+                self.cancelError = false;
+                self.cancelSuccess = true;
+                self.cancelProcessing = false;
+                location.reload();
+              }).catch(function (error) {
+                console.log('cancel failed', {
+                  error: error.response.data
+                });
+
+                self.cancelError = true;
+                self.cancelSuccess = false;
+                self.cancelErrorMessage = error.response.data.message;
+                self.cancelProcessing = false;
               });
+            },
+            hideReedem() {
+              this.$refs['reedemOrder'].hide()
+            },
+            toggleReedem() {
+              let self = this;
+              self.reedemProcessing = true;
 
-              self.cancelError = true;
-              self.cancelSuccess = false;
-              self.cancelErrorMessage = error.response.data.message;
-              self.cancelProcessing = false;
-            });
-          }
+              let formData = {
+                orderId: this.order.id,
+              };
+
+              axios.post('/api/order/reedem', formData).then(function (result) {
+                self.reedemError = false;
+                self.reedemSuccess = true;
+                self.reedemProcessing = false;
+                location.reload();
+              }).catch(function (error) {
+                console.log('reedem failed', {
+                  error: error.response.data
+                });
+
+                self.reedemError = true;
+                self.reedemSuccess = false;
+                self.reedemErrorMessage = error.response.data.message;
+                self.reedemProcessing = false;
+              });
+            }
         }
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+    .customer-details {
+        font-size: .9rem;
+        .heading-style {
+            border-bottom: 2px solid #CCC;
+            padding-bottom: 1rem;
+            margin-bottom: 0;
+            font-size: 1.1rem;
+        }
+    }
+    @media screen and (min-width: 800px) {
+      .btnStyle {
+        position: absolute; right: 0; top: 0;
+      }
+    }
+    @media screen and (max-width: 800px) {
+      .btnStyle {
+        position: absolute; right: 0; top: 68 !important;
+      }
+    }
 </style>

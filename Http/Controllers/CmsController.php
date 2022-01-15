@@ -99,15 +99,20 @@ class CmsController extends Controller
         return view($template, [
             'page' => $page,
             'settings' => [
-                'logo'  =>  json_decode($settings->settings, true)['siteLogo'],
-                'buttonPrimaryColor'  =>  json_decode($settings->settings, true)['buttonPrimaryColor'] ?? '',
+                'logo'                  =>  json_decode($settings->settings, true)['siteLogo'],
+                'buttonPrimaryColor'    =>  json_decode($settings->settings, true)['buttonPrimaryColor'] ?? '',
                 'buttonSecondaryColor'  =>  json_decode($settings->settings, true)['buttonSecondaryColor'] ?? '',
-                'textPrimaryColor'   =>   json_decode($settings->settings, true)['textPrimaryColor'] ?? '',
-                'textHighlightColor' =>   json_decode($settings->settings, true)['textHighlightColor'] ?? '',
-                'currency'  =>  json_decode($settings->settings, true)['currency'] ?? '',
-                'stripePublishKey'  =>  json_decode($settings->settings, true)['stripePublishKey'] ?? '',
-                'stripeAccessToken'  =>  json_decode($settings->settings, true)['stripeAccessToken'] ?? '',
-                'stripeAccountId'  =>  json_decode($settings->settings, true)['stripeAccountId'] ?? '',
+                'textPrimaryColor'      =>   json_decode($settings->settings, true)['textPrimaryColor'] ?? '',
+                'textHighlightColor'    =>   json_decode($settings->settings, true)['textHighlightColor'] ?? '',
+                'currency'              =>  json_decode($settings->settings, true)['currency'] ?? '',
+                'feeAmount'             =>  json_decode($settings->settings, true)['feeAmount'] ?? '',
+                'taxActive'             =>  json_decode($settings->settings, true)['taxActive'] ?? '',
+                'taxAmount'             =>  json_decode($settings->settings, true)['taxAmount'] ?? '',
+                'serviceFeeActive'      =>  json_decode($settings->settings, true)['serviceFeeActive'] ?? '',
+                'serviceFeeAmount'      =>  json_decode($settings->settings, true)['serviceFeeAmount'] ?? '',
+                'stripePublishKey'      =>  json_decode($settings->settings, true)['stripePublishKey'] ?? '',
+                'stripeAccessToken'     =>  json_decode($settings->settings, true)['stripeAccessToken'] ?? '',
+                'stripeAccountId'       =>  json_decode($settings->settings, true)['stripeAccountId'] ?? '',
             ]
         ]);
     }

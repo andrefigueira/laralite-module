@@ -1,11 +1,17 @@
 <template>
   <div>
-    <b-sidebar id="sidebar-1" :visible="visible" no-close-on-route-change class="sidebar hide-menu" no-header sidebar-class="border-right border-dark" aria-expanded="true" style="border: none !important; display: block !important;">
+    <!--    <b-button v-b-toggle.sidebar-1 class="button" style="background-color: transparent !important; border: initial !important;">
+          <i data-icon="list" class="ri-menu-2-fill align-middle" style="font-size: 28px; color: #5664D2"></i>
+        </b-button>-->
+    <b-sidebar id="sidebar-1" :visible="visible" no-close-on-route-change class="sidebar hide-menu" no-header  :title="appName" sidebar-class="border-right border-dark" aria-expanded="true" style="border: none !important; display: block !important;">
       <div class="py-2">
+        <div id="sidebar-no-header-title" class="mt-4 mb-4" style="text-align: center">
+          <img src="/images/logo.png" class="logoImage">
+        </div>
         <nav class="d-block pr-3 pl-2">
-          <div class="mb-1">
+<!--          <div class="mb-1">
             <img class="admin-logo" src="/images/trap-music-museum-logo.png" alt="TrapMusicMuseum Logo">
-          </div>
+          </div>-->
           <ul class="nav">
             <li class="nav-item">
               <a class="nav-link" :class="{ 'active': request === 'admin' || request.match('admin/home') }" href="/admin/home">
@@ -275,5 +281,9 @@ export default {
 <style scoped>
 .logoutBtn {
   cursor: pointer;
+}
+.logoImage {
+  max-width: 100%;
+  width: 100px;
 }
 </style>
