@@ -23,4 +23,12 @@ trait ApiResponses
             'errors' => $errors,
         ], $code);
     }
+
+    protected function unknownError(): JsonResponse
+    {
+        return new JsonResponse([
+            'success' => false,
+            'message' => 'An unknown error has occurred!',
+        ], 500);
+    }
 }

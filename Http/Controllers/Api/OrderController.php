@@ -56,36 +56,6 @@ class OrderController extends Controller
         }
     }
 
-    public function getTicketDetails($uuid)
-    {
-        $ticket = Ticket::with('order.customer')->where('unique_id', '=', $uuid)->first();
-
-        return $ticket;
-    }
-
-    public function scanTicket($uuid)
-    {
-
-        $ticket = Ticket::with('order')->where('unique_id', '=', $uuid)->first();
-
-        $order = $ticket->order;
-
-        if($ticket && $order->order_status == 'complete' && $order->refunded == 0 && $ticket->visited_counts != 1) {
-            $ticket->validated = '1';
-            $ticket->visited_counts = '1';
-            $ticket->save();
-            return response()->json([
-                'success' => 'true',
-                'message' => "Tickets table updated successfully",
-                'ticket'  => $ticket]);
-        } else{
-            return response()->json([
-                'success' => 'false',
-                'message' => "Error: Invalid Ticket"
-            ], 404);
-        }
-    }
-
     public function refund (Request $request)
     {
         $orderId = $request->get('orderId', null);

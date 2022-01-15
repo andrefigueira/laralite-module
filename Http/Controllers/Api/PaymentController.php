@@ -222,6 +222,7 @@ class PaymentController extends Controller
                     'image' => $generatedTicket->writeDataUri(),
                 ],
                 'admit_quantity' => $quantityToGenerate,
+                'status_log' => Ticket::generateInitialStatusLogEntry(),
             ]);
             // else create each individual ticket
         } else {
@@ -238,6 +239,7 @@ class PaymentController extends Controller
                         'image' => $generatedTicket->writeDataUri(),
                     ],
                     'admit_quantity' => 1,
+                    'status_log' => Ticket::generateInitialStatusLogEntry(),
                 ]);
 
                 $quantityGenerated++;

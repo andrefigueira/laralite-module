@@ -88,8 +88,10 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::post('/order/cancel', 'Api\OrderController@cancel');
     Route::post('/order/bulk-refunds', 'Api\OrderController@bulkRefunds');
 
-    Route::get('/scan/ticket/{uuid}', 'Api\OrderController@scanTicket');
-    Route::get('/ticket/{uuid}', 'Api\OrderController@getTicketDetails');
+    Route::patch('/ticket/{uuid}/redeem', 'Api\TicketController@redeemTicket');
+    Route::patch('/ticket/{uuid}/unredeem', 'Api\TicketController@unredeemTicket');
+    Route::patch('/ticket/{uuid}/cancel', 'Api\TicketController@cancelTicket');
+    Route::get('/ticket/{uuid}', 'Api\TicketController@getTicketDetails');
 
     Route::get('/discount', 'Api\DiscountController@get');
     Route::post('/discount', 'Api\DiscountController@create');
