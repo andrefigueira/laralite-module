@@ -280,7 +280,7 @@ class OrderController extends Controller
             $this->handleCaughtException($e);
         }
 
-        return $this->success($ticket->toArray(), 'Tickets table updated successfully');
+        return $this->success($ticket->toArray(), 'Tickets redeemed successfully');
     }
 
     /**
@@ -308,7 +308,7 @@ class OrderController extends Controller
             $this->handleCaughtException($e);
         }
 
-        return $this->success($ticket->toArray(), 'Tickets table updated successfully');
+        return $this->success($ticket->toArray(), 'Ticket unredeemed successfully');
     }
 
     public function sendOrderConfirmationEmail(Request $request)
