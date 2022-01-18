@@ -3,19 +3,15 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Barryvdh\LaravelIdeHelper\Helpers;
-use Endroid\QrCode\QrCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Log;
-use Mail;
 use Modules\Laralite\Http\Requests\PaymentRequest;
-use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\Settings;
-use Modules\Laralite\Models\Ticket;
+use Modules\Laralite\Services\OrderService;
 use Modules\Laralite\Traits\ApiResponses;
 use Ramsey\Uuid\Uuid;
 use Spatie\Newsletter\NewsletterFacade;
@@ -26,6 +22,17 @@ use Symfony\Component\HttpFoundation\Response;
 class PaymentController extends Controller
 {
     use ApiResponses;
+
+    private $orderService;
+
+    /**
+     * PaymentController constructor.
+     * @param OrderService $orderService
+     */
+    public function __construct(OrderService $orderService)
+    {
+        $this->orderService = $orderService;
+    }
 
     /**
      * @param PaymentRequest $request
@@ -38,7 +45,6 @@ class PaymentController extends Controller
         $token = $request->get('token');
         $basket = $request->get('basket');
         $customerData = $request->get('customer');
-        $discount = $request->get('discount');
 
         $settings = Settings::firstOrFail();
 
@@ -69,7 +75,6 @@ class PaymentController extends Controller
         ]);
 
         $customerEmail = $customerData['email'];
-        $basketTotal = $this->getBasketTotal($basket);
         $currency = json_decode($settings->settings, true)['currency'];
         /** @var Customer $customer */
         $customer = Customer::where([
@@ -93,13 +98,11 @@ class PaymentController extends Controller
             $customer->refresh();
         }
 
-        $confirm_code = generateUniqueCode('TRAP-');
-
-        /*dd($code);*/
-
-        $order = Order::create([
+        /** @var Order $order */
+        $order = $this->orderService->saveOrder([
             'unique_id' => Uuid::uuid4(),
-            'confirmation_code' => generateUniqueCode('TRAP-'),
+            //TODO Ticket prefix should come from settings
+            'confirmation_code' => $this->orderService->generateUniqueCode('TRAP-'),
             'customer_id' => $customer->id,
             'basket' => $basket,
             'status' => 1,
@@ -107,16 +110,6 @@ class PaymentController extends Controller
             'refunded' => 0,
             'payment_processor_result' => $result,
         ]);
-
-        $orderAssets = $this->generateOrderAssets($order, $basket, $customer);
-
-        // @todo: load from settings
-        Mail::to($customerEmail)->send(new OrderConfirmation([
-            'order' => $order,
-            'customer' => $customer,
-            'orderAssets' => $orderAssets,
-            'currency' => $currency
-        ]));
 
         if ($customerData['newsletter_subscription']['email']) {
             $splitName = explode(' ', $customer->name); // Restricts it to only 2 values, for names like Billy Bob Jones
@@ -126,7 +119,7 @@ class PaymentController extends Controller
             NewsletterFacade::subscribe($customer['email'], ['FNAME' => $first_name, 'LNAME' => $last_name]);
         }
 
-        if ($orderAssets) {
+        if ($order->getAttributeValue('unique_id')) {
             return (new JsonResponse([
                 'success' => true,
                 'message' => 'Processed payment',
@@ -180,73 +173,6 @@ class PaymentController extends Controller
         }
 
         return $basketTotal;
-    }
-
-    private function generateTicket($ticketUuid)
-    {
-        $qrCode = new QrCode($ticketUuid);
-        $qrCode->setSize(300);
-        $qrCode->setMargin(10);
-
-        return $qrCode;
-    }
-
-    private function generateOrderAssets($order, $basket, $customer)
-    {
-        $generatedTickets = [];
-
-        foreach ($basket['products'] as $index => $product) {
-            $generatedTickets[] = $this->getGeneratedTickets($index, $product, $order, $customer);
-        }
-
-        return $generatedTickets;
-    }
-
-    private function getGeneratedTickets($index, $product, $order, $customer)
-    {
-        $quantityGenerated = 0;
-        $quantityToGenerate = $product['quantity'];
-
-        // If product variant is `groupable` create just one ticket for the group
-        if (isset($product['groupable']) && $product['groupable'] === true) {
-
-            $ticketUuid = Uuid::uuid4();
-            $generatedTicket = $this->generateTicket($ticketUuid);
-
-            $generatedTickets = Ticket::create([
-                'sku' => $product['sku'],
-                'unique_id' => $ticketUuid,
-                'customer_id' => $customer->id,
-                'order_id' => $order->id,
-                'ticket' => [
-                    'image' => $generatedTicket->writeDataUri(),
-                ],
-                'admit_quantity' => $quantityToGenerate,
-                'status_log' => Ticket::generateInitialStatusLogEntry(),
-            ]);
-            // else create each individual ticket
-        } else {
-            while ($quantityGenerated < $quantityToGenerate) {
-                $ticketUuid = Uuid::uuid4();
-                $generatedTicket = $this->generateTicket($ticketUuid);
-
-                $generatedTickets[] = Ticket::create([
-                    'sku' => $product['sku'],
-                    'unique_id' => $ticketUuid,
-                    'customer_id' => $customer->id,
-                    'order_id' => $order->id,
-                    'ticket' => [
-                        'image' => $generatedTicket->writeDataUri(),
-                    ],
-                    'admit_quantity' => 1,
-                    'status_log' => Ticket::generateInitialStatusLogEntry(),
-                ]);
-
-                $quantityGenerated++;
-            }
-        }
-
-        return $generatedTickets;
     }
 
     private function isFeeCollectionActive()

@@ -208,7 +208,6 @@ export default {
       this.turnCameraOff()
     },
     processTicketAction(action) {
-      debugger;
       let self = this;
       self.actionProcessing = true;
       self.action = action.toUpperCase();

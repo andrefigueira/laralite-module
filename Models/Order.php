@@ -3,7 +3,14 @@
 namespace Modules\Laralite\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use stdClass;
 
+/**
+ * @property stdClass basket
+ * @property string order_status
+ * @property bool refunded
+ * @property Customer customer
+ */
 class Order extends Model
 {
     protected $fillable = [
@@ -21,6 +28,10 @@ class Order extends Model
         'basket' => 'object',
         'payment_processor_result' => 'object',
     ];
+    /**
+     * @var mixed
+     */
+    private $tickets;
 
     public function tickets()
     {

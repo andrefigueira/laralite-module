@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Modules\Laralite\Services\TicketService;
 
 class OrderConfirmation extends Mailable
 {
@@ -30,7 +31,7 @@ class OrderConfirmation extends Mailable
 
         if (!empty($form['orderAssets'])) {
             foreach ($form['orderAssets'] as $ticket) {
-                 $this->attachData(generateTicketPDF($ticket['unique_id']), 'ticket-' . $ticket['unique_id'] . '.pdf', [
+                 $this->attachData(TicketService::generateTicketPDF($ticket['unique_id']), 'ticket-' . $ticket['unique_id'] . '.pdf', [
                      'mime' => 'application/pdf',
                  ]);
             }

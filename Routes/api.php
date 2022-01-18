@@ -86,7 +86,9 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::get('/order/{id}', 'Api\OrderController@getOne');
     Route::post('/order/refund', 'Api\OrderController@refund');
     Route::post('/order/cancel', 'Api\OrderController@cancel');
-    Route::post('/order/reedem', 'Api\OrderController@reedem');
+    Route::post('/order/redeem', 'Api\OrderController@redeem');
+    Route::post('/order/unredeem', 'Api\OrderController@unredeem');
+    Route::post('/order/send-order-confirmation-email', 'Api\OrderController@sendOrderConfirmationEmail');
     Route::post('/order/bulk-refunds', 'Api\OrderController@bulkRefunds');
 
     Route::patch('/ticket/{uuid}/redeem', 'Api\TicketController@redeemTicket');

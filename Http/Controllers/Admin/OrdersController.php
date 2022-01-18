@@ -16,7 +16,7 @@ class OrdersController extends Controller
 
     public function view(string $uniqueId)
     {
-        $order = Order::where('unique_id', '=', $uniqueId)->with('tickets')->get();
+        $order = Order::where('unique_id', '=', $uniqueId)->with(['tickets', 'customer'])->get();
 
         if ($order === null) {
             throw new NotFoundHttpException('Order not found');
