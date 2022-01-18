@@ -12,12 +12,33 @@ use Illuminate\Http\Request;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
+use Modules\Laralite\Services\OrderService;
+use Modules\Laralite\Services\TicketService;
+use Modules\Laralite\Traits\ApiResponses;
 use Symfony\Component\HttpFoundation\Response;
 use Stripe\StripeClient;
 use Stripe\Exception\InvalidRequestException;
 
 class OrderController extends Controller
 {
+    use ApiResponses;
+
+    /**
+     * @var TicketService
+     */
+    private $ticketService;
+
+    /**
+     * @var OrderService
+     */
+    private $orderService;
+
+    public function __construct(OrderService $orderService, TicketService $ticketService)
+    {
+        $this->orderService = $orderService;
+        $this->ticketService = $ticketService;
+    }
+
     public function get(Request $request)
     {
         $orders = Order::with(['customer']);
@@ -56,7 +77,7 @@ class OrderController extends Controller
         }
     }
 
-    public function refund (Request $request)
+    public function refund(Request $request)
     {
         $orderId = $request->get('orderId', null);
 
@@ -169,8 +190,9 @@ class OrderController extends Controller
             ], 400);
         }
 
+        $errors = [];
+        /** @var Order $order */
         $order = Order::where('id', '=', $orderId)->first();
-
         $order->order_status = 'cancel';
         $order->save();
 
@@ -178,33 +200,29 @@ class OrderController extends Controller
         $settings = Settings::firstOrFail();
         $currency = json_decode($settings->settings, true)['currency'];
 
+        /** @var Ticket $ticket */
+        $ticket = $order->tickets()->first();
+
+        if ($ticket) {
+            try {
+                $this->ticketService->cancelTicket($ticket);
+            } catch (\Exception $e) {
+                $this->handleCaughtException($e);
+            }
+        }
+
         Mail::to($order->customer->email)->send(new OrderCancellation([
             'order' => $order,
             'customer' => $order->customer,
             'currency' => $currency
         ]));
 
-        return response()->json([
-            'success' => 'true',
-            'message' => "Order Canceled Successfully."]);
-
-//        if ($order->order_status === 'completed') {
-//            $order->order_status = 'canceled';
-//            $order->save();
-//
-//            $ticket->status = 'canceled';
-//            $ticket->save();
-//
-//            return response()->json([
-//                'success' => 'true',
-//                'message' => "Order Canceled Successfully.",
-//                'ticket'  => $order]);
-//        } else{
-//            return response()->json([
-//                'success' => 'false',
-//                'message' => "Error: No order ID given"
-//            ], 400);
-//    }
+        return $this->success(
+            $order->toArray(),
+            'Order Canceled Successfully.',
+            $errors ? Response::HTTP_PARTIAL_CONTENT : Response::HTTP_OK,
+            $errors
+        );
     }
 
     public function bulkRefunds(Request $request)
@@ -237,33 +255,79 @@ class OrderController extends Controller
         }
     }
 
-    public function reedem(Request $request) {
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function redeem(Request $request): JsonResponse
+    {
         $orderId = $request->get('orderId', null);
 
-    if (!$orderId) {
-        return response()->json([
-            'success' => 'false',
-            'message' => "Error: No order ID given"
-        ], 400);
-    }
-
-    $order = Order::where('id', '=', $orderId)->first();
-
-    $ticket = $order->tickets()->first();
-
-        if ($ticket && $order->order_status == 'complete' && $order->refunded == 0 && ($ticket->visited_counts != 1 || $ticket->visited_counts == null)) {
-            $ticket->validated = '1';
-            $ticket->visited_counts = '1';
-            $ticket->save();
-            return response()->json([
-                'success' => 'true',
-                'message' => "Tickets table updated successfully",
-                'ticket' => $ticket]);
-        } else {
+        if (!$orderId) {
             return response()->json([
                 'success' => 'false',
-                'message' => "Error: Invalid Ticket"
-            ], 404);
+                'message' => "Error: No order ID given"
+            ], 400);
         }
-}
+
+        $order = Order::where('id', '=', $orderId)->first();
+        /** @var Ticket $ticket */
+        $ticket = $order->tickets()->first();
+
+        try {
+            $ticket = $this->ticketService->redeemTicket($ticket->unique_id);
+        } catch (\Exception $e) {
+            $this->handleCaughtException($e);
+        }
+
+        return $this->success($ticket->toArray(), 'Tickets redeemed successfully');
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function unredeem(Request $request): JsonResponse
+    {
+        $orderId = $request->get('orderId', null);
+
+        if (!$orderId) {
+            return response()->json([
+                'success' => 'false',
+                'message' => "Error: No order ID given"
+            ], 400);
+        }
+
+        $order = Order::where('id', '=', $orderId)->first();
+        /** @var Ticket $ticket */
+        $ticket = $order->tickets()->first();
+
+        try {
+            $ticket = $this->ticketService->unredeemTicket($ticket->unique_id);
+        } catch (\Exception $e) {
+            $this->handleCaughtException($e);
+        }
+
+        return $this->success($ticket->toArray(), 'Ticket unredeemed successfully');
+    }
+
+    public function sendOrderConfirmationEmail(Request $request)
+    {
+        $orderId = $request->get('orderId', null);
+        $email = $request->get('email', null);
+
+        if (!$orderId) {
+            return $this->error('Error: No order ID given', 400);
+        }
+
+        $order = Order::where('id', '=', $orderId)->first();
+
+        try {
+            $this->orderService->sendOrderConfirmationEmail($order, $email);
+        } catch (\Exception $e) {
+            $this->handleCaughtException($e);
+        }
+
+        return $this->success([], 'Order confirmation email sent successfully');
+    }
 }

@@ -4,6 +4,9 @@ namespace Modules\Laralite\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property array settings
+ */
 class Settings extends Model
 {
     protected $fillable = [

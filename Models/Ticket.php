@@ -5,6 +5,13 @@ namespace Modules\Laralite\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property Order order
+ * @property string status
+ * @property mixed|string visited_counts
+ * @property string unique_id
+ * @property int id
+ */
 class Ticket extends Model
 {
     protected $fillable = [

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Class Customer
+ * @property string email
  * @package Modules\Laralite\Models
  */
 class Customer extends Authenticatable
