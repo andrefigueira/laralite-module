@@ -78,7 +78,9 @@ class OrderService
     {
         /** @var Customer $customer */
         $customer = Customer::find($order->getAttributeValue('customer_id'));
-        $orderAssets = $order->tickets()->get() ?: $this->generateOrderAssets($order, $customer);
+        $orderAssets = $order->tickets()->get()->isEmpty()
+            ? $this->generateOrderAssets($order, $customer)
+            : $order->tickets()->get();
         $recipientEmail = $sendToEmail ?: $customer->getAttributeValue('email');
 
         Mail::to($recipientEmail)->send(new OrderConfirmation([
