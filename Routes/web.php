@@ -80,6 +80,9 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/admin/scanner', 'Admin\ScannerController@scanner');
     Route::get('/admin/reporting', 'Admin\ReportingController@index');
 
+    Route::get('/admin/sales', 'Admin\AdminController@getSales');
+
+
 });
 
 
