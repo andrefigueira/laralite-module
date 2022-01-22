@@ -1,21 +1,71 @@
 <script>
 import { Line } from "vue-chartjs";
+import axios  from 'axios';
 
 export default {
     extends: Line,
+  props: {
+    startDate: {
+      type: String,
+      default: "2021-10-01"
+    },
+    endDate: {
+      type: String,
+      default: "2022-01-22"
+    },
+  },
     mounted() {
+      this.fetchData()
+    },
+  watch: {
+    startDate(newValue, oldValue) {
+      this.fetchData()
+    },
+    endDate(newValue, oldValue) {
+      this.fetchData()
+    }
+  },
+    methods: {
+      fetchData() {
+        axios.get(`/admin/sales?startDate=${this.startDate}&endDate=${this.endDate}`).then((response) => {
+          let data = response.data;
+          console.log(response.data);
+          if(data) {
+            var array = Object.keys(response.data)
+                .map(function(key) {
+                  return (response.data[key].length);
+                });
+
+            console.log("My Array  : "+array);
+
+            this.renderChart({
+                  labels: Object.keys(response.data),
+                  datasets: [{
+                    label: 'Revenue',
+                    backgroundColor: '#5664D2',
+                    data: array
+                  }]
+                },
+                {
+                  responsive: true,
+                  maintainAspectRatio: false
+                }
+            )
+          }
+          else {
+            console.log('No data');
+          }
+        });
+      }
+    },
+    /*mounted() {
+       const salesMonth= this.month;
+       const salesAHT = this.day;
+       console.log(salesMonth);
+       console.log(salesAHT);
         this.renderChart(
             {
-                labels: [
-                    "January",
-                    "February",
-                    "March",
-                    "April",
-                    "May",
-                    "June",
-                    "July",
-                    "August",
-                ],
+                labels:  ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                 datasets: [
                     {
                       label: "Revenue",
@@ -36,7 +86,7 @@ export default {
                       pointHoverBorderWidth: 2,
                       pointRadius: 1,
                       pointHitRadius: 10,
-                      data: [65, 59, 80, 81, 56, 55, 40, 55, 30, 80],
+                      data: salesAHT,
                     }
                 ]
             },
@@ -73,7 +123,7 @@ export default {
               }
             }
         );
-    }
+    }*/
 };
 </script>
 <style scoped>
