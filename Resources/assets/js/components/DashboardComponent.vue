@@ -4,32 +4,8 @@
           <div class="row">
             <div class="col-6">
               <h2 class="dashboard-title">Today's Sale</h2>
-              <p class="dashboard-subtitle"></p>
+              <p class="dashboard-subtitle">{{ currentDate() }}</p>
             </div>
-<!--            <div class="col-3">
-              <b-form-group id="discount-end-date-group" label="Select Start Date" label-for="start-date-input">
-                <b-input-group>
-                  <b-input-group-append class="col-md-12 m-0 p-0">
-                    <b-form-datepicker
-                        id="start-date-input"
-                        v-model="startDate"
-                    ></b-form-datepicker>
-                  </b-input-group-append>
-                </b-input-group>
-              </b-form-group>
-            </div>
-            <div class="col-3">
-              <b-form-group id="discount-end-date-group" label="Select End Date" label-for="end-date-input">
-                <b-input-group>
-                  <b-input-group-append class="col-md-12 m-0 p-0">
-                    <b-form-datepicker
-                        id="end-date-input"
-                        v-model="endDate"
-                    ></b-form-datepicker>
-                  </b-input-group-append>
-                </b-input-group>
-              </b-form-group>
-            </div>-->
           </div>
 
 
@@ -45,6 +21,13 @@ export default {
     return {
       startDate: '',
       endDate: ''
+    }
+  },
+  methods: {
+    currentDate() {
+      const current = new Date();
+      const date = `${current.getDate()}-${current.getMonth()+1}-${current.getFullYear()}`;
+      return date;
     }
   },
 }

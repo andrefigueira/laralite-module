@@ -7,11 +7,11 @@ export default {
   props: {
     startDate: {
       type: String,
-      default: "2021-10-01"
+      default: ""
     },
     endDate: {
       type: String,
-      default: "2022-01-22"
+      default: ""
     },
   },
     mounted() {
