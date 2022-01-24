@@ -4,7 +4,7 @@
           <div class="row">
             <div class="col-6">
               <h2 class="dashboard-title">Today's Sale</h2>
-              <p class="dashboard-subtitle">{{ currentDate() }}</p>
+              <p class="dashboard-subtitle"></p>
             </div>
           </div>
 
