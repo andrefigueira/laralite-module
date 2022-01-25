@@ -27,7 +27,8 @@ class PaymentRequest extends FormRequest
             'customer.name' => 'required|max:255',
             'customer.password' => 'nullable|min:8|max:20',
             'customer.password_confirm' => 'exclude_if:customer.register,false|required|same:customer.password',
-            'customer.newsletter_subscription' => 'array:email,sms,phone'
+            'customer.newsletter_subscription' => 'array:email,sms,phone',
+            'customer.numbers' => 'array:mobile'
         ];
     }
 

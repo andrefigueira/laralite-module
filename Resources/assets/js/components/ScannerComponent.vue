@@ -227,66 +227,6 @@ export default {
             self.actionProcessing = false;
           })
     },
-    unredeemTicket() {
-      let self = this;
-      self.actionProcessing = true;
-      self.action = 'UNREDEEM';
-      axios.patch('/api/ticket/' + this.result + '/unredeem', {withCredentials: true})
-          .then((response) => {
-            self.ticket = response.data.data;
-            self.message = response.data.message;
-            self.actionError = false;
-            self.actionSuccess = true;
-            self.actionProcessing = false;
-          })
-          .catch(error => {
-            console.log(error);
-            self.actionError = true;
-            self.actionSuccess = false;
-            self.actionErrorMessage = error;
-            self.actionProcessing = false;
-          })
-    },
-    cancelTicket() {
-      let self = this;
-      self.actionProcessing = true;
-      self.action = 'CANCEL';
-      axios.patch('/api/ticket/' + this.result + '/cancel', {withCredentials: true})
-          .then((response) => {
-            self.ticket = response.data.data;
-            self.message = response.data.message;
-            self.actionError = false;
-            self.actionSuccess = true;
-            self.actionProcessing = false;
-          })
-          .catch(error => {
-            console.log(error);
-            self.actionError = true;
-            self.actionSuccess = false;
-            self.actionErrorMessage = error;
-            self.actionProcessing = false;
-          })
-    },
-    redeemTicket() {
-      let self = this;
-      self.actionProcessing = true;
-      self.action = 'REDEEM';
-      axios.patch('/api/ticket/' + this.result + '/redeem', {withCredentials: true})
-          .then((response) => {
-            self.ticket = response.data.data;
-            self.message = response.data.message;
-            self.actionError = false;
-            self.actionSuccess = true;
-            self.actionProcessing = false;
-          })
-          .catch(error => {
-            console.log(error);
-            self.actionError = true;
-            self.actionSuccess = false;
-            self.actionErrorMessage = error;
-            self.actionProcessing = false;
-          })
-    },
     getTicketDetails() {
       axios.get('/api/ticket/' + this.result)
           .then((response) => {

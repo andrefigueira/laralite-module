@@ -45,11 +45,9 @@ class PaymentController extends Controller
         $token = $request->get('token');
         $basket = $request->get('basket');
         $customerData = $request->get('customer');
-
+        $sendSms = $customerData['sms'] ?? false;
         $settings = Settings::firstOrFail();
-
         $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
-
         $stripe = new StripeClient($stripeKey);
 
         if (!$stripe) {
@@ -87,7 +85,8 @@ class PaymentController extends Controller
                 'name' => $customerData['name'],
                 'email' => $customerEmail,
                 'password' => !empty($customerData['password']) ? \Hash::make($customerData['password']) : null,
-                'newsletter_subscription' => $customerData['newsletter_subscription'],
+                'newsletter_subscription' => $customerData['newsletter_subscription'] ?? '',
+                'numbers' => $customerData['numbers'] ?? '',
             ]);
         } else {
             $updateArray['newsletter_subscription->email'] = $customerData['newsletter_subscription']['email'];
@@ -111,13 +110,34 @@ class PaymentController extends Controller
             'payment_processor_result' => $result,
         ]);
 
-        if ($customerData['newsletter_subscription']['email']) {
-            $splitName = explode(' ', $customer->name); // Restricts it to only 2 values, for names like Billy Bob Jones
+        $mobile = $customerData['numbers']['mobile'] ?? null;
 
-            $first_name = $splitName[0];
-            $last_name = !empty($splitName[1]) ? $splitName[1] : '';
-            NewsletterFacade::subscribe($customer['email'], ['FNAME' => $first_name, 'LNAME' => $last_name]);
+        try {
+            if ($sendSms && $mobile) {
+                $mobile = '+1' . $mobile;
+                $ticketId = $order->tickets()->first()['unique_id'];
+                \Twilio::message(
+                    $mobile,
+                    'Thank you for your order view your ticket online here: '
+                    . url('ticket/view/' . $ticketId)
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to send SMS message: ' . $e->getMessage(), $e->getTrace());
         }
+
+        try {
+            if ($customerData['newsletter_subscription']['email']) {
+                $splitName = explode(' ', $customer->name); // Restricts it to only 2 values, for names like Billy Bob Jones
+
+                $first_name = $splitName[0];
+                $last_name = !empty($splitName[1]) ? $splitName[1] : '';
+                NewsletterFacade::subscribe($customer['email'], ['FNAME' => $first_name, 'LNAME' => $last_name]);
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to subscribe customer to newsletter : ' . $e->getMessage(), $e->getTrace());
+        }
+
 
         if ($order->getAttributeValue('unique_id')) {
             return (new JsonResponse([

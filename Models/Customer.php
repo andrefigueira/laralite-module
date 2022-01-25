@@ -16,6 +16,7 @@ class Customer extends Authenticatable
 
     protected $casts = [
         'newsletter_subscription' => 'array',
+        'numbers' => 'array',
         'email_verified_at' => 'datetime',
     ];
 
@@ -31,7 +32,9 @@ class Customer extends Authenticatable
         'newsletter_subscription',
         'newsletter_subscription->email',
         'newsletter_subscription->sms',
-        'newsletter_subscription->phone'
+        'newsletter_subscription->phone',
+        'numbers',
+        'numbers->mobile'
     ];
 
     protected $attributes = [
@@ -39,6 +42,9 @@ class Customer extends Authenticatable
             "email": false,
             "sms": false,
             "phone": false
+        }',
+        'numbers' => '{
+            "mobile": null
         }'
     ];
 
