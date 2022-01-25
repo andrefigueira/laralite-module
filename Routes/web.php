@@ -100,6 +100,7 @@ Route::get('/orders', 'CustomerController@orders');
 Route::get('/account', 'CustomerController@account');
 Route::put('/account', 'CustomerController@accountUpdate');
 Route::post('/change-password', 'CustomerController@changePassword');
+Route::get('/ticket/view/{uuid}', 'TicketController@view');
 
 /**
  * CMS catch-all route

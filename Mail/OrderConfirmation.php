@@ -31,7 +31,7 @@ class OrderConfirmation extends Mailable
 
         if (!empty($form['orderAssets'])) {
             foreach ($form['orderAssets'] as $ticket) {
-                 $this->attachData(TicketService::generateTicketPDF($ticket['unique_id']), 'ticket-' . $ticket['unique_id'] . '.pdf', [
+                 $this->attachData(TicketService::generateTicketView($ticket['unique_id']), 'ticket-' . $ticket['unique_id'] . '.pdf', [
                      'mime' => 'application/pdf',
                  ]);
             }

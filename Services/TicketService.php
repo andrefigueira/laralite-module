@@ -5,9 +5,12 @@ namespace Modules\Laralite\Services;
 
 use Barryvdh\DomPDF\Facade as PDF;
 use Endroid\QrCode\QrCode;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
+use Illuminate\View\View;
 use Modules\Laralite\Exceptions\AppException;
 use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\Settings;
@@ -205,14 +208,16 @@ class TicketService
 
     /**
      * @param string $uuid
-     * @return Response|void
+     * @param false $htmlView
+     * @return Application|Factory|Response|View
      */
-    public static function generateTicketPDF(string $uuid): ?Response
+    public static function generateTicketView(string $uuid, $htmlView = false)
     {
         try {
+            /** @var Ticket $ticket */
             $ticket = Ticket::where('unique_id', '=', $uuid)->firstOrFail();
         } catch (\Throwable $exception) {
-            Log::critical('Failed to generate ticket');
+            Log::critical('Failed to load ticket by uuid: ' . $uuid);
             abort(404);
         }
 
@@ -247,21 +252,33 @@ class TicketService
             ]
         ]);
 
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => false]);
-        $pdf->getDomPDF()->setHttpContext($context);
+        if (!$htmlView) {
+            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => false]);
+            $pdf->getDomPDF()->setHttpContext($context);
 
-        $pdf->loadView('trapmusicmuseum::ticket',
-            compact(
-                'ticketUuid',
-                'ticketQrCode',
-                'ticketPrice',
-                'ticketAdmitQuantity',
-                'currency',
-                'confirmation_code',
-                'productName'
-            )
-        );
+            $pdf->loadView('trapmusicmuseum::ticket',
+                compact(
+                    'ticketUuid',
+                    'ticketQrCode',
+                    'ticketPrice',
+                    'ticketAdmitQuantity',
+                    'currency',
+                    'confirmation_code',
+                    'productName'
+                )
+            );
 
-        return $pdf->stream();
+            return $pdf->stream();
+        }
+
+        return view('trapmusicmuseum::ticket', compact(
+            'ticketUuid',
+            'ticketQrCode',
+            'ticketPrice',
+            'ticketAdmitQuantity',
+            'currency',
+            'confirmation_code',
+            'productName'
+        ));
     }
 }

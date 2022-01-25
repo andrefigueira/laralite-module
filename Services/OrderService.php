@@ -2,7 +2,6 @@
 
 namespace Modules\Laralite\Services;
 
-
 use Mail;
 use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
@@ -65,7 +64,16 @@ class OrderService
     public function saveOrder($orderArray): ?Order
     {
         $order = Order::create($orderArray);
-        $this->sendOrderConfirmationEmail($order);
+
+        try {
+            $this->sendOrderConfirmationEmail($order);
+        } catch (\Throwable $e) {
+            \Log::error(
+                'Failed sending order confirmation email: ' . $e->getMessage(),
+                $e->getTrace()
+            );
+        }
+
 
         return $order;
     }
