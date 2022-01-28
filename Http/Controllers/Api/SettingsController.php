@@ -2,8 +2,11 @@
 
 namespace Modules\Laralite\Http\Controllers\Api;
 
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Storage;
 use Log;
 use Hash;
+use Modules\Laralite\Exceptions\AppException;
 use Redirect;
 use App\Http\Controllers\Controller;
 use Modules\Laralite\Models\Settings;
@@ -39,7 +42,20 @@ class SettingsController extends Controller
         $headerFooterFont = $request->get('headerFooterFont');
         $paragraphFont = $request->get('paragraphFont');
         $mainTextFont = $request->get('mainTextFont');
+        $maintenanceActive = $request->get('maintenanceActive');
 
+
+        if($maintenanceActive) {
+            // Create a new file
+            file_put_contents(App::storagePath() . '/framework/down', json_encode([
+                "time" => 1643352441,
+                "message" => 'Site is Down',
+                "retry" => null,
+                "allowed" => [],
+           ]));
+        } else {
+            unlink( App::storagePath() . '/framework/down');
+        }
 
         $settings = [
             'currency' => $currency,
@@ -64,6 +80,7 @@ class SettingsController extends Controller
             'headerFooterFont' => $headerFooterFont,
             'paragraphFont' => $paragraphFont,
             'mainTextFont' => $mainTextFont,
+            'maintenanceActive' => $maintenanceActive
         ];
 
         try {

@@ -9,7 +9,7 @@
         <div class="page-section p-4">
           <b-form-checkbox
               id="checkbox-1"
-              v-model="maintenance"
+              v-model="settings.maintenanceActive"
               name="checkbox-1"
               :value="true"
               :unchecked-value="false">
@@ -300,9 +300,9 @@ export default {
         buttonsFont: "Acme",
         headerFooterFont: "Padauk",
         mainTextFont: "Cinzel",
-        paragraphFont: "Gabriela"
+        paragraphFont: "Gabriela",
+        maintenanceActive: false,
       },
-      maintenance: false,
       currencyOptions: [
         {
           title: '$ US Dollar',
@@ -488,6 +488,9 @@ export default {
       if (settingsObject.paragraphFont) {
         this.settings.paragraphFont = settingsObject.paragraphFont;
       }
+      if (settingsObject.maintenanceActive) {
+        this.settings.maintenanceActive = settingsObject.maintenanceActive;
+      }
       var connectedAccount = this.getUrlParameter('connectedAccountId');
       if (connectedAccount !== false) {
         this.settings.stripeSecretKey = connectedAccount;
@@ -507,6 +510,13 @@ export default {
         }
       }
       return false;
+    },
+
+    maintenance() {
+      axios({
+        method: 'patch',
+        url: '/api/settings/',
+      })
     },
     save() {
       this.saving = true;
