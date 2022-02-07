@@ -19,6 +19,25 @@
                 Dashboard
               </a>
             </li>
+
+              <li class="nav-item">
+                  <a class="nav-link" :class="{ 'active': request.match('admin/orders*') }" href="/admin/orders">
+                      <i class="ri-ticket-line"></i>
+                      Orders
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" :class="{ 'active': request.match('admin/customers*') }" href="/admin/customers">
+                      <i class="ri-group-line"></i>
+                      Customers
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" :class="{ 'active': request.match('admin/reporting*') }" href="/admin/reporting">
+                      <i class="ri-file-chart-line"></i>
+                      Reporting
+                  </a>
+              </li>
           </ul>
 
           <div id="accordion" class="sidebar accordion" style="width: 230px !important;">
@@ -119,27 +138,9 @@
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/orders*') }" href="/admin/orders">
-                        <i class="ri-ticket-line"></i>
-                        Orders
-                      </a>
-                    </li>
-                    <li class="nav-item">
                       <a class="nav-link" :class="{ 'active': request.match('admin/discounts*') }" href="/admin/discounts">
                         <i class="ri-percent-line"></i>
                         Discounts
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/customers*') }" href="/admin/customers">
-                        <i class="ri-group-line"></i>
-                        Customers
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/reporting*') }" href="/admin/reporting">
-                        <i class="ri-file-chart-line"></i>
-                        Reporting
                       </a>
                     </li>
                   </ul>
@@ -286,4 +287,5 @@ export default {
   max-width: 100%;
   width: 100px;
 }
+
 </style>
