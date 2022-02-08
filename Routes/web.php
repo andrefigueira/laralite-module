@@ -24,8 +24,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web']], function () {
  * Admin Routes
  */
 Route::group(['middleware' => 'auth:admin'], function () {
-    Route::get('/admin', 'Admin\AdminController@home');
-    Route::get('/admin/home', 'Admin\AdminController@home');
+    Route::get('/admin', 'Admin\OrdersController@index');
+    Route::get('/admin/home', 'Admin\OrdersController@index');
 
     Route::get('/admin/pages', 'Admin\PagesController@index');
     Route::get('/admin/pages/create', 'Admin\PagesController@create');

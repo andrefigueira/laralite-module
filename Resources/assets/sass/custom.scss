@@ -248,9 +248,9 @@ body .container-fluid {
 .b-sidebar .nav-item .nav-link {
     display: block;
     padding: 0.5rem 1rem !important;
-    color: #74788d !important;
+    color: #FFFFFF !important;
     position: relative;
-    font-size: 0.875rem !important;
+    font-size: 1rem !important;
     transition: all 0.4s;
     font-family: "Inter", sans-serif;
     font-weight: 500;
@@ -263,7 +263,7 @@ body .container-fluid {
     font-size: 1.2rem;
     line-height: 1.40625rem;
     vertical-align: middle;
-    color: #505d69;
+    color:#FFFFFF;
     transition: all 0.4s;
     opacity: 0.75;
 }
@@ -274,20 +274,20 @@ body .container-fluid {
 
 .sidebar .nav-item .nav-link:hover, .accordion .card .card-header a:hover {
     background: #252B3B !important;
-    color: #d7e4ec !important;
+    color: #5664d2  !important;
 }
 .sidebar .nav-item .nav-link:hover i {
-    color: #d7e4ec !important;
+    color: #5664d2  !important;
 }
 
 .sidebar .nav-item .nav-link.active {
     background: transparent !important;
-    color: #d7e4ec !important;
+    color: #5664d2  !important;
 }
 
 .sidebar .nav-item .nav-link.active i {
     //background: transparent !important;
-    color: #d7e4ec !important;
+    color: #5664d2 !important;
 }
 
 .accordion {
@@ -323,8 +323,8 @@ body .container-fluid {
 }
 
 .accordion .card .card-header a {
-    color: #74788d !important;
-    font-size: 0.875rem !important;
+    color: #FFFFFF !important;
+    font-size: 1rem !important;
 }
 
 .pagination .page-item.active .page-link {
