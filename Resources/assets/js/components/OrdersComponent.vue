@@ -61,27 +61,36 @@
             <template v-slot:cell(unique_id)="data" class="min-width-0">
               <div class="row">
                 <div class="col-1"><input type="checkbox" class="" :value="data.item" :id="data.item.unique_id" v-model="checkedOrders"></div>
-                <div class="col-10">
-                  <span style="font-size: 0.7rem">{{ data.item.unique_id }}</span><br>
+<!--                <div class="col-10">
+                  <span style="font-size: 0.7rem; display: none">{{ data.item.unique_id }}</span><br>
                   <b-badge class="badge-soft-info">{{ data.item.customer.email }}</b-badge>
                   <b-badge class="badge-soft-danger" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
-                </div>
+                </div>-->
               </div>
             </template>
             <template v-slot:cell(confirmation_code)="data">
-              <span class="d-sm-none d-md-block">{{ data.item.confirmation_code }}</span>
+              <span>{{ data.item.confirmation_code }}</span>
+              <b-badge class="badge-soft-danger" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
+            </template>
+            <template v-slot:cell(created_at)="data">
+              <span>{{ timeFormat(data.item.created_at) }}</span>
             </template>
             <template v-slot:cell(customer_id)="data">
-              <span class="d-sm-none d-md-block">{{ data.item.customer.name }}</span>
+              <span>{{ data.item.customer.name }}</span>
             </template>
-            <template v-slot:cell(customer_email)="data" class="d-md-block">
-              <span class="d-md-block">{{ data.item.customer.email }}</span>
+            <template v-slot:cell(customer_email)="data">
+              <span>{{ data.item.customer.email }}</span>
             </template>
-            <template v-slot:cell(created_at)="data" class="d-none d-sm-block d-md-none">
-              <span class="d-sm-none d-md-block">{{ timeFormat(data.item.created_at) }}</span>
+            <template v-slot:cell(basket)="data">
+              <span>{{ data.item.basket.subtotals[0].total}}/-</span>
+<!--              <b-badge :class="data.item.tickets.validated ? 'badge-soft-primary' : 'badge-soft-danger'"><i class="fas fa-check-circle"></i>{{ data.item.tickets.validated ? 'Reedemed' : 'Pending' }}</b-badge>-->
+            </template>
+            <template v-slot:cell(status)="data">
+<!--              <span>{{ data.item.tickets.validated ? 'Reedemed' : 'Pending' }}</span>-->
+              <b-badge :class="data.item.tickets.status === 'REDEEMED' ? 'badge-soft-primary' : 'badge-soft-danger'"><i class="fas fa-check-circle"></i>{{ data.item.tickets.validated === 'REDEEMED' ? 'Reedemed' : 'Pending' }}</b-badge>
             </template>
             <template v-slot:cell(actions)="data">
-              <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="float-right mr-1" style="font-size: 20px"><i class="ri-eye-fill"></i></a>
+              <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="btn btn-sm btn-primary float-right mr-3" style="font-size: 12px">View</a>
             </template>
           </b-table>
         </div>
@@ -110,16 +119,19 @@ export default {
     filteredFields() {
       if(!this.visible) {
         return [
-          {key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc'},
+          {key: 'unique_id', label: '', sortDirection: 'desc'},
           {key: 'confirmation_code', label: 'Confirmation Code', sortable: true, sortDirection: 'desc'},
+          {key: 'created_at', label: 'Order Date', sortable: true, sortDirection: 'desc'},
           {key: 'customer_id', label: 'Customer Name', sortable: true, sortDirection: 'desc'},
           {key: 'customer_email', label: 'Customer Email'},
-          {key: 'created_at', label: 'Order Date', sortable: true, sortDirection: 'desc'},
+          {key: 'basket', label: 'Total', sortable: true, sortDirection: 'desc'},
+          {key: 'status', label: 'Status', sortable: true, sortDirection: 'desc'},
           {key: 'actions', label: ''}
         ]
       } else {
         return [
-          {key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc'},
+          {key: 'unique_id', label: '', sortDirection: 'desc'},
+          {key: 'confirmation_code', label: 'Confirmation Code', sortable: true, sortDirection: 'desc'},
           {key: 'actions', label: ''}
         ]
       }

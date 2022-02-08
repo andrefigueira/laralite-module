@@ -1,4 +1,4 @@
-<template>
+  <template>
     <div>
         <b-alert class="m-3" :show="!loading && !showResults">No products added yet &middot; <a href="/admin/product/create">Create product</a></b-alert>
 
@@ -25,7 +25,7 @@
               ref="table"
               :busy.sync="isBusy"
               :items="tableDataProvider"
-              :fields="fields"
+              :fields="filteredFields"
               :per-page="perPage"
               :current-page="currentPage"
               :filter="filter"
@@ -68,16 +68,37 @@
 </template>
 
 <script>
+    import * as moment from "moment";
     import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
     export default {
       components: {ConfirmDialogueComponent},
+      computed: {
+        filteredFields() {
+          if(!this.visible) {
+            return [
+              { key: 'image', label: '' },
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'slug', label: 'URL', sortable: true, sortDirection: 'desc' },
+              { key: 'category_id', label: 'Category', sortable: true, sortDirection: 'desc' },
+              { key: 'category_price', label: 'Price', sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ]
+          } else {
+            return [
+              { key: 'image', label: '' },
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              {key: 'actions', label: ''}
+            ]
+          }
+        }
+      },
       mounted() {
             console.log('Component mounted.');
-
             this.load();
         },
         data() {
             return {
+               visible: true,
                 loading: true,
                 showResults: false,
                 products: [],
@@ -102,6 +123,9 @@
             }
         },
         methods: {
+          onResize() {
+            this.visible = window.innerWidth <= 700;
+          },
           async doDelete(product) {
             const ok = await this.$refs.confirmDialogue.show({
               title: 'Delete Product: ' + product.name,
@@ -183,7 +207,16 @@
                 // An error occurred
             });
             }
-        }
+        },
+      created() {
+        this.onResize();
+        // window.addEventListener('resize', this.onResize)
+      },
+
+      beforeDestroy() {
+        !this.onResize();
+        // window.removeEventListener('resize', this.onResize)
+      },
     }
 </script>
 

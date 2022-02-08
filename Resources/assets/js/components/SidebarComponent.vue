@@ -23,89 +23,21 @@
 
           <div id="accordion" class="sidebar accordion" style="width: 230px !important;">
             <div class="card" v-if="role">
-              <div class="card-header" id="headingOne">
-                <a href="#" data-toggle="collapse" data-target="#collapseOne">Site Management
-                  <i class="ri-arrow-down-s-line float-right"></i></a>
-              </div>
-              <!--              End card header-->
-              <div id="collapseOne" class="collapse" :class="{ 'show': request.match('admin/pages*') || request.match('admin/templates*') || request.match('admin/components') || request.match('admin/navigation*') }" aria-labelledby="headingOne" data-parent="#accordion">
-                <div class="card-body">
-                  <ul class="nav">
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/pages*') }" href="/admin/pages">
-                        <i class="bx ri-pages-line"></i>
-                        Pages
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/templates*') }" href="/admin/templates">
-                        <i class="bx ri-slideshow-line"></i>
-                        Templates
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/components') }" href="/admin/components">
-                        <i class="ri-tools-fill"></i>
-                        Components
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/navigation*') }" href="/admin/navigation">
-                        <i class="ri-compass-3-line"></i>
-                        Navigation
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <!--                End card body-->
-              </div>
-              <!--             End collapse-->
-            </div>
-            <!--End card-->
-            <div class="card" v-if="role">
-              <div class="card-header" id="headingtwo">
-                <a href="#" data-toggle="collapse" data-target="#collapseTwo">Users
-                  <i class="ri-arrow-down-s-line float-right"></i></a>
-              </div>
-              <!--End card header-->
-              <div id="collapseTwo" class="collapse" :class="{ 'show': request.match('admin/users*') || request.match('admin/permissions*') || request.match('admin/roles*') }" aria-labelledby="headingOne" data-parent="#accordion">
-                <div class="card-body">
-                  <ul class="nav">
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/users*') }" href="/admin/users">
-                        <i class="bx ri-user-line"></i>
-                        Users
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/roles*') }" href="/admin/roles">
-                        <i class="ri-map-pin-user-line"></i>
-                        Roles
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/permissions*') }" href="/admin/permissions">
-                        <i class="bx ri-lock-2-line"></i>
-                        Permissions
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <!--                End card body-->
-              </div>
-              <!--             End collapse-->
-            </div>
-            <!--End card-->
-            <div class="card" v-if="role">
               <div class="card-header" id="headingThree">
                 <a href="#" data-toggle="collapse" data-target="#collapseThree">Ecommerce
                   <i class="ri-arrow-down-s-line float-right"></i></a>
               </div>
               <!--              End card header-->
-              <div id="collapseThree" class="collapse" :class="{ 'show': request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/product-category*') || request.match('admin/customers*') || request.match('admin/orders*') || request.match('admin/discounts*') }" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div id="collapseThree" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/product-category*') || request.match('admin/customers*') || request.match('admin/orders*') || request.match('admin/discounts*') }" aria-labelledby="headingTwo" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav pl-2">
                     <!--                    @if (Auth::user()->hasRole('admin'))-->
+                    <li class="nav-item" v-if="role">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/scanner*') }" href="/admin/scanner">
+                        <i class="ri-qr-code-line"></i>
+                        Scanner
+                      </a>
+                    </li>
                     <li class="nav-item" v-if="role">
                       <a class="nav-link" :class="{ 'active': request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/reporting*') }" href="/admin/product">
                         <i class="ri-shopping-cart-2-line"></i>
@@ -147,22 +79,49 @@
               </div><!-- End collapse -->
             </div>
             <!-- End card -->
-            <div class="menu-title">Pages</div>
-
+            <div class="card" v-if="role">
+              <div class="card-header" id="headingtwo">
+                <a href="#" data-toggle="collapse" data-target="#collapseTwo">Users
+                  <i class="ri-arrow-down-s-line float-right"></i></a>
+              </div>
+              <!--End card header-->
+              <div id="collapseTwo" class="collapse" :class="{ 'show': request.match('admin/users*') || request.match('admin/permissions*') || request.match('admin/roles*') }" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                  <ul class="nav">
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/users*') }" href="/admin/users">
+                        <i class="bx ri-user-line"></i>
+                        Users
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/roles*') }" href="/admin/roles">
+                        <i class="ri-map-pin-user-line"></i>
+                        Roles
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/permissions*') }" href="/admin/permissions">
+                        <i class="bx ri-lock-2-line"></i>
+                        Permissions
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <!--                End card body-->
+              </div>
+              <!--             End collapse-->
+            </div>
+            <!--End card-->
+<!--            <div class="menu-title">Pages</div>-->
             <div class="card" v-if="role">
               <div class="card-header" id="headingFour">
                 <a href="#" data-toggle="collapse" data-target="#collapseFour">Advanced
                   <i class="ri-arrow-down-s-line float-right"></i></a>
               </div><!-- End card header -->
-              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/variables') || request.match('admin/authentication') || request.match('admin/import') || request.match('admin/settings') }" aria-labelledby="headingThree" data-parent="#accordion">
+              <div id="collapseFour" class="collapse" :class="{ 'show': request.match('admin/variables') || request.match('admin/authentication') || request.match('admin/import') || request.match('admin/settings') }" aria-labelledby="headingThree" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav">
-                    <li class="nav-item" v-if="role">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/scanner*') }" href="/admin/scanner">
-                        <i class="ri-qr-code-line"></i>
-                        Scanner
-                      </a>
-                    </li>
                     <li class="nav-item">
                       <a class="nav-link" :class="{ 'active': request.match('admin/variables') }" href="/admin/variables">
                         <i class="ri-code-s-slash-line"></i>
@@ -192,6 +151,46 @@
               </div><!-- End collapse -->
             </div>
             <!-- End card -->
+            <div class="card" v-if="role">
+              <div class="card-header" id="headingOne">
+                <a href="#" data-toggle="collapse" data-target="#collapseOne">Site Management
+                  <i class="ri-arrow-down-s-line float-right"></i></a>
+              </div>
+              <!--              End card header-->
+              <div id="collapseOne" class="collapse" :class="{ 'show': request.match('admin/pages*') || request.match('admin/templates*') || request.match('admin/components') || request.match('admin/navigation*') }" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                  <ul class="nav">
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/pages*') }" href="/admin/pages">
+                        <i class="bx ri-pages-line"></i>
+                        Pages
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/templates*') }" href="/admin/templates">
+                        <i class="bx ri-slideshow-line"></i>
+                        Templates
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/components') }" href="/admin/components">
+                        <i class="ri-tools-fill"></i>
+                        Components
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/navigation*') }" href="/admin/navigation">
+                        <i class="ri-compass-3-line"></i>
+                        Navigation
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <!--                End card body-->
+              </div>
+              <!--             End collapse-->
+            </div>
+            <!--End card-->
             <div class="card" v-if="role">
               <div class="card-header" id="headingFive">
                 <a href="#" data-toggle="collapse" data-target="#collapseFive" class="accordion-button">

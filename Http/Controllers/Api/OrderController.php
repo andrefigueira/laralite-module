@@ -41,7 +41,7 @@ class OrderController extends Controller
 
     public function get(Request $request)
     {
-        $orders = Order::with(['customer']);
+        $orders = Order::with(['customer', 'tickets']);
         $perPage = $request->get('perPage', 1);
 
         if ($request->get('all') === 'true') {
