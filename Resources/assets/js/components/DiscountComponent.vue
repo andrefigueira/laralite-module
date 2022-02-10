@@ -26,7 +26,7 @@
                     ref="table"
                     :busy.sync="isBusy"
                     :items="tableDataProvider"
-                    :fields="fields"
+                    :fields="filteredFields"
                     :per-page="perPage"
                     :current-page="currentPage"
                     :filter="filter">
@@ -62,40 +62,61 @@
 
     export default {
       components: {ConfirmDialogueComponent},
+      computed: {
+        filteredFields() {
+          if(!this.visible) {
+            return [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'type', label: 'Discount Type', sortable: true, sortDirection: 'desc' },
+              { key: 'value', label: 'Discount Value', sortable: true, sortDirection: 'desc' },
+              { key: 'created_at', label: 'Created', sortable: true, sortDirection: 'desc'},
+              { key: 'actions', label: '' }
+            ]
+          } else {
+            return [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ]
+          }
+        }
+      },
       data() {
-            return {
-                // Alert settings
-                alert: {
-                    show: false,
-                    dismissible: true,
-                    message: '',
-                    variant: 'success',
-                    dismissCountDown: 0,
-                    dismissSecs: 3
-                },
+        return {
+          visible: true,
+            // Alert settings
+            alert: {
+                show: false,
+                dismissible: true,
+                message: '',
+                variant: 'success',
+                dismissCountDown: 0,
+                dismissSecs: 3
+            },
 
-                // Table settings
-                fields: [
-                    { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
-                    { key: 'type', label: 'Discount Type', sortable: true, sortDirection: 'desc' },
-                    { key: 'value', label: 'Discount Value', sortable: true, sortDirection: 'desc' },
-                    { key: 'created_at', label: 'Created', sortable: true, sortDirection: 'desc'},
-                    { key: 'actions', label: '' }
-                ],
-                totalRows: 1,
-                currentPage: 1,
-                perPage: 10,
-                pageOptions: [5, 10, 15],
-                sortBy: '',
-                sortDesc: false,
-                sortDirection: 'asc',
-                filter: null,
-                filterOn: [],
-
-                isBusy: false,
-            }
+            // Table settings
+            fields: [
+                { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+                { key: 'type', label: 'Discount Type', sortable: true, sortDirection: 'desc' },
+                { key: 'value', label: 'Discount Value', sortable: true, sortDirection: 'desc' },
+                { key: 'created_at', label: 'Created', sortable: true, sortDirection: 'desc'},
+                { key: 'actions', label: '' }
+            ],
+            totalRows: 1,
+            currentPage: 1,
+            perPage: 10,
+            pageOptions: [5, 10, 15],
+            sortBy: '',
+            sortDesc: false,
+            sortDirection: 'asc',
+            filter: null,
+            filterOn: [],
+            isBusy: false,
+        }
         },
         methods: {
+          onResize() {
+            this.visible = window.innerWidth <= 700;
+          },
           async doDelete(discount) {
             const ok = await this.$refs.confirmDialogue.show({
               title: 'Delete Discount: ' + discount.name,
@@ -160,6 +181,15 @@
                     // An error occurred
                 });
             }
-        }
+        },
+        created() {
+          this.onResize();
+          // window.addEventListener('resize', this.onResize)
+        },
+
+        beforeDestroy() {
+          !this.onResize();
+          // window.removeEventListener('resize', this.onResize)
+        },
     }
 </script>

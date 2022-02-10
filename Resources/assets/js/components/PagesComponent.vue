@@ -26,7 +26,7 @@
               ref="table"
               :busy.sync="isBusy"
               :items="tableDataProvider"
-              :fields="fields"
+              :fields="filteredFields"
               :per-page="perPage"
               :current-page="currentPage"
               :filter="filter">
@@ -68,8 +68,27 @@ import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
 
 export default {
   components: {ConfirmDialogueComponent},
+  computed: {
+    filteredFields() {
+      if(!this.visible) {
+        return [
+          { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+          { key: 'slug', label: 'URL', sortable: true, sortDirection: 'desc' },
+          { key: 'primary', label: 'Type', sortable: true, sortDirection: 'desc' },
+          { key: 'template_id', label: 'Template', sortable: true, sortDirection: 'desc'},
+          { key: 'actions', label: '' }
+        ]
+      } else {
+        return [
+          { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+          { key: 'actions', label: '' }
+        ]
+      }
+    }
+  },
   data() {
     return {
+      visible: true,
       // Alert settings
       alert: {
         show: false,
@@ -102,6 +121,9 @@ export default {
     }
   },
   methods: {
+    onResize() {
+      this.visible = window.innerWidth <= 700;
+    },
     async doDelete(page) {
       const ok = await this.$refs.confirmDialogue.show({
         title: 'Delete Page: ' + page.name,
@@ -186,7 +208,16 @@ export default {
         // An error occurred
       });
     }
-  }
+  },
+  created() {
+    this.onResize();
+    // window.addEventListener('resize', this.onResize)
+  },
+
+  beforeDestroy() {
+    !this.onResize();
+    // window.removeEventListener('resize', this.onResize)
+  },
 }
 </script>
 

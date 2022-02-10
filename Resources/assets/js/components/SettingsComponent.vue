@@ -42,12 +42,12 @@
                     class="fas fa-external-link-alt"></i>RECONNECT STRIPE ACCOUNT</a>
                 <div class="pt-4 mt-1 pl-2" v-if="settings.stripeSecretKey">
                   <div>
-                    <p><strong>Client Id:</strong> {{ settings.stripeClientId }}</p>
-                    <p><strong>Secret Key:</strong> {{ hideSecretKey(settings.stripeSecretKey) }}</p>
-                    <p><strong>Access Token:</strong> {{ hideSecretKey(settings.stripeAccessToken) }}</p>
-                    <p><strong>Account Id:</strong> {{ settings.stripeAccountId }}</p>
-                    <p><strong>Live Account:</strong> {{ settings.stripeLiveAccount }}</p>
-                    <p><strong>Publisher Key:</strong> {{ settings.stripePublishKey }}</p>
+                    <p style="word-break: break-all;"><strong>Client Id:</strong> {{ settings.stripeClientId }}</p>
+                    <p style="word-break: break-all;"><strong>Secret Key:</strong> {{ hideSecretKey(settings.stripeSecretKey) }}</p>
+                    <p style="word-break: break-all;"><strong>Access Token:</strong> {{ hideSecretKey(settings.stripeAccessToken) }}</p>
+                    <p style="word-break: break-all;"><strong>Account Id:</strong> {{ settings.stripeAccountId }}</p>
+                    <p style="word-break: break-all;"><strong>Live Account:</strong> {{ settings.stripeLiveAccount }}</p>
+                    <p style="word-break: break-all;"><strong>Publisher Key:</strong> {{ settings.stripePublishKey }}</p>
                   </div>
                 </div>
                 <div class="mt-4" v-if="settings.stripeSecretKey !== ''">
@@ -65,7 +65,7 @@
                       <b-form-input v-model="settings.feeAmount" placeholder="10%"></b-form-input>
                     </div>
 
-                    <div class="col-md-4 col-sm-12">
+                    <div class="col-md-4 col-sm-12 mt-3 mt-lg-0">
                       <b-form-checkbox
                           id="taxActive"
                           v-model="settings.taxActive"
@@ -78,7 +78,7 @@
                       <b-form-input v-model="settings.taxAmount" placeholder="10%"></b-form-input>
                     </div>
 
-                    <div class="col-md-4 col-sm-12">
+                    <div class="col-md-4 col-sm-12 mt-3 mt-lg-0">
                       <b-form-checkbox
                           id="serviceFeeActive"
                           v-model="settings.serviceFeeActive"

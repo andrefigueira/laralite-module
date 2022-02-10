@@ -21,9 +21,9 @@
               </b-input-group-append>
             </b-input-group>
           </div>
-          <div class="col-md-6" v-if="checkedOrders.length">
-            <b-button class="mt-2 float-right mr-4" @click="uncheckAll" :disabled="checkedOrders.length == 0">Clear All</b-button>
-            <a class="btn btn-danger mt-2 float-right mr-4" :disabled="checkedOrders.length == 0" v-b-modal.issueRefund>Process Bulk Refunds</a>
+          <div class="col-md-6 align-self-center" v-if="checkedOrders.length">
+            <b-button variant="secondary" size="sm" class="float-right mr-lg-4 mr-sm-2" @click="uncheckAll" :disabled="checkedOrders.length == 0">Clear All</b-button>
+            <b-button variant="danger" size="sm" class="btn btn-danger float-right mr-4" :disabled="checkedOrders.length == 0" v-b-modal.issueRefund>Process Bulk Refunds</b-button>
           </div>
         </div>
 <!--        {{ checkedOrders }}-->
@@ -45,7 +45,7 @@
           <b-button class="mt-3" block @click="hideRefund">Exit</b-button>
         </b-modal>
       </div>
-      <div class="col-md-12">
+      <div class="col-md-12 mt-sm-2 mt-lg-0">
         <div class="table-responsive-sm">
           <b-table
             hover

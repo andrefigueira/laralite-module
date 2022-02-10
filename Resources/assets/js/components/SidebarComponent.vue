@@ -28,7 +28,7 @@
                   <i class="ri-arrow-down-s-line float-right"></i></a>
               </div>
               <!--              End card header-->
-              <div id="collapseThree" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/product-category*') || request.match('admin/customers*') || request.match('admin/orders*') || request.match('admin/discounts*') }" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div id="collapseThree" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/product-category*') || request.match('admin/customers*') || request.match('admin/orders*') || request.match('admin/discounts*') || request.match('admin/reporting*') }" aria-labelledby="headingTwo" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav pl-2">
                     <!--                    @if (Auth::user()->hasRole('admin'))-->
@@ -39,7 +39,7 @@
                       </a>
                     </li>
                     <li class="nav-item" v-if="role">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/reporting*') }" href="/admin/product">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') }" href="/admin/product">
                         <i class="ri-shopping-cart-2-line"></i>
                         Products
                       </a>

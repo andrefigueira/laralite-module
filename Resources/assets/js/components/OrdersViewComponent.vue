@@ -55,7 +55,6 @@
         <b-spinner label="Spinning"></b-spinner>
       </div>
     </b-modal>
-
     <b-modal ref="unredeemOrder" id="unredeemOrder" title="Unredeem Order" hide-footer>
       <div v-if="unredeemProcessing === false && unredeemError === false && unredeemSuccess !== true">
         <p>Are You Sure?? <br/> <strong>Order Id </strong>:- {{ order.unique_id }}</p>
@@ -74,11 +73,7 @@
         <b-spinner label="Spinning"></b-spinner>
       </div>
     </b-modal>
-
-    <b-modal ref="resendOrderConfirmationEmail"
-             id="resendOrderConfirmationEmail"
-             title="Send Order Confirmation Email"
-             hide-footer>
+    <b-modal ref="resendOrderConfirmationEmail" id="resendOrderConfirmationEmail" title="Send Order Confirmation Email" hide-footer>
       <div>
         <p>Are You Sure?? <br/> <strong>Order Id </strong>:- {{ order.unique_id }}</p>
         <b-form-group label-cols="4" label-cols-lg="2" label="Send To" label-for="order-confirmation-email">
@@ -105,28 +100,29 @@
     </div>
 
     <div class="row mt-2">
-      <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+      <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
         <h1 class="h6 mt-1">Order &rarr; <strong>{{ order.unique_id }}</strong></h1>
       </div>
-
       <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
-        <b-button size="sm" class="mr-1 float-right"
+        <b-button size="sm" class="mr-1 float-right mt-1 mt-lg-0"
                   :disabled="order.refunded === 1 || (_.get(order, 'tickets[0].status') === 'REDEEMED' && _.get(order, 'tickets[0].visited_counts', null) != null)"
                   variant="warning" v-b-modal.issueRefund>Issue Refund
         </b-button>
-        <b-button size="sm" class="mr-1 float-right"
+        <b-button size="sm" class="mr-1 float-right mt-1 mt-lg-0"
                   :disabled="order.order_status === 'cancel' || (_.get(order, 'tickets[0].status') === 'REDEEMED' && _.get(order, 'tickets[0].visited_counts', null) != null)"
                   variant="warning" v-b-modal.cancelOrder>Cancel Order
         </b-button>
-        <b-button size="sm" class="mr-1 float-right" variant="warning"
+        <br class="d-lg-none"/><br class="d-lg-none"/>
+        <b-button size="sm" class="mr-1 float-right mt-1 mt-lg-0" variant="warning"
                   :disabled="order.refunded === 1 || order.order_status === 'cancel' || (_.get(order, 'tickets[0].status') === 'REDEEMED' && _.get(order, 'tickets[0].visited_counts', null) != null)"
                   v-b-modal.redeemOrder>Redeem Order
         </b-button>
-        <b-button size="sm" class="mr-1 float-right"
+        <b-button size="sm" class="mr-1 float-right mt-1 mt-lg-0"
                   :disabled="order.refunded === 1 || _.get(order, 'tickets[0].status') !== 'REDEEMED'"
                   variant="warning" v-b-modal.unredeemOrder>Unredeem Order
         </b-button>
-        <b-button size="sm" class="mr-1 float-right"
+        <br class="d-lg-none"/><br class="d-lg-none"/>
+        <b-button size="sm" class="mr-1 float-right mt-1 mt-lg-0"
                   :disabled="order.refunded === 1 || order.order_status === 'cancel' || order.order_status !== 'complete'"
                   variant="warning" v-b-modal.resendOrderConfirmationEmail>Send Order Confirmation Email
         </b-button>
@@ -207,70 +203,103 @@
       <div class="col-sm-12 col-md-6 mt-2">
         <b-card>
           <b-card-text>
-            <h5 class="heading-style">
-              <i class="ri-bank-card-fill" style="font-size: 20px"></i> Payment Details
-            </h5>
-            <table class="table table-striped">
-              <tr>
-                <td><strong>ID</strong></td>
-                <td>{{ order.payment_processor_result.id }}</td>
-              </tr>
-              <tr>
-                <td width="40%"><strong>Payment Descriptor</strong></td>
-                <td>{{ order.payment_processor_result.calculated_statement_descriptor }}</td>
-              </tr>
-              <tr>
-                <td width="40%"><strong>Description</strong></td>
-                <td>{{ order.payment_processor_result.description }}</td>
-              </tr>
-              <tr>
-                <td><strong>Total Amount</strong></td>
-                <td>${{ order.payment_processor_result.amount / 100 }}</td>
-              </tr>
-              <tr>
-                <td><strong>Tax Applied</strong></td>
-                <td>
-                  {{
-                    _.get(order, 'basket.subtotals[0].taxAmount')
-                        ? '$' + _.get(order, 'basket.subtotals[0].taxAmount') : 'n/a'
-                  }}
-                  ({{
-                    _.get(order, 'basket.subtotals[0].tax')
-                        ? _.get(order, 'basket.subtotals[0].tax') + '%' : 'n/a'
-                  }})
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Service Fee</strong></td>
-                <td>
-                  {{
-                    _.get(order, 'basket.subtotals[0].serviceFee')
-                        ? '$' + _.get(order, 'basket.subtotals[0].serviceFee') : 'n/a'
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Fee</strong></td>
-                <td>
-                  {{
-                    order.payment_processor_result.application_fee_amount
-                        ? order.payment_processor_result.application_fee_amount / 100 : 'n/a'
-                  }}
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Balance Transaction</strong></td>
-                <td>{{ order.payment_processor_result.balance_transaction }}</td>
-              </tr>
-            </table>
+            <div class="row heading-style">
+              <div class="col-8 col-sm-10 col-lg-10 align-self-end">
+                <h5>
+                  <i class="ri-bank-card-fill" style="font-size: 20px"></i> Payment Details
+                </h5>
+              </div>
+              <div class="col-4 col-sm-2 col-lg-2">
+                <b-button class="float-right" v-b-toggle.payment-details variant="default">
+                  <span class="when-opened">
+                     <i class="ri-subtract-line"></i>
+                  </span>
+                  <span class="when-closed">
+                     <i class="ri-add-line"></i>
+                  </span>
+                </b-button>
+              </div>
+            </div>
+
+            <b-collapse id="payment-details">
+              <table class="table table-striped">
+                <tr>
+                  <td><strong>ID</strong></td>
+                  <td>{{ order.payment_processor_result.id }}</td>
+                </tr>
+                <tr>
+                  <td width="40%"><strong>Payment Descriptor</strong></td>
+                  <td>{{ order.payment_processor_result.calculated_statement_descriptor }}</td>
+                </tr>
+                <tr>
+                  <td width="40%"><strong>Description</strong></td>
+                  <td>{{ order.payment_processor_result.description }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Total Amount</strong></td>
+                  <td>${{ order.payment_processor_result.amount / 100 }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Tax Applied</strong></td>
+                  <td>
+                    {{
+                      _.get(order, 'basket.subtotals[0].taxAmount')
+                          ? '$' + _.get(order, 'basket.subtotals[0].taxAmount') : 'n/a'
+                    }}
+                    ({{
+                      _.get(order, 'basket.subtotals[0].tax')
+                          ? _.get(order, 'basket.subtotals[0].tax') + '%' : 'n/a'
+                    }})
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Service Fee</strong></td>
+                  <td>
+                    {{
+                      _.get(order, 'basket.subtotals[0].serviceFee')
+                          ? '$' + _.get(order, 'basket.subtotals[0].serviceFee') : 'n/a'
+                    }}
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Fee</strong></td>
+                  <td>
+                    {{
+                      order.payment_processor_result.application_fee_amount
+                          ? order.payment_processor_result.application_fee_amount / 100 : 'n/a'
+                    }}
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Balance Transaction</strong></td>
+                  <td>{{ order.payment_processor_result.balance_transaction }}</td>
+                </tr>
+              </table>
+            </b-collapse>
+
           </b-card-text>
         </b-card>
       </div><!-- End col -->
       <div class="col-sm-12 col-md-6 mt-2">
         <b-card>
           <b-card-text>
-            <h5 class="heading-style"><i class="fas fa-user"></i> Payment Method</h5>
-            <table class="table table-striped">
+            <div class="row heading-style">
+              <div class="col-8 col-sm-10 col-lg-10  align-self-end">
+                <h5><i class="fas fa-user"></i> Payment Method</h5>
+              </div>
+              <div class="col-4 col-sm-2 col-lg-2">
+                <b-button class="float-right" v-b-toggle.payment-method variant="default">
+                  <span class="when-opened">
+                     <i class="ri-subtract-line"></i>
+                  </span>
+                  <span class="when-closed">
+                     <i class="ri-add-line"></i>
+                  </span>
+                </b-button>
+              </div>
+            </div>
+            <b-collapse id="payment-method">
+              <table class="table table-striped">
               <tr v-if="order.payment_processor_result.payment_method">
                 <td width="40%"><strong>ID</strong></td>
                 <td>{{ order.payment_processor_result.payment_method }}</td>
@@ -317,6 +346,7 @@
                 </td>
               </tr>
             </table>
+            </b-collapse>
           </b-card-text>
         </b-card>
       </div><!-- End col -->
@@ -542,5 +572,10 @@ export default {
     right: 0;
     top: 68 !important;
   }
+}
+
+.collapsed > .when-opened,
+:not(.collapsed) > .when-closed {
+  display: none;
 }
 </style>
