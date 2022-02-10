@@ -25,7 +25,7 @@
               ref="table"
               :busy.sync="isBusy"
               :items="tableDataProvider"
-              :fields="fields"
+              :fields="filteredFields"
               :per-page="perPage"
               :current-page="currentPage"
               :filter="filter">
@@ -60,115 +60,142 @@
     import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
     export default {
       components: {ConfirmDialogueComponent},
+      computed: {
+        filteredFields() {
+          if(!this.visible) {
+            return [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'description', label: 'Description', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ]
+          } else {
+            return [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ]
+          }
+        }
+      },
       mounted() {
             console.log('Component mounted.');
-
             this.load();
         },
-        data() {
-            return {
-                loading: true,
-                showResults: false,
-                navigation: [],
-              fields: [
-                { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
-                { key: 'description', label: 'Description', sortable: true, sortDirection: 'desc' },
-                { key: 'actions', label: '' }
-              ],
-              totalRows: 1,
-              currentPage: 1,
-              perPage: 10,
-              pageOptions: [5, 10, 15],
-              sortBy: '',
-              sortDesc: false,
-              sortDirection: 'asc',
-              filter: null,
-              filterOn: [],
+      data() {
+          return {
+            visible: true,
+            loading: true,
+            showResults: false,
+            navigation: [],
+            fields: [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'description', label: 'Description', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ],
+            totalRows: 1,
+            currentPage: 1,
+            perPage: 10,
+            pageOptions: [5, 10, 15],
+            sortBy: '',
+            sortDesc: false,
+            sortDirection: 'asc',
+            filter: null,
+            filterOn: [],
 
-              isBusy: false,
-            }
+            isBusy: false,
+          }
+      },
+      methods: {
+        onResize() {
+          this.visible = window.innerWidth <= 700;
         },
-        methods: {
-          async doDelete(navigation) {
-            const ok = await this.$refs.confirmDialogue.show({
-              title: 'Delete Navigation: ' + navigation.name,
-              message: 'Are you sure you want to delete this navigation? It cannot be undone.',
-              okButton: 'Delete',
-            })
-            // If you throw an error, the method will terminate here unless you surround it wil try/catch
-            if (ok) {
-              console.log(navigation);
-              axios.delete('/api/navigation/' + navigation.id).then(response => {
-                this.navigation = response.data
-                if (this.navigation.length > 0) {
-                  this.showResults = true;
-                }
-                location.reload();
-              }).catch(error => {
-                alert("Error in deleting Navigation: " + navigation.name)
-              });
-            } else {
-              /*alert('You chose not to delete this page. Doing nothing now.')*/
-              console.log(navigation)
-            }
-          },
-          tableDataProvider(context) {
-            this.isBusy = true;
-
-            const promise = axios.get(
-                '/api/navigation?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
-                { withCredentials: true }
-            );
-
-            return promise.then((data) => {
-              const items = data.data.data;
-
-              this.totalRows = data.data.total;
-
-              this.isBusy = false;
-
-              // console.log(items);
-              return items;
+        async doDelete(navigation) {
+          const ok = await this.$refs.confirmDialogue.show({
+            title: 'Delete Navigation: ' + navigation.name,
+            message: 'Are you sure you want to delete this navigation? It cannot be undone.',
+            okButton: 'Delete',
+          })
+          // If you throw an error, the method will terminate here unless you surround it wil try/catch
+          if (ok) {
+            console.log(navigation);
+            axios.delete('/api/navigation/' + navigation.id).then(response => {
+              this.navigation = response.data
+              if (this.navigation.length > 0) {
+                this.showResults = true;
+              }
+              location.reload();
             }).catch(error => {
-              this.isBusy = false;
+              alert("Error in deleting Navigation: " + navigation.name)
+            });
+          } else {
+            /*alert('You chose not to delete this page. Doing nothing now.')*/
+            console.log(navigation)
+          }
+        },
+        tableDataProvider(context) {
+          this.isBusy = true;
 
-              return [];
-            })
+          const promise = axios.get(
+              '/api/navigation?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
+              { withCredentials: true }
+          );
+
+          return promise.then((data) => {
+            const items = data.data.data;
+
+            this.totalRows = data.data.total;
+
+            this.isBusy = false;
+
+            // console.log(items);
+            return items;
+          }).catch(error => {
+            this.isBusy = false;
+
+            return [];
+          })
+        },
+
+        load() {
+              axios.get('/api/navigation').then(response => {
+                  this.navigation = response.data.data;
+
+                  if (this.navigation.length > 0) {
+                      this.showResults = true;
+                  }
+
+                  this.loading = false;
+              }).catch(error => {
+                  // handle error
+              });
           },
+          confirmDelete(navigationRow) {
+              this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
+                  if (value) {
+                      let index = this.navigation.indexOf(navigationRow);
+                      let self = this;
 
-          load() {
-                axios.get('/api/navigation').then(response => {
-                    this.navigation = response.data.data;
+                      axios.delete('/api/navigation/' + navigationRow.id).then(response => {
+                          self.navigation.splice(index, 1);
 
-                    if (this.navigation.length > 0) {
-                        this.showResults = true;
-                    }
-
-                    this.loading = false;
-                }).catch(error => {
-                    // handle error
-                });
-            },
-            confirmDelete(navigationRow) {
-                this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
-                    if (value) {
-                        let index = this.navigation.indexOf(navigationRow);
-                        let self = this;
-
-                        axios.delete('/api/navigation/' + navigationRow.id).then(response => {
-                            self.navigation.splice(index, 1);
-
-                            if (self.navigation.length < 1) {
-                                self.showResults = false;
-                            }
-                        }).catch(error => {
-                            // handle error
-                        });
-                    }
-                }).catch(error => {
-                    // An error occurred
-                });
-            }
-        }
+                          if (self.navigation.length < 1) {
+                              self.showResults = false;
+                          }
+                      }).catch(error => {
+                          // handle error
+                      });
+                  }
+              }).catch(error => {
+                  // An error occurred
+              });
+          }
+      },
+      created() {
+        this.onResize();
+        // window.addEventListener('resize', this.onResize)
+      },
+      beforeDestroy() {
+        !this.onResize();
+        // window.removeEventListener('resize', this.onResize)
+      },
     }
 </script>

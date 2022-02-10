@@ -26,7 +26,7 @@
             ref="table"
             :busy.sync="isBusy"
             :items="tableDataProvider"
-            :fields="fields"
+            :fields="filteredFields"
             :per-page="perPage"
             :current-page="currentPage"
             :filter="filter">
@@ -62,114 +62,141 @@
     import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
     export default {
       components: {ConfirmDialogueComponent},
+      computed: {
+        filteredFields() {
+          if(!this.visible) {
+            return [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'description', label: 'Description', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ]
+          } else {
+            return [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ]
+          }
+        }
+      },
       mounted() {
             console.log('Component mounted.');
-
             this.load();
         },
-        data() {
-            return {
-                loading: true,
-                showResults: false,
-                templates: [],
-              fields: [
-                { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
-                { key: 'description', label: 'Description', sortable: true, sortDirection: 'desc' },
-                { key: 'actions', label: '' }
-              ],
-              totalRows: 1,
-              currentPage: 1,
-              perPage: 10,
-              pageOptions: [5, 10, 15],
-              sortBy: '',
-              sortDesc: false,
-              sortDirection: 'asc',
-              filter: null,
-              filterOn: [],
+      data() {
+          return {
+            visible: true,
+            loading: true,
+            showResults: false,
+            templates: [],
+            fields: [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'description', label: 'Description', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ],
+            totalRows: 1,
+            currentPage: 1,
+            perPage: 10,
+            pageOptions: [5, 10, 15],
+            sortBy: '',
+            sortDesc: false,
+            sortDirection: 'asc',
+            filter: null,
+            filterOn: [],
 
-              isBusy: false,
-            }
+            isBusy: false,
+          }
+      },
+      methods: {
+        onResize() {
+          this.visible = window.innerWidth <= 700;
         },
-        methods: {
-          async doDelete(template) {
-            const ok = await this.$refs.confirmDialogue.show({
-              title: 'Delete Template: ' + template.name,
-              message: 'Are you sure you want to delete this template? It cannot be undone.',
-              okButton: 'Delete',
-            })
-            // If you throw an error, the method will terminate here unless you surround it wil try/catch
-            if (ok) {
-              console.log(template);
-              axios.delete('/api/template/' + template.id).then(response => {
-                this.template = response.data
-                if (this.template.length > 0) {
-                  this.showResults = true;
-                }
-                location.reload();
-              }).catch(error => {
-                alert("Error in deleting Template: " + template.name)
-              });
-            } else {
-              /*alert('You chose not to delete this page. Doing nothing now.')*/
-              console.log(template)
-            }
-          },
-          tableDataProvider(context) {
-            this.isBusy = true;
-
-            const promise = axios.get(
-                '/api/template?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
-                { withCredentials: true}
-            );
-
-            return promise.then((data) => {
-              const items = data.data.data;
-
-              this.totalRows = data.data.total;
-
-              this.isBusy = false;
-
-              // console.log(items);
-              return items;
+        async doDelete(template) {
+          const ok = await this.$refs.confirmDialogue.show({
+            title: 'Delete Template: ' + template.name,
+            message: 'Are you sure you want to delete this template? It cannot be undone.',
+            okButton: 'Delete',
+          })
+          // If you throw an error, the method will terminate here unless you surround it wil try/catch
+          if (ok) {
+            console.log(template);
+            axios.delete('/api/template/' + template.id).then(response => {
+              this.template = response.data
+              if (this.template.length > 0) {
+                this.showResults = true;
+              }
+              location.reload();
             }).catch(error => {
-              this.isBusy = false;
+              alert("Error in deleting Template: " + template.name)
+            });
+          } else {
+            /*alert('You chose not to delete this page. Doing nothing now.')*/
+            console.log(template)
+          }
+        },
+        tableDataProvider(context) {
+          this.isBusy = true;
 
-              return [];
-            })
+          const promise = axios.get(
+              '/api/template?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
+              { withCredentials: true}
+          );
+
+          return promise.then((data) => {
+            const items = data.data.data;
+
+            this.totalRows = data.data.total;
+
+            this.isBusy = false;
+
+            // console.log(items);
+            return items;
+          }).catch(error => {
+            this.isBusy = false;
+
+            return [];
+          })
+        },
+          load() {
+              axios.get('/api/template').then(response => {
+                  this.templates = response.data.data;
+
+                  if (this.templates.length > 0) {
+                      this.showResults = true;
+                  }
+
+                  this.loading = false;
+              }).catch(error => {
+                  // handle error
+              });
           },
-            load() {
-                axios.get('/api/template').then(response => {
-                    this.templates = response.data.data;
+          confirmDelete(template) {
+              this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
+                  if (value) {
+                      let index = this.templates.indexOf(template);
+                      let self = this;
 
-                    if (this.templates.length > 0) {
-                        this.showResults = true;
-                    }
+                      axios.delete('/api/template/' + template.id).then(response => {
+                          self.templates.splice(index, 1);
 
-                    this.loading = false;
-                }).catch(error => {
-                    // handle error
-                });
-            },
-            confirmDelete(template) {
-                this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
-                    if (value) {
-                        let index = this.templates.indexOf(template);
-                        let self = this;
-
-                        axios.delete('/api/template/' + template.id).then(response => {
-                            self.templates.splice(index, 1);
-
-                            if (self.templates.length < 1) {
-                                self.showResults = false;
-                            }
-                        }).catch(error => {
-                            // handle error
-                        });
-                    }
-                }).catch(error => {
-                    // An error occurred
-                });
-            }
-        }
+                          if (self.templates.length < 1) {
+                              self.showResults = false;
+                          }
+                      }).catch(error => {
+                          // handle error
+                      });
+                  }
+              }).catch(error => {
+                  // An error occurred
+              });
+          }
+      },
+      created() {
+        this.onResize();
+        // window.addEventListener('resize', this.onResize)
+      },
+      beforeDestroy() {
+        !this.onResize();
+        // window.removeEventListener('resize', this.onResize)
+      },
     }
 </script>

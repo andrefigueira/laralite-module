@@ -1,4 +1,4 @@
-<template>
+ <template>
     <div>
         <b-alert class="m-3" :show="!loading && !showResults">No product category added yet &middot; <a href="/admin/product-category/create">Create product category</a></b-alert>
 
@@ -26,7 +26,7 @@
             ref="table"
             :busy.sync="isBusy"
             :items="tableDataProvider"
-            :fields="fields"
+            :fields="filteredFields"
             :per-page="perPage"
             :current-page="currentPage"
             :filter="filter">
@@ -37,7 +37,6 @@
           <template v-slot:cell(actions)="data">
             <a v-b-tooltip:hover title="Delete" class="float-right mr-2" style="width: 10%; cursor: pointer" @click="doDelete(data.item)"><i class="ri-delete-bin-6-fill"></i></a>
             <confirm-dialogue-component ref="confirmDialogue"></confirm-dialogue-component>
-<!--            <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item)" class="float-right" style="text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>-->
             <a v-b-tooltip:hover title="Edit" :href="'/admin/product-category/edit/' + data.item.id" class="float-right mr-3" style="text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
           </template>
         </b-table>
@@ -59,35 +58,54 @@
     import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
     export default {
       components: {ConfirmDialogueComponent},
+      computed: {
+        filteredFields() {
+          if(!this.visible) {
+            return [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'slug', label: 'Slug', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ]
+          } else {
+            return [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ]
+          }
+        }
+      },
       mounted() {
             console.log('Component mounted.');
-
             this.load();
         },
         data() {
-            return {
-                loading: true,
-                showResults: false,
-                productCategories: [],
-              fields: [
-                { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
-                { key: 'slug', label: 'Slug', sortable: true, sortDirection: 'desc' },
-                { key: 'actions', label: '' }
-              ],
-              totalRows: 1,
-              currentPage: 1,
-              perPage: 10,
-              pageOptions: [5, 10, 15],
-              sortBy: '',
-              sortDesc: false,
-              sortDirection: 'asc',
-              filter: null,
-              filterOn: [],
+          return {
+            visible: true,
+            loading: true,
+            showResults: false,
+            productCategories: [],
+            fields: [
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'slug', label: 'Slug', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ],
+            totalRows: 1,
+            currentPage: 1,
+            perPage: 10,
+            pageOptions: [5, 10, 15],
+            sortBy: '',
+            sortDesc: false,
+            sortDirection: 'asc',
+            filter: null,
+            filterOn: [],
 
-              isBusy: false,
-            }
+            isBusy: false,
+          }
         },
         methods: {
+          onResize() {
+            this.visible = window.innerWidth <= 700;
+          },
           async doDelete(productCategory) {
             const ok = await this.$refs.confirmDialogue.show({
               title: 'Delete Product Category: ' + productCategory.name,
@@ -167,6 +185,15 @@
                     // An error occurred
                 });
             }
-        }
+        },
+        created() {
+          this.onResize();
+          // window.addEventListener('resize', this.onResize)
+        },
+
+        beforeDestroy() {
+          !this.onResize();
+          // window.removeEventListener('resize', this.onResize)
+        },
     }
 </script>

@@ -51,13 +51,14 @@
 
                         <b-table striped :fields="orderFields" :items="customer.orders" responsive="sm" sortDesc>
                             <template #cell(unique_id)="data">
-                                 {{ data.item.unique_id }}
+                                 {{ data.item.confirmation_code }}
                             </template>
                             <template v-slot:cell(date_created)="data">
                                 {{ timeFormat(data.item.created_at) }}
                             </template>
                             <template v-slot:cell(actions)="data">
-                                <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="float-right mr-1"><i class="ri-eye-fill"></i></a>
+                              <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="btn btn-sm btn-primary float-right mr-3" style="font-size: 12px">View</a>
+<!--                              <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="float-right mr-1"><i class="ri-eye-fill"></i></a>-->
                             </template>
                         </b-table>
                     </b-card-text>
@@ -73,7 +74,6 @@
     export default {
         mounted() {
             console.log('Component mounted.');
-
             this.loading = false;
         },
         props: {
@@ -87,7 +87,7 @@
                 showResults: false,
                 orderFields: [
                     { key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc' },
-                    { key: 'date_created', label: 'Order Date', sortDirection: 'desc'},
+                    { key: 'date_created', label: 'Order Date',sortable: true, sortDirection: 'desc'},
                     { key: 'actions', label: '' }
                 ],
               sortBy: '',

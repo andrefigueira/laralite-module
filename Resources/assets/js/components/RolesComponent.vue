@@ -25,7 +25,7 @@
               ref="table"
               :busy.sync="isBusy"
               :items="tableDataProvider"
-              :fields="fields"
+              :fields="filteredFields"
               :per-page="perPage"
               :current-page="currentPage"
               :filter="filter">
@@ -71,120 +71,151 @@ import * as moment from "moment";
 import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
 export default {
   components: {ConfirmDialogueComponent},
+  computed: {
+    filteredFields() {
+      if(!this.visible) {
+        return [
+          { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
+          { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+          { key: 'guard_name', label: 'Guard Name', sortable: true, sortDirection: 'desc' },
+          { key: 'created_at', label: 'Created At', sortable: true, sortDirection: 'desc'},
+          { key: 'updated_at', label: 'Updated At', sortable: true, sortDirection: 'desc'},
+          { key: 'actions', label: '' }
+        ]
+      } else {
+        return [
+          { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
+          { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+          { key: 'actions', label: '' }
+        ]
+      }
+    }
+  },
   mounted() {
             console.log('Component mounted.');
-
             this.load();
         },
-        data() {
-            return {
-                loading: true,
-                showResults: false,
-                roles: [],
-                fields: [
-                  { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
-                  { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
-                  { key: 'guard_name', label: 'Guard Name', sortable: true, sortDirection: 'desc' },
-                  { key: 'created_at', label: 'Created At', sortable: true, sortDirection: 'desc'},
-                  { key: 'updated_at', label: 'Updated At', sortable: true, sortDirection: 'desc'},
-                  { key: 'actions', label: '' }
-                ],
-                totalRows: 1,
-                currentPage: 1,
-                perPage: 10,
-                pageOptions: [5, 10, 15],
-                sortBy: '',
-                sortDesc: false,
-                sortDirection: 'asc',
-                filter: null,
-                filterOn: [],
+  data() {
+      return {
+        visible: true,
+        loading: true,
+        showResults: false,
+        roles: [],
+        fields: [
+          { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
+          { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+          { key: 'guard_name', label: 'Guard Name', sortable: true, sortDirection: 'desc' },
+          { key: 'created_at', label: 'Created At', sortable: true, sortDirection: 'desc'},
+          { key: 'updated_at', label: 'Updated At', sortable: true, sortDirection: 'desc'},
+          { key: 'actions', label: '' }
+        ],
+        totalRows: 1,
+        currentPage: 1,
+        perPage: 10,
+        pageOptions: [5, 10, 15],
+        sortBy: '',
+        sortDesc: false,
+        sortDirection: 'asc',
+        filter: null,
+        filterOn: [],
+        isBusy: false,
+      }
+  },
+  methods: {
+    onResize() {
+      this.visible = window.innerWidth <= 700;
+    },
+    async doDelete(role) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: 'Delete Role: ' + role.name,
+        message: 'Are you sure you want to delete this role? It cannot be undone.',
+        okButton: 'Delete',
+      })
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        console.log(role);
+        axios.delete('/api/roles/' + role.id).then(response => {
+          this.role = response.data
+          if (this.role.length > 0) {
+            this.showResults = true;
+          }
+          location.reload();
+        }).catch(error => {
+          alert("Error in deleting Role: " + role.name)
+        });
+      } else {
+        /*alert('You chose not to delete this page. Doing nothing now.')*/
+        console.log(role)
+      }
+    },
+    tableDataProvider(context) {
+      this.isBusy = true;
 
-                isBusy: false,
-            }
-        },
-        methods: {
-          async doDelete(role) {
-            const ok = await this.$refs.confirmDialogue.show({
-              title: 'Delete Role: ' + role.name,
-              message: 'Are you sure you want to delete this role? It cannot be undone.',
-              okButton: 'Delete',
-            })
-            // If you throw an error, the method will terminate here unless you surround it wil try/catch
-            if (ok) {
-              console.log(role);
-              axios.delete('/api/roles/' + role.id).then(response => {
-                this.role = response.data
-                if (this.role.length > 0) {
+      const promise = axios.get(
+          '/api/roles?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
+          { withCredentials: true }
+      );
+
+      return promise.then((data) => {
+        const items = data.data.data;
+
+        this.totalRows = data.data.total;
+
+        this.isBusy = false;
+
+        // console.log(items);
+        return items;
+      }).catch(error => {
+        this.isBusy = false;
+
+        return [];
+      })
+    },
+    timeFormat(time) {
+      return moment(time).format("Do MMM, YYYY");
+    },
+      load() {
+          axios.get('/api/roles').then(response => {
+              this.roles = response.data.data;
+
+              if (this.roles.length > 0) {
                   this.showResults = true;
-                }
-                location.reload();
-              }).catch(error => {
-                alert("Error in deleting Role: " + role.name)
-              });
-            } else {
-              /*alert('You chose not to delete this page. Doing nothing now.')*/
-              console.log(role)
-            }
-          },
-          tableDataProvider(context) {
-            this.isBusy = true;
+              }
 
-            const promise = axios.get(
-                '/api/roles?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
-                { withCredentials: true }
-            );
+              this.loading = false;
+          }).catch(error => {
+              // handle error
+          });
+      },
+      confirmDelete(role) {
+          this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
+              if (value) {
+                  let index = this.roles.indexOf(role);
+                  let self = this;
 
-            return promise.then((data) => {
-              const items = data.data.data;
+                  axios.delete('/api/roles/' + role.id).then(response => {
+                      self.roles.splice(index, 1);
 
-              this.totalRows = data.data.total;
+                      if (self.roles.length < 1) {
+                          self.showResults = false;
+                      }
+                  }).catch(error => {
+                      // handle error
+                  });
+              }
+          }).catch(error => {
+              // An error occurred
+          });
+      }
+  },
+  created() {
+    this.onResize();
+    // window.addEventListener('resize', this.onResize)
+  },
 
-              this.isBusy = false;
-
-              // console.log(items);
-              return items;
-            }).catch(error => {
-              this.isBusy = false;
-
-              return [];
-            })
-          },
-          timeFormat(time) {
-            return moment(time).format("Do MMM, YYYY");
-          },
-            load() {
-                axios.get('/api/roles').then(response => {
-                    this.roles = response.data.data;
-
-                    if (this.roles.length > 0) {
-                        this.showResults = true;
-                    }
-
-                    this.loading = false;
-                }).catch(error => {
-                    // handle error
-                });
-            },
-            confirmDelete(role) {
-                this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
-                    if (value) {
-                        let index = this.roles.indexOf(role);
-                        let self = this;
-
-                        axios.delete('/api/roles/' + role.id).then(response => {
-                            self.roles.splice(index, 1);
-
-                            if (self.roles.length < 1) {
-                                self.showResults = false;
-                            }
-                        }).catch(error => {
-                            // handle error
-                        });
-                    }
-                }).catch(error => {
-                    // An error occurred
-                });
-            }
-        }
+  beforeDestroy() {
+    !this.onResize();
+    // window.removeEventListener('resize', this.onResize)
+  },
     }
 </script>

@@ -25,7 +25,7 @@
               ref="table"
               :busy.sync="isBusy"
               :items="tableDataProvider"
-              :fields="fields"
+              :fields="filteredFields"
               :per-page="perPage"
               :current-page="currentPage"
               :filter="filter">
@@ -71,120 +71,151 @@
 
     export default {
       components: {ConfirmDialogueComponent},
+      computed: {
+        filteredFields() {
+          if(!this.visible) {
+            return [
+              { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'guard_name', label: 'Guard Name', sortable: true, sortDirection: 'desc' },
+              { key: 'created_at', label: 'Created At', sortable: true, sortDirection: 'desc'},
+              { key: 'updated_at', label: 'Updated At', sortable: true, sortDirection: 'desc'},
+              { key: 'actions', label: '' }
+            ]
+          } else {
+            return [
+              { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'actions', label: '' }
+            ]
+          }
+        }
+      },
       mounted() {
             console.log('Component mounted.');
-
             this.load();
         },
-        data() {
-            return {
-                loading: true,
-                showResults: false,
-                permissions: [],
-                fields: [
-                  { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
-                  { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
-                  { key: 'guard_name', label: 'Guard Name', sortable: true, sortDirection: 'desc' },
-                  { key: 'created_at', label: 'Created At', sortable: true, sortDirection: 'desc'},
-                  { key: 'updated_at', label: 'Updated At', sortable: true, sortDirection: 'desc'},
-                  { key: 'actions', label: '' }
-                ],
-                totalRows: 1,
-                currentPage: 1,
-                perPage: 10,
-                pageOptions: [5, 10, 15],
-                sortBy: '',
-                sortDesc: false,
-                sortDirection: 'asc',
-                filter: null,
-                filterOn: [],
-
-                isBusy: false,
-            }
+      data() {
+          return {
+            visible: true,
+            loading: true,
+            showResults: false,
+            permissions: [],
+            fields: [
+              { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
+              { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'guard_name', label: 'Guard Name', sortable: true, sortDirection: 'desc' },
+              { key: 'created_at', label: 'Created At', sortable: true, sortDirection: 'desc'},
+              { key: 'updated_at', label: 'Updated At', sortable: true, sortDirection: 'desc'},
+              { key: 'actions', label: '' }
+            ],
+            totalRows: 1,
+            currentPage: 1,
+            perPage: 10,
+            pageOptions: [5, 10, 15],
+            sortBy: '',
+            sortDesc: false,
+            sortDirection: 'asc',
+            filter: null,
+            filterOn: [],
+            isBusy: false,
+          }
+      },
+      methods: {
+        onResize() {
+          this.visible = window.innerWidth <= 700;
         },
-        methods: {
-          async doDelete(permission) {
-            const ok = await this.$refs.confirmDialogue.show({
-              title: 'Delete Permission: ' + permission.name,
-              message: 'Are you sure you want to delete this permission? It cannot be undone.',
-              okButton: 'Delete',
-            })
-            // If you throw an error, the method will terminate here unless you surround it wil try/catch
-            if (ok) {
-              console.log(permission);
-              axios.delete('/api/permission/' + permission.id).then(response => {
-                this.permission = response.data
-                if (this.permission.length > 0) {
-                  this.showResults = true;
-                }
-                location.reload();
-              }).catch(error => {
-                alert("Error in deleting Permission: " + permission.name)
-              });
-            } else {
-              /*alert('You chose not to delete this page. Doing nothing now.')*/
-              console.log(permission)
-            }
-          },
-          tableDataProvider(context) {
-            this.isBusy = true;
-
-            const promise = axios.get(
-                '/api/permissions?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
-                { withCredentials: true }
-            );
-
-            return promise.then((data) => {
-              const items = data.data.data;
-
-              this.totalRows = data.data.total;
-
-              this.isBusy = false;
-
-              // console.log(items);
-              return items;
+        async doDelete(permission) {
+          const ok = await this.$refs.confirmDialogue.show({
+            title: 'Delete Permission: ' + permission.name,
+            message: 'Are you sure you want to delete this permission? It cannot be undone.',
+            okButton: 'Delete',
+          })
+          // If you throw an error, the method will terminate here unless you surround it wil try/catch
+          if (ok) {
+            console.log(permission);
+            axios.delete('/api/permission/' + permission.id).then(response => {
+              this.permission = response.data
+              if (this.permission.length > 0) {
+                this.showResults = true;
+              }
+              location.reload();
             }).catch(error => {
-              this.isBusy = false;
+              alert("Error in deleting Permission: " + permission.name)
+            });
+          } else {
+            /*alert('You chose not to delete this page. Doing nothing now.')*/
+            console.log(permission)
+          }
+        },
+        tableDataProvider(context) {
+          this.isBusy = true;
 
-              return [];
-            })
+          const promise = axios.get(
+              '/api/permissions?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
+              { withCredentials: true }
+          );
+
+          return promise.then((data) => {
+            const items = data.data.data;
+
+            this.totalRows = data.data.total;
+
+            this.isBusy = false;
+
+            // console.log(items);
+            return items;
+          }).catch(error => {
+            this.isBusy = false;
+
+            return [];
+          })
+        },
+        timeFormat(time) {
+          return moment(time).format("Do MMM, YYYY");
+        },
+          load() {
+              axios.get('/api/permissions').then(response => {
+                  this.permissions = response.data.data;
+
+                  if (this.permissions.length > 0) {
+                      this.showResults = true;
+                  }
+
+                  this.loading = false;
+              }).catch(error => {
+                  // handle error
+              });
           },
-          timeFormat(time) {
-            return moment(time).format("Do MMM, YYYY");
-          },
-            load() {
-                axios.get('/api/permissions').then(response => {
-                    this.permissions = response.data.data;
+          confirmDelete(role) {
+              this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
+                  if (value) {
+                      let index = this.permissions.indexOf(role);
+                      let self = this;
 
-                    if (this.permissions.length > 0) {
-                        this.showResults = true;
-                    }
+                      axios.delete('/api/permissions/' + permission.id).then(response => {
+                          self.permissions.splice(index, 1);
 
-                    this.loading = false;
-                }).catch(error => {
-                    // handle error
-                });
-            },
-            confirmDelete(role) {
-                this.$bvModal.msgBoxConfirm('Are you sure?').then(value => {
-                    if (value) {
-                        let index = this.permissions.indexOf(role);
-                        let self = this;
+                          if (self.permissions.length < 1) {
+                              self.showResults = false;
+                          }
+                      }).catch(error => {
+                          // handle error
+                      });
+                  }
+              }).catch(error => {
+                  // An error occurred
+              });
+          }
+      },
+      created() {
+        this.onResize();
+        // window.addEventListener('resize', this.onResize)
+      },
 
-                        axios.delete('/api/permissions/' + permission.id).then(response => {
-                            self.permissions.splice(index, 1);
-
-                            if (self.permissions.length < 1) {
-                                self.showResults = false;
-                            }
-                        }).catch(error => {
-                            // handle error
-                        });
-                    }
-                }).catch(error => {
-                    // An error occurred
-                });
-            }
-        }
+      beforeDestroy() {
+        !this.onResize();
+        // window.removeEventListener('resize', this.onResize)
+      },
     }
 </script>
