@@ -59,15 +59,15 @@ return [
             ],
         ],
         [
-            'name' => 'ResetPassword',
-            'slug' => 'reset-password',
+            'name' => 'ForgotPassword',
+            'slug' => 'forgot-password',
             'settings' => [
                 'icon' => 'fa-key',
             ],
         ],
         [
-            'name' => 'ResetPasswordForm',
-            'slug' => 'reset-password-form',
+            'name' => 'PasswordReset',
+            'slug' => 'password-reset',
             'settings' => [
                 'icon' => 'fa-key',
             ],
