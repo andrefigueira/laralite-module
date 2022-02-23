@@ -2,18 +2,20 @@
 
 namespace Modules\Laralite\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Modules\Laralite\Http\Requests\LoginRequest;
 use Modules\Laralite\Traits\ApiResponses;
+use Password;
 use Symfony\Component\HttpFoundation\Response;
 
 
-class CustomerAuthController extends Controller
+class CustomerAuthController extends ForgotPasswordController
 {
     use ApiResponses;
+    use ResetsPasswords;
 
     public function login(LoginRequest $request): JsonResponse
     {
@@ -30,7 +32,6 @@ class CustomerAuthController extends Controller
     /**
      * Log the user out (Invalidate the token).
      *
-     * @param Request $request
      * @return RedirectResponse
      */
     public function logout(): RedirectResponse
@@ -40,4 +41,8 @@ class CustomerAuthController extends Controller
         return redirect('/');
     }
 
+    public function broker(): PasswordBroker
+    {
+        return Password::broker('customers');
+    }
 }

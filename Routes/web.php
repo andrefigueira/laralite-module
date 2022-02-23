@@ -88,6 +88,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
 Route::post('/login', 'Auth\CustomerAuthController@login');
 Route::get('/logout', 'Auth\CustomerAuthController@logout');
+Route::post('/password-reset', 'Auth\CustomerAuthController@sendResetLinkEmail');
+Route::post('/reset', 'Auth\CustomerAuthController@reset');
 Route::post('/signup', 'Auth\SignupController@signup');
 
 Route::get('/ticket/{uuid}', 'TicketController@generateTicket');

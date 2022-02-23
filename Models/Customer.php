@@ -2,8 +2,10 @@
 
 namespace Modules\Laralite\Models;
 
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Modules\Laralite\Notifications\ResetPasswordNotification;
 
 /**
  * Class Customer
@@ -56,5 +58,10 @@ class Customer extends Authenticatable
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'customer_id', 'id');
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }
