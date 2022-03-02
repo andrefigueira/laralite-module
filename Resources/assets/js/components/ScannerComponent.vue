@@ -118,6 +118,7 @@
             </template>
             <template v-else>
               <p>Ticket Not Found</p>
+              <b-button class="mt-3" block @click="hideReedem">Mark as special event</b-button>
               <b-button class="mt-3" block @click="hideReedem">Exit</b-button>
             </template>
           </b-modal>
