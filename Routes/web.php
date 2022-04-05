@@ -53,6 +53,10 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/admin/permissions/create', 'Admin\PermissionsController@create');
     Route::get('/admin/permissions/edit/{id}', 'Admin\PermissionsController@edit');
 
+    Route::get('/admin/subscriptions', 'Admin\SubscriptionsController@index');
+    Route::get('/admin/subscriptions/create', 'Admin\SubscriptionsController@create');
+    Route::get('/admin/subscriptions/edit/{id}', 'Admin\SubscriptionsController@edit');
+
     Route::get('/admin/customers', 'Admin\CustomersController@index');
     Route::get('/admin/customers/edit/{id}', 'Admin\CustomersController@edit');
     Route::get('/admin/customers/view/{id}', 'Admin\CustomersController@view');

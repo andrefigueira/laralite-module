@@ -55,6 +55,12 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::delete('/permissions/{id}', 'Api\PermissionsController@delete');
     Route::patch('/permissions/{id}', 'Api\PermissionsController@update');
 
+    Route::post('/subscriptions', 'Api\SubscriptionsController@create');
+    Route::get('/subscriptions', 'Api\SubscriptionsController@get');
+    Route::get('/subscriptions/{id}', 'Api\SubscriptionsController@getOne');
+    Route::delete('/subscriptions/{id}', 'Api\SubscriptionsController@delete');
+    Route::patch('/subscriptions/{id}', 'Api\SubscriptionsController@update');
+
     Route::get('/product', 'Api\ProductController@get');
     Route::post('/product', 'Api\ProductController@create');
     Route::get('/product/{id}', 'Api\ProductController@getOne');

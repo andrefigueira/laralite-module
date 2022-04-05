@@ -145,5 +145,15 @@ return [
                 ],
             ],
         ],
+        [
+            'name' => 'My Subscriptions',
+            'slug' => 'my-subscriptions',
+            'settings' => [
+                'icon' => 'fa-shopping-cart',
+            ],
+            'properties' => [
+                
+            ],
+        ],
     ],
 ];

@@ -28,7 +28,7 @@
                   <i class="ri-arrow-down-s-line float-right"></i></a>
               </div>
               <!--              End card header-->
-              <div id="collapseThree" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/product-category*') || request.match('admin/customers*') || request.match('admin/orders*') || request.match('admin/discounts*') || request.match('admin/reporting*') }" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div id="collapseThree" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/product-category*') || request.match('admin/customers*') || request.match('admin/orders*') || request.match('admin/discounts*') || request.match('admin/subscriptions*') || request.match('admin/reporting*') }" aria-labelledby="headingTwo" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav pl-2">
                     <!--                    @if (Auth::user()->hasRole('admin'))-->
@@ -72,6 +72,12 @@
                       <a class="nav-link" :class="{ 'active': request.match('admin/reporting*') }" href="/admin/reporting">
                         <i class="ri-file-chart-line"></i>
                         Reporting
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/subscriptions*') }" href="/admin/subscriptions">
+                        <i class="ri-cloud-fill"></i>
+                        Subscriptions
                       </a>
                     </li>
                   </ul>
