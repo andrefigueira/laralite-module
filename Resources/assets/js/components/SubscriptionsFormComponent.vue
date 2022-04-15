@@ -156,7 +156,7 @@
                 if (this.subscription.id !== undefined) {
                     this.form.id = this.subscription.id;
                     this.form.name = this.subscription.name;
-                    this.form.price = this.subscription.price;
+                    this.form.price = this.subscription.prices[0].price;
                     this.form.description = this.subscription.description;
                 }
             },
@@ -172,7 +172,7 @@
                 axios({
                     method: this.formMethod,
                     url: this.formEndpoint,
-                    data:  {
+                    data: {
                         name: this.form.name,
                         description: this.form.description,
                         price: this.form.price,

@@ -227,22 +227,11 @@ class PaymentController extends Controller
         $amount = $request->get('amount');
         $currency = $request->get('currency');
         $settings = Settings::firstOrFail();
-
         $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
-
-        // @todo: Load stripe key from .env
-        // $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
-
         $stripe = new StripeClient($stripeKey);
 
         // Fees
         $feeCollection = $this->isFeeCollectionActive();
-
-        /*$intent = $stripe->paymentIntents->create([
-            'amount' => $amount * 100,
-            'currency' => $currency,
-        ]);*/
-
         $totalAmount = $amount * 100;
 
         // @todo: This is now using the PaymentIntents API

@@ -2,18 +2,38 @@
 
 namespace Modules\Laralite\Http\Controllers\Api;
 
+use Illuminate\Validation\Rule;
 use Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\Laralite\Models\Subscriptions;
+use Modules\Laralite\Models\Subscription;
+use Modules\Laralite\Services\Subscription as SubscriptionService;
+use Modules\Laralite\Services\SettingsService;
+use Stripe\StripeClient;
 use Symfony\Component\HttpFoundation\Response;
 
 class SubscriptionsController extends Controller
 {
+    /**
+     * @var SettingsService
+     */
+    private $settingsService;
+
+    /**
+     * @var SubscriptionService
+     */
+    private $subscriptionService;
+
+    public function __construct(SettingsService $settingsService, SubscriptionService $subscriptionService)
+    {
+        $this->settingsService = $settingsService;
+        $this->subscriptionService = $subscriptionService;
+    }
+
     public function get(Request $request)
     {
-        $subscriptions = Subscriptions::query();
+        $subscriptions = Subscription::query();
         $perPage = $request->get('perPage', 1);
 
         if ($request->get('all') === 'true') {
@@ -29,13 +49,13 @@ class SubscriptionsController extends Controller
             $subscriptions->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
         }
 
-        return $subscriptions->paginate($perPage);
+        return $subscriptions->with('prices')->paginate($perPage);
     }
 
     public function getOne($id)
     {
         try {
-            return Subscriptions::where('id', '=', $id)->firstOrFail();
+            return Subscription::where('id', '=', $id)->firstOrFail()->with(['prices']);
         } catch (\Throwable $exception) {
             return new JsonResponse([
                 'success' => false,
@@ -52,18 +72,73 @@ class SubscriptionsController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'description' => 'required',
-            'price' => 'required',
+            'price' => 'required|numeric',
         ]);
 
+        $subscriptionRequest = [
+            'name' => $request->get('name'),
+            'price' =>  $request->get('price'),
+            'description' =>  $request->get('description'),
+            'image' => '',
+        ];
+
+        if ($id = $request->get('id')) {
+            $subscriptionRequest['id'] = $id;
+        }
+
         try {
-            $subscription = Subscriptions::create([
-                'name' => $request->get('name'),
-                'description' => $request->get('description'),
-                'price' => $request->get('price'),
-                'image' => '',
+            $subscription = $this->subscriptionService->save($subscriptionRequest);
+
+            Log::info('Saved subscription', [
+                'request' => $request->all(),
+                'subscription' => $subscription,
             ]);
 
-            Log::info('Created subscription', [
+            return new JsonResponse([
+                'success' => true,
+                'message' => 'Created new subscription',
+                'data' => [
+                    'permission' => $subscription,
+                ],
+            ], Response::HTTP_CREATED);
+        } catch (\Throwable $exception) {
+            Log::error('Failed to create subscription', [
+                'message' => $exception->getMessage(),
+            ]);
+
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Failed to create subscription',
+                'errors' => [
+                    $exception->getMessage(),
+                ],
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function save(Request $request, $id = null): JsonResponse
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'description' => 'required',
+            'price' => 'required|numeric',
+        ]);
+
+        $subscriptionRequest = [
+            'name' => $request->get('name'),
+            'price' =>  $request->get('price'),
+            'description' =>  $request->get('description'),
+            'image' => '',
+        ];
+
+        if ($id) {
+            $subscriptionRequest['id'] = $id;
+        }
+
+        try {
+            $subscription = $this->subscriptionService->save($subscriptionRequest);
+
+            Log::info('Saved subscription', [
                 'request' => $request->all(),
                 'subscription' => $subscription,
             ]);
@@ -97,7 +172,7 @@ class SubscriptionsController extends Controller
         ]);
 
         try {
-            $subscription = Subscriptions::where('id', '=', $id)->firstOrFail();
+            $subscription = Subscription::where('id', '=', $id)->firstOrFail();
 
             $subscription->update([
                 'name' => $request->get('name'),
@@ -130,7 +205,7 @@ class SubscriptionsController extends Controller
     public function delete($id)
     {
         try {
-            $subscription = Subscriptions::where('id', '=', $id)->firstOrFail();
+            $subscription = Subscription::where('id', '=', $id)->firstOrFail();
 
             $subscription->delete();
 

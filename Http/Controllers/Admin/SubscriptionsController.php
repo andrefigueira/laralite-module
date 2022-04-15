@@ -3,7 +3,7 @@
 namespace Modules\Laralite\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Modules\Laralite\Models\Subscriptions;
+use Modules\Laralite\Models\Subscription;
 
 class SubscriptionsController extends Controller
 {
@@ -21,7 +21,7 @@ class SubscriptionsController extends Controller
 
     public function edit($id)
     {
-        $subscription = Subscriptions::where('id', '=', $id)->firstOrFail();
+        $subscription = Subscription::where('id', '=', $id)->with(['prices'])->firstOrFail();
 
         return view('laralite::admin.subscriptions.form', [
             'type' => 'edit',

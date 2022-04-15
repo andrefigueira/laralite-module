@@ -11,8 +11,18 @@ class SettingsService
         return json_decode($this->getSettings()->settings , true)['currency'] ?? null;
     }
 
+    public function isUsingStripe(): bool
+    {
+        return isset(json_decode($this->getSettings()->settings , true)['stripeSecretKey']);
+    }
+
     private function getSettings(): Settings
     {
         return Settings::firstOrFail();
+    }
+
+    public function getSettingsArray()
+    {
+        return json_decode($this->getSettings()->settings, true);
     }
 }
