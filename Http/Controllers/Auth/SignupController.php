@@ -6,18 +6,24 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Modules\Laralite\Http\Requests\SignUpRequest;
 use Modules\Laralite\Models\Customer;
+use Modules\Laralite\Services\StripeService;
 use Ramsey\Uuid\Uuid;
 
 class SignupController extends Controller
 {
     /**
+     * @var StripeService
+     */
+    protected $stripeService;
+
+    /**
      * Create a new controller instance.
      *
-     * @return void
+     * @param StripeService $stripeService
      */
-    public function __construct()
+    public function __construct(StripeService $stripeService)
     {
-        $this->middleware('guest');
+        $this->stripeService = $stripeService;
     }
 
     /**
@@ -34,6 +40,15 @@ class SignupController extends Controller
             $data['password'] = \Hash::make($data['password']);
             $customer->fill($data);
             $customer->save();
+
+            if (!$customer->getStripeCustomerId()) {
+                $stripeCustomer = $this->stripeService->saveCustomer([
+                    'name' => $customer->name,
+                    'email' => $customer->email,
+                ]);
+                $customer->setStripeCustomerId($stripeCustomer->get('id'));
+                $customer->save();
+            }
         } catch(\Throwable $e) {
             \Log::error('User Signup failure', [
                 'error' => $e->getMessage(),

@@ -55,6 +55,30 @@
                                 <b-form-invalid-feedback>Enter a valid price in integer</b-form-invalid-feedback>
                             </b-form-group>
                         </div><!-- End col -->
+                      <div class="col-md-12">
+                        <b-form-group id="subscription-credit-amount-group" label="Subscription Credit Amount" label-for="subscription-credit-amount-input">
+                          <b-form-input
+                              id="subscription-credit-amount-input"
+                              required
+                              v-model="form.default_credit_amount"
+                              :state="validateState('default_credit_amount')"
+                              placeholder="Enter subscription periodic credit amount"
+                          ></b-form-input>
+                          <b-form-invalid-feedback>Enter a valid credit amount number</b-form-invalid-feedback>
+                        </b-form-group>
+                      </div><!-- End col -->
+                      <div class="col-md-12">
+                        <b-form-group id="subscription-initial-credit-amount-group" label="Subscription Initial Credit Amount" label-for="subscription-initial-credit-amount-input">
+                          <b-form-input
+                              id="subscription-initial-credit-amount-input"
+                              required
+                              v-model="form.default_initial_credit_amount"
+                              :state="validateState('default_initial_credit_amount')"
+                              placeholder="Enter subscription initial credit amount"
+                          ></b-form-input>
+                          <b-form-invalid-feedback>Enter a valid initial credit amount number</b-form-invalid-feedback>
+                        </b-form-group>
+                      </div><!-- End col -->
                         <div class="col-md-12">
                             <b-button class="mt-2" variant="success" :disabled="saving" @click="save()">{{ button }}</b-button>
                         </div><!-- End col -->
@@ -69,7 +93,7 @@
     import { bus } from '../admin'
     import helpers from '../helpers'
     import { validationMixin } from 'vuelidate'
-    import { required, minLength, email, sameAs, requiredIf } from 'vuelidate/lib/validators'
+    import { required, minLength, integer } from 'vuelidate/lib/validators'
 
     export default {
         mixins: [validationMixin],
@@ -99,6 +123,8 @@
                     name: '',
                     description: '',
                     price: '',
+                    default_credit_amount: 0,
+                    default_initial_credit_amount: 0,
                 }
             }
         },
@@ -114,6 +140,12 @@
                 },
                 price: {
                     required
+                },
+                default_credit_amount: {
+                  integer
+                },
+                default_initial_credit_amount: {
+                  integer
                 },
             }
         },
@@ -156,7 +188,7 @@
                 if (this.subscription.id !== undefined) {
                     this.form.id = this.subscription.id;
                     this.form.name = this.subscription.name;
-                    this.form.price = this.subscription.price;
+                    this.form.price = this.subscription.prices[0].price;
                     this.form.description = this.subscription.description;
                 }
             },
@@ -172,10 +204,12 @@
                 axios({
                     method: this.formMethod,
                     url: this.formEndpoint,
-                    data:  {
+                    data: {
                         name: this.form.name,
                         description: this.form.description,
                         price: this.form.price,
+                        default_credit_amount: this.form.default_credit_amount,
+                        default_initial_credit_amount: this.form.default_initial_credit_amount
                     }
                 }).then(response => {
                     this.saving = false;

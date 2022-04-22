@@ -3,8 +3,13 @@
 namespace Modules\Laralite\Providers;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
+use Modules\Laralite\Services\SettingsService;
+use Modules\Laralite\Services\StripeService;
+use Stripe\Stripe;
+use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +20,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        $this->app->bind(StripeService::class, function (Application $app) {
+            $settingsService = $app->make(SettingsService::class);
+            $stripeClient = new StripeClient($settingsService->getStripeKey());
+            return new StripeService($stripeClient);
+        });
     }
 
     /**

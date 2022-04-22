@@ -2,24 +2,31 @@
 
 namespace Modules\Laralite\Models;
 
-use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Notifications\Notifiable;
+use Eloquent;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Modules\Laralite\Models\Customer\Wallet;
 use Modules\Laralite\Notifications\ResetPasswordNotification;
+use Modules\Laralite\Models\Customer\Subscription as CustomerSubscription;
 
 /**
  * Class Customer
  * @property string email
  * @package Modules\Laralite\Models
+ * @mixin Eloquent
  */
 class Customer extends Authenticatable
 {
     use Notifiable;
+    use StripeMetaData;
 
     protected $casts = [
         'newsletter_subscription' => 'array',
         'numbers' => 'array',
         'email_verified_at' => 'datetime',
+        'meta_data' => 'array'
     ];
 
     protected $hidden = [
@@ -36,7 +43,8 @@ class Customer extends Authenticatable
         'newsletter_subscription->sms',
         'newsletter_subscription->phone',
         'numbers',
-        'numbers->mobile'
+        'numbers->mobile',
+        'meta_data'
     ];
 
     protected $attributes = [
@@ -50,18 +58,31 @@ class Customer extends Authenticatable
         }'
     ];
 
-    public function orders()
+    public function orders(): HasMany
     {
-        return $this->hasMany(Order::class, 'customer_id', 'id')->orderBy('created_at', 'desc');
+        return $this->hasMany(Order::class, 'customer_id', 'id')
+            ->orderBy('created_at', 'desc');
     }
 
-    public function tickets()
+    public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'customer_id', 'id');
+    }
+
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class, 'customer_id', 'id');
     }
 
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(CustomerSubscription::class, 'customer_id', 'id')
+            ->orderBy('created_at', 'desc');
+    }
+
 }

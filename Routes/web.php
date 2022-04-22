@@ -105,6 +105,9 @@ Route::get('/dynamic', 'CmsController@dynamic');
 Route::get('/orders', 'CustomerController@orders');
 Route::get('/account', 'CustomerController@account');
 Route::put('/account', 'CustomerController@accountUpdate');
+Route::get('/account/wallet', 'CustomerController@wallet');
+Route::get('/account/subscription', 'CustomerSubscriptionController@get');
+Route::post('/account/subscription/{id}', 'CustomerSubscriptionController@cancel');
 Route::post('/change-password', 'CustomerController@changePassword');
 Route::get('/ticket/view/{uuid}', 'TicketController@view');
 

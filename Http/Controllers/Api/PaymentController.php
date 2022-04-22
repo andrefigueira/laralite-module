@@ -11,7 +11,10 @@ use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\Settings;
+use Modules\Laralite\Models\Subscription;
+use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Services\OrderService;
+use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Traits\ApiResponses;
 use Ramsey\Uuid\Uuid;
 use Spatie\Newsletter\NewsletterFacade;
@@ -23,21 +26,30 @@ class PaymentController extends Controller
 {
     use ApiResponses;
 
+    /**
+     * @var OrderService
+     */
     private $orderService;
+
+    /**
+     * @var StripeService
+     */
+    private $stripeService;
 
     /**
      * PaymentController constructor.
      * @param OrderService $orderService
+     * @param StripeService $stripeService
      */
-    public function __construct(OrderService $orderService)
+    public function __construct(OrderService $orderService, StripeService $stripeService)
     {
         $this->orderService = $orderService;
+        $this->stripeService = $stripeService;
     }
 
     /**
      * @param PaymentRequest $request
-     * @param $order
-     * @return JsonResponse|object
+     * @return JsonResponse
      * @throws ApiErrorException
      */
     public function processPayment(PaymentRequest $request): JsonResponse
@@ -53,7 +65,7 @@ class PaymentController extends Controller
         if (!$stripe) {
             return response()->json([
                 'success' => 'false',
-                'message' => "Error in Payment Processing. Try again later!"
+                'message' => "Error in Payment Processing. Try again later!",
             ], 400);
         }
 
@@ -62,7 +74,7 @@ class PaymentController extends Controller
         if (!$result) {
             return response()->json([
                 'success' => false,
-                'message' => "Error! PLease try again later."
+                'message' => "Error! PLease try again later.",
             ], 400);
         }
 
@@ -76,10 +88,11 @@ class PaymentController extends Controller
         $currency = json_decode($settings->settings, true)['currency'];
         /** @var Customer $customer */
         $customer = Customer::where([
-            'email' => $customerEmail
+            'email' => $customerEmail,
         ])->first();
 
         if (!$customer) {
+            /** @var Customer $customer */
             $customer = Customer::create([
                 'unique_id' => Uuid::uuid4(),
                 'name' => $customerData['name'],
@@ -88,7 +101,20 @@ class PaymentController extends Controller
                 'newsletter_subscription' => $customerData['newsletter_subscription'] ?? '',
                 'numbers' => $customerData['numbers'] ?? '',
             ]);
+            $stripeCustomer = $this->stripeService->saveCustomer([
+                'name' => $customer->name,
+                'email' => $customer->email,
+            ]);
+            $customer->setStripeCustomerId($stripeCustomer->get('id'));
+            $customer->save();
         } else {
+            if (!$customer->getStripeCustomerId()) {
+                $stripeCustomer = $this->stripeService->saveCustomer([
+                    'name' => $customer->name,
+                    'email' => $customer->email,
+                ]);
+                $customer->setStripeCustomerId($stripeCustomer->get('id'));
+            }
             $updateArray['newsletter_subscription->email'] = $customerData['newsletter_subscription']['email'];
             if (empty($customer->password) && !empty($customerData['password'])) {
                 $updateArray['password'] = \Hash::make($customerData['password']);
@@ -155,7 +181,7 @@ class PaymentController extends Controller
         } else {
             return response()->json([
                 'success' => 'false',
-                'message' => "Error."
+                'message' => "Error.",
             ], 400);
         }
     }
@@ -211,7 +237,7 @@ class PaymentController extends Controller
                     'stripeSecretKey' => $settings->stripeSecretKey,
                     'feeAmount' => $settings->feeAmount,
                     'stripeAccessToken' => $settings->stripeAccessToken,
-                    'connectedAccountId' => $settings->stripeAccountId
+                    'connectedAccountId' => $settings->stripeAccountId,
                 ];
             }
 
@@ -226,23 +252,9 @@ class PaymentController extends Controller
     {
         $amount = $request->get('amount');
         $currency = $request->get('currency');
-        $settings = Settings::firstOrFail();
-
-        $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
-
-        // @todo: Load stripe key from .env
-        // $stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';
-
-        $stripe = new StripeClient($stripeKey);
 
         // Fees
         $feeCollection = $this->isFeeCollectionActive();
-
-        /*$intent = $stripe->paymentIntents->create([
-            'amount' => $amount * 100,
-            'currency' => $currency,
-        ]);*/
-
         $totalAmount = $amount * 100;
 
         // @todo: This is now using the PaymentIntents API
@@ -251,23 +263,24 @@ class PaymentController extends Controller
             // Fees are enabled, so send fee amount to connected Stripe Account
             // `feeAmount` is the amount set in the settings
             // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
-            $intent = $stripe->paymentIntents->create([
+            $intent = $this->stripeService->createPaymentIntent([
                 'amount' => $totalAmount,
                 'currency' => $currency,
                 'application_fee_amount' => round(($feeCollection['feeAmount'] / 100) * $totalAmount),
                 'transfer_data' => [
                     'destination' => $feeCollection['connectedAccountId'],
                 ],
-                'on_behalf_of' => $feeCollection['connectedAccountId']
+                'on_behalf_of' => $feeCollection['connectedAccountId'],
             ]);
         } else {
-            $intent = $stripe->paymentIntents->create([
+            $intent = $this->stripeService->createPaymentIntent([
                 'amount' => $totalAmount,
                 'currency' => $currency,
             ]);
-
         }
 
-        return json_encode(array('client_secret' => $intent->client_secret));
+        return json_encode([
+            'client_secret' => $intent->get('client_secret')
+        ]);
     }
 }

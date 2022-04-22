@@ -2,19 +2,37 @@
 
 namespace Modules\Laralite\Http\Controllers\Api;
 
-use Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\Laralite\Models\Subscriptions;
+use Log;
+use Modules\Laralite\Models\Subscription;
+use Modules\Laralite\Services\SettingsService;
+use Modules\Laralite\Services\SubscriptionService;
 use Symfony\Component\HttpFoundation\Response;
 
 class SubscriptionsController extends Controller
 {
+    /**
+     * @var SettingsService
+     */
+    private $settingsService;
+
+    /**
+     * @var SubscriptionService
+     */
+    private $subscriptionService;
+
+    public function __construct(SettingsService $settingsService, SubscriptionService $subscriptionService)
+    {
+        $this->settingsService = $settingsService;
+        $this->subscriptionService = $subscriptionService;
+    }
+
     public function get(Request $request)
     {
-        $subscriptions = Subscriptions::query();
-        $perPage = $request->get('perPage', 1);
+        $subscriptions = Subscription::query();
+        $perPage = $request->get('perPage', 10);
 
         if ($request->get('all') === 'true') {
             return $subscriptions->get();
@@ -29,13 +47,13 @@ class SubscriptionsController extends Controller
             $subscriptions->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
         }
 
-        return $subscriptions->paginate($perPage);
+        return $subscriptions->with('prices')->paginate($perPage);
     }
 
     public function getOne($id)
     {
         try {
-            return Subscriptions::where('id', '=', $id)->firstOrFail();
+            return Subscription::where('id', '=', $id)->firstOrFail()->with(['prices']);
         } catch (\Throwable $exception) {
             return new JsonResponse([
                 'success' => false,
@@ -47,23 +65,33 @@ class SubscriptionsController extends Controller
         }
     }
 
-    public function create(Request $request)
+    public function save(Request $request, $id = null): JsonResponse
     {
         $this->validate($request, [
             'name' => 'required',
             'description' => 'required',
-            'price' => 'required',
+            'price' => 'required|numeric',
+            'default_credit_amount' => 'numeric',
+            'default_initial_credit_amount' => 'numeric',
         ]);
 
-        try {
-            $subscription = Subscriptions::create([
-                'name' => $request->get('name'),
-                'description' => $request->get('description'),
-                'price' => $request->get('price'),
-                'image' => '',
-            ]);
+        $subscriptionRequest = [
+            'name' => $request->get('name'),
+            'price' =>  $request->get('price'),
+            'description' =>  $request->get('description'),
+            'default_credit_amount' => $request->get('default_credit_amount'),
+            'default_initial_credit_amount' => $request->get('default_initial_credit_amount'),
+            'image' => '',
+        ];
 
-            Log::info('Created subscription', [
+        if ($id) {
+            $subscriptionRequest['id'] = $id;
+        }
+
+        try {
+            $subscription = $this->subscriptionService->save($subscriptionRequest);
+
+            Log::info('Saved subscription', [
                 'request' => $request->all(),
                 'subscription' => $subscription,
             ]);
@@ -90,49 +118,11 @@ class SubscriptionsController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
-    {
-        $this->validate($request, [
-            'name' => 'required',
-        ]);
-
-        try {
-            $subscription = Subscriptions::where('id', '=', $id)->firstOrFail();
-
-            $subscription->update([
-                'name' => $request->get('name'),
-                'description' => $request->get('description'),
-                'price' => $request->get('price'),
-                'image' => '',
-            ]);
-
-            Log::info('Updated subscription', [
-                'request' => $request->all(),
-                'subscription' => $subscription,
-            ]);
-
-            return $subscription;
-        } catch (\Throwable $exception) {
-            Log::error('Failed to update subscription', [
-                'message' => $exception->getMessage(),
-            ]);
-
-            return new JsonResponse([
-                'success' => false,
-                'message' => 'Failed to update subscription',
-                'errors' => [
-                    $exception->getMessage(),
-                ],
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
     public function delete($id)
     {
         try {
-            $subscription = Subscriptions::where('id', '=', $id)->firstOrFail();
-
-            $subscription->delete();
+            $subscription = Subscription::where('id', '=', $id)->firstOrFail();
+            $this->subscriptionService->deleteSubscription($subscription);
 
             return new JsonResponse([], Response::HTTP_NO_CONTENT);
         } catch (\Throwable $exception) {
