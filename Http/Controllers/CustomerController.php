@@ -27,12 +27,26 @@ class CustomerController extends Controller
 
         return $this->success([
             'user'  =>  [
+                'id' => $customer->id,
                 'name'  =>  $customer->name,
                 'email' =>  $customer->email,
                 'newsletter_subscription' => $customer->newsletter_subscription,
             ]
         ], '');
     }
+
+    public function wallet(Request $request): JsonResponse
+    {
+        if(!auth('customers')->id()) {
+            return $this->error('You are not authorized to access this', 403);
+        }
+
+        /** @var Customer $customer */
+        $customer = auth('customers')->user();
+
+        return $this->success($customer->wallet()->first()->toArray(), '');
+    }
+
 
     public function orders(): JsonResponse
     {

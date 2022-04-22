@@ -23,10 +23,6 @@ class AddSubscriptionPricesTable extends Migration
 
             $table->timestamps();
         });
-
-        Schema::table('subscriptions', function (Blueprint $table) {
-            $table->dropColumn('price');
-        });
     }
 
     /**
@@ -37,8 +33,5 @@ class AddSubscriptionPricesTable extends Migration
     public function down()
     {
         Schema::dropIfExists('subscription_prices');
-        Schema::table('subscriptions', function (Blueprint $table) {
-            $table->integer('price');
-        });
     }
 }

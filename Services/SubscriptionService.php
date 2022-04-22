@@ -4,11 +4,9 @@ namespace Modules\Laralite\Services;
 
 use Modules\Laralite\Models\Subscription as SubscriptionModel;
 use Modules\Laralite\Models\Subscription\Price as PriceModel;
-use Stripe\Price;
-use Stripe\Product;
-use Stripe\StripeClient;
+use Modules\Laralite\Services\StripeService\ApiResourceWrapper;
 
-class Subscription
+class SubscriptionService
 {
     /**
      * @var SettingsService
@@ -16,15 +14,14 @@ class Subscription
     protected $settingsService;
 
     /**
-     * @var StripeClient
+     * @var StripeService
      */
-    protected $stripeClient;
+    protected $stripeService;
 
-    public function __construct(SettingsService $settingsService)
+    public function __construct(SettingsService $settingsService, StripeService $stripeService)
     {
         $this->settingsService = $settingsService;
-        $stripeKey = $this->settingsService->getSettingsArray()['stripeSecretKey'] ?? null;
-        $this->stripeClient = new StripeClient($stripeKey);
+        $this->stripeService = $stripeService;
     }
 
     /**
@@ -35,50 +32,59 @@ class Subscription
     public function save(array $subscriptionArray): SubscriptionModel
     {
         $update = false;
+        $price = $subscriptionArray['price'] ?? null;
+        unset($subscriptionArray['price']);
         if (empty($subscriptionArray['id'])) {
             /** @var SubscriptionModel $subscription */
-            $subscription = SubscriptionModel::create([
-                'name' => $subscriptionArray['name'],
-                'description' => $subscriptionArray['description'],
-                'image' => $subscriptionArray['image'],
-            ]);
+            $subscription = SubscriptionModel::create($subscriptionArray);
 
             /** @var PriceModel $priceModel */
             $priceModel = $subscription->prices()->create([
                 'name' => $subscriptionArray['name'],
-                'price' => $subscriptionArray['price'],
+                'price' => $price,
                 'recurring_period' => 'month',
             ]);
         } else {
             /** @var SubscriptionModel $subscription */
             $subscription = SubscriptionModel::find($subscriptionArray['id']);
-            $subscription->update([
+            $subscription->update($subscriptionArray);
+            $priceModel = $subscription->prices()->getResults()->first() ?: $subscription->prices()->create([
                 'name' => $subscriptionArray['name'],
-                'description' => $subscriptionArray['description'],
-                'image' => $subscriptionArray['image'],
+                'price' => $price,
+                'recurring_period' => 'month',
             ]);
-            $priceModel = $subscription->prices()->getResults()->first();
-            $priceModel->price = $subscriptionArray['price'];
+            $priceModel->price = $price;
             $update = true;
         }
 
         $stripeProduct = $this->saveStripeProduct($subscription, $update);
-        $stripePrice = $update ? $this->stripeClient->prices->retrieve($priceModel->getStripePriceId()) : null;
-        if (!$update || ($stripePrice && (int)$priceModel->price !== (int)$stripePrice->unit_amount)) {
+        $stripePrice = ($update && $priceModel->getStripePriceId())
+            ? $this->stripeService->getPrice($priceModel->getStripePriceId())
+            : null;
+        if (
+            !$update ||
+            ($stripePrice === null) ||
+            ((int)$priceModel->price !== (int)$stripePrice->get('unit_amount'))
+        ) {
             $stripePrice = $this->saveStripePrice($priceModel, $stripeProduct, $update);
         }
-        $priceModel->setStripePriceId($stripePrice->id);
-        if (!$update) {
-            $subscription->setStripeProductId($stripeProduct->id);
+
+        $priceModel->setStripePriceId($stripePrice->get('id'));
+        if (!$update || $stripeProduct->get('id') !== $subscription->getStripeProductId()) {
+            $subscription->setStripeProductId($stripeProduct->get('id'));
         }
         $priceModel->save();
         $subscription->save();
 
-
         return $subscription;
     }
 
-    protected function saveStripeProduct(SubscriptionModel $subscription, bool $update = false): Product
+    public function deleteSubscription(SubscriptionModel $subscription)
+    {
+        $subscription->delete();
+    }
+
+    protected function saveStripeProduct(SubscriptionModel $subscription, bool $update = false): ApiResourceWrapper
     {
         try {
             $payload = [
@@ -86,12 +92,9 @@ class Subscription
                 'description' => $subscription->description,
                 'metadata' => [
                     'external_id' => $subscription->id,
-                ]
+                ],
             ];
-            if ($update) {
-                return $this->stripeClient->products->update($subscription->getStripeProductId(), $payload);
-            }
-            return $this->stripeClient->products->create($payload);
+            return $this->stripeService->saveProduct($payload, $subscription->getStripeProductId());
         } catch (\Throwable $exception) {
             \Log::error('Failed to create stripe subscription product', [
                 'message' => $exception->getMessage(),
@@ -100,26 +103,27 @@ class Subscription
         }
     }
 
-    protected function saveStripePrice(PriceModel $priceModel, Product $stripeProduct, bool $update = false): Price
+    protected function saveStripePrice(
+        PriceModel $priceModel,
+        ApiResourceWrapper $stripeProduct,
+        bool $update = false
+    ): ApiResourceWrapper
     {
         try {
             $currency = $this->settingsService->getCurrency()['value'] ?: 'usd';
             $currency = strtolower($currency);
             $payload = [
-                'product' => $stripeProduct->id,
-                'unit_amount' => $priceModel['price'],
+                'product' => $stripeProduct->get('id'),
+                'unit_amount' => $priceModel->price,
                 'metadata' => [
                     'external_id' => $priceModel->id,
                 ],
                 'currency' => $currency,
                 'recurring' => [
-                    'interval' => 'month'
-                ]
+                    'interval' => 'month',
+                ],
             ];
-            if ($update) {
-                $this->stripeClient->prices->update($priceModel->getStripePriceId(), ['active' => false]);
-            }
-            return $this->stripeClient->prices->create($payload);
+            return $this->stripeService->savePrice($payload, $priceModel->getStripePriceId());
         } catch (\Throwable $exception) {
             \Log::error('Failed to create stripe product price', [
                 'message' => $exception->getMessage(),

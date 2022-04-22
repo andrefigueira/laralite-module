@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnsToSubscriptionsTable extends Migration
+class AddMetaDataColumnToCustomerTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class AddColumnsToSubscriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('subscriptions', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table) {
             $table->json('meta_data')->nullable();
-            $table->dropColumn('price');
         });
     }
 
@@ -26,9 +25,8 @@ class AddColumnsToSubscriptionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('subscriptions', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table) {
             $table->dropColumn('meta_data');
-            $table->integer('price');
         });
     }
 }

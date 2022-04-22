@@ -2,11 +2,23 @@
 
 namespace Modules\Laralite\Models\Subscription;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Laralite\Models\StripeMetaData;
 use Modules\Laralite\Models\Subscription;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class Price
+ * @package Modules\Laralite\Models\Subscription
+ * @mixin Eloquent
+ * @property int id
+ * @protected int price
+ */
 class Price extends Model
 {
+    use StripeMetaData;
+
     protected $table = 'subscription_prices';
 
     protected $fillable = [
@@ -20,34 +32,8 @@ class Price extends Model
         'meta_data' => 'array'
     ];
 
-    public function subscription(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function subscription(): BelongsTo
     {
         return $this->belongsTo(Subscription::class, 'subscription_id');
-    }
-
-    public function getMetaData(): array
-    {
-        $metaData = $this->getAttribute('meta_data') ?: [];
-        if ($metaData) {
-            $metaData = is_string($metaData) ? json_decode($metaData) : $metaData;
-        }
-
-        return $metaData;
-    }
-
-    public function getStripePriceId(): string
-    {
-        $metaData = $this->getMetaData();
-
-        return $metaData['stripe']['price_id'] ?? '';
-    }
-
-    public function setStripePriceId($stripeId): Price
-    {
-        $metaData = $this->getMetaData();
-        $metaData['stripe']['price_id'] = $stripeId;
-        $this->setAttribute('meta_data', $metaData);
-
-        return $this;
     }
 }

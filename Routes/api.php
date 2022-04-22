@@ -55,11 +55,11 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::delete('/permissions/{id}', 'Api\PermissionsController@delete');
     Route::patch('/permissions/{id}', 'Api\PermissionsController@update');
 
-    Route::post('/subscriptions', 'Api\SubscriptionsController@create');
+    Route::post('/subscriptions', 'Api\SubscriptionsController@save');
     Route::get('/subscriptions', 'Api\SubscriptionsController@get');
     Route::get('/subscriptions/{id}', 'Api\SubscriptionsController@getOne');
     Route::delete('/subscriptions/{id}', 'Api\SubscriptionsController@delete');
-    Route::patch('/subscriptions/{id}', 'Api\SubscriptionsController@update');
+    Route::patch('/subscriptions/{id}', 'Api\SubscriptionsController@save');
 
     Route::get('/product', 'Api\ProductController@get');
     Route::post('/product', 'Api\ProductController@create');
@@ -119,13 +119,18 @@ Route::group(['middleware'=>'auth:api'], static function () {
 });
 
 Route::post('/intent-secret', 'Api\PaymentController@intentSecret');
+Route::post('/subscription/create', 'Api\SubscriptionPaymentController@createSubscription');
 // need to figure out a way to protect this route
 Route::get('/stripe-connect', 'Api\SettingsController@stripeConnect');
+
 
 Route::get('/product-list', 'Api\ProductController@getProducts');
 
 Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
 Route::post('/process-payment', 'Api\PaymentController@processPayment');
+Route::post('/payment/webhook', 'Api\SubscriptionPaymentController@webhook');
+
+Route::post('/subscription/process-payment', 'Api\SubscriptionPaymentController@processPayment');
 Route::get('/discount/verify/{code}', 'Api\DiscountController@verify');
 
 Route::get('/email-available', 'CustomerController@emailAvailable');

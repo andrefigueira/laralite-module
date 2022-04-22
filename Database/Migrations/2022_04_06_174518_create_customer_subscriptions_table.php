@@ -17,7 +17,9 @@ class CreateCustomerSubscriptionsTable extends Migration
             $table->id();
             $table->integer('customer_id');
             $table->integer('subscription_id');
-            $table->dateTime('expiry_date');
+            $table->dateTime('expiry_date')->nullable();
+            $table->json('meta_data');
+            $table->string('status');
             $table->unique(["customer_id", "subscription_id"], 'customer_subscription');
             $table->timestamps();
         });

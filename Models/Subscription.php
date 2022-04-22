@@ -2,52 +2,43 @@
 
 namespace Modules\Laralite\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Laralite\Models\Subscription\Price;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Laralite\Models\Customer\Subscription as CustomerSubscription;
 
+/**
+ * Class Subscription
+ * @package Modules\Laralite\Models
+ * @mixin Eloquent
+ */
 class Subscription extends Model
 {
+    use StripeMetaData;
+
     protected $fillable = [
         'name',
         'description',
         'image',
         'price',
         'meta_data',
-        'recurring_period'
+        'recurring_period',
+        'default_credit_amount',
+        'default_initial_credit_amount'
     ];
 
     protected $casts = [
         'meta_data' => 'array'
     ];
 
-    public function prices(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function prices(): HasMany
     {
         return $this->hasMany(Price::class, 'subscription_id');
     }
 
-    public function getMetaData(): array
+    public function customerSubscription(): HasMany
     {
-        $metaData = $this->getAttribute('meta_data') ?: [];
-        if ($metaData) {
-            $metaData = is_string($metaData) ? json_decode($metaData) : $metaData;
-        }
-
-        return $metaData;
-    }
-
-    public function getStripeProductId(): string
-    {
-        $metaData = $this->getMetaData();
-
-        return $metaData['stripe']['product_id'] ?? '';
-    }
-
-    public function setStripeProductId($stripeId): Subscription
-    {
-        $metaData = $this->getMetaData();
-        $metaData['stripe']['product_id'] = $stripeId;
-        $this->setAttribute('meta_data', $metaData);
-
-        return $this;
+        return $this->hasMany(CustomerSubscription::class, 'subscription_id');
     }
 }
