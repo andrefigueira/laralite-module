@@ -22,7 +22,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(StripeService::class, function (Application $app) {
             $settingsService = $app->make(SettingsService::class);
-            $stripeClient = new StripeClient($settingsService->getStripeKey());
+            $key = $settingsService->getStripeKey() ?: 'UNSET_STRIPE_KEY';
+            $stripeClient = new StripeClient($key);
             return new StripeService($stripeClient);
         });
     }
