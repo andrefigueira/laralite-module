@@ -187,7 +187,7 @@ class SubscriptionPaymentController extends Controller
     public function webhook(Request $request): JsonResponse
     {
         // Parse the message body (and check the signature if possible)
-        $webhookSecret = 'whsec_4937388dc5a011de39e9c4c91ba636ec2d0e4d5918b95fefdb609faa82173ffb';
+        $webhookSecret = config('app.stripe_webhook_secret');
         if ($webhookSecret) {
             try {
                 $event = Webhook::constructEvent(
