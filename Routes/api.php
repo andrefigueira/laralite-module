@@ -119,7 +119,6 @@ Route::group(['middleware'=>'auth:api'], static function () {
 });
 
 Route::post('/intent-secret', 'Api\PaymentController@intentSecret');
-Route::post('/subscription/create', 'Api\SubscriptionPaymentController@createSubscription');
 // need to figure out a way to protect this route
 Route::get('/stripe-connect', 'Api\SettingsController@stripeConnect');
 
@@ -128,9 +127,6 @@ Route::get('/product-list', 'Api\ProductController@getProducts');
 
 Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
 Route::post('/process-payment', 'Api\PaymentController@processPayment');
-Route::post('/payment/webhook', 'Api\SubscriptionPaymentController@webhook');
-
-Route::post('/subscription/process-payment', 'Api\SubscriptionPaymentController@processPayment');
 Route::get('/discount/verify/{code}', 'Api\DiscountController@verify');
 
 Route::get('/email-available', 'CustomerController@emailAvailable');

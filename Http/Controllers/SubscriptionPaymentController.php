@@ -1,17 +1,20 @@
 <?php
 
-namespace Modules\Laralite\Http\Controllers\Api;
+namespace Modules\Laralite\Http\Controllers;
 
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Modules\Laralite\Jobs\Stripe\PaymentSuccess;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Traits\ApiResponses;
 use Stripe\Event;
 use Stripe\Exception\ApiErrorException;
+use Stripe\Stripe;
 use Stripe\Webhook;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,9 +43,6 @@ class SubscriptionPaymentController extends Controller
      */
     public function processPayment(Request $request): JsonResponse
     {
-        if(!auth('customers')->id()) {
-            return $this->error('You are not authorized to access this', 403);
-        }
         $token = $request->get('token');
         $subscriptionRequest = $request->get('subscription');
         $subscriptionId = $subscriptionRequest['id'] ?? null;;
@@ -203,40 +203,30 @@ class SubscriptionPaymentController extends Controller
         }
         $type = $event['type'];
         $object = $event['data']['object'];
-
+        $message = '🔔 ' . $type . ' Webhook received! ';
         switch ($type) {
-            case 'invoice.paid':
+            case Event::INVOICE_PAID:
                 // The status of the invoice will show up as paid. Store the status in your
                 // database to reference when a user accesses your service to avoid hitting rate
                 // limits.
-                \Log::info('🔔  Webhook received! ', $object);
+                \Log::info($message, $object);
                 break;
-            case 'invoice.payment_failed':
+            case Event::INVOICE_PAYMENT_FAILED:
                 // If the payment fails or the customer does not have a valid payment method,
                 // an invoice.payment_failed event is sent, the subscription becomes past_due.
                 // Use this webhook to notify your user that their payment has
                 // failed and to retrieve new card details.
-                \Log::info('🔔  Webhook received! ', $object);
+                \Log::info($message, $object);
                 break;
-            case 'invoice.payment_success':
-                if ($object['billing_reason'] == 'subscription_create') {
-                    $subscription_id = $object['subscription'];
-                    $payment_intent_id = $object['payment_intent'];
-
-                    # Retrieve the payment intent used to pay the subscription
-                    $payment_intent = $this->stripeService->getPaymentIntent($payment_intent_id);
-                    $this->stripeService->updateSubscription(
-                        $subscription_id,
-                        ['default_payment_method' => $payment_intent->get('payment_method')]
-                    );
-                };
-                \Log::info('🔔  Webhook received! ', $object);
+            case Event::INVOICE_PAYMENT_SUCCEEDED:
+                \Log::info($message, $object);
+                PaymentSuccess::dispatchAfterResponse($object);
                 break;
-            case 'customer.subscription.deleted':
+            case EVENT::CUSTOMER_SUBSCRIPTION_DELETED:
                 // handle subscription canceled automatically based
                 // upon your subscription settings. Or if the user
                 // cancels it.
-                \Log::info('🔔  Webhook received! ', $object);
+                \Log::info($message, $object);
                 break;
             default:
                 // Unhandled event type

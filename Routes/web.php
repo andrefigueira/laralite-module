@@ -102,13 +102,24 @@ Route::get('/parallax', 'LaraliteController@parallax');
 
 Route::get('/dynamic', 'CmsController@dynamic');
 
-Route::get('/orders', 'CustomerController@orders');
-Route::get('/account', 'CustomerController@account');
-Route::put('/account', 'CustomerController@accountUpdate');
-Route::get('/account/wallet', 'CustomerController@wallet');
-Route::get('/account/subscription', 'CustomerSubscriptionController@get');
-Route::post('/account/subscription/{id}', 'CustomerSubscriptionController@cancel');
-Route::post('/change-password', 'CustomerController@changePassword');
+Route::group(['middleware' => 'auth:customers'], function () {
+    Route::get('/account', 'CustomerController@account');
+    Route::put('/account', 'CustomerController@accountUpdate');
+    Route::get('/account/wallet', 'CustomerController@wallet');
+    Route::post('/change-password', 'CustomerController@changePassword');
+    Route::get('/orders', 'CustomerController@orders');
+
+    Route::get('/account/subscription', 'CustomerSubscriptionController@get');
+    Route::post('/account/subscription/{id}', 'CustomerSubscriptionController@cancel');
+    Route::post('/subscription/create', 'SubscriptionPaymentController@createSubscription');
+    Route::post('/subscription/process-payment', 'SubscriptionPaymentController@processPayment');
+    Route::get('/subscriptions', 'SubscriptionsController@get');
+});
+
+Route::post('/payment/webhook', 'SubscriptionPaymentController@webhook');
+
+
+
 Route::get('/ticket/view/{uuid}', 'TicketController@view');
 
 /**
