@@ -44,7 +44,12 @@ class CustomerController extends Controller
         /** @var Customer $customer */
         $customer = auth('customers')->user();
 
-        return $this->success($customer->wallet()->first()->toArray(), '');
+        $wallet = [];
+        if ($customer->wallet()->count() > 0) {
+            $wallet = $customer->wallet()->first()->toArray();
+        }
+
+        return $this->success($wallet, '');
     }
 
 
