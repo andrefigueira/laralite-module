@@ -190,6 +190,8 @@
                     this.form.name = this.subscription.name;
                     this.form.price = this.subscription.prices[0].price;
                     this.form.description = this.subscription.description;
+                    this.form.default_credit_amount = this.subscription.default_credit_amount;
+                    this.form.default_initial_credit_amount = this.subscription.default_initial_credit_amount;
                 }
             },
             save() {

@@ -25,4 +25,22 @@ class SettingsService
     {
         return json_decode($this->getSettings()->settings, true);
     }
+
+    public function isFeeCollectionActive(): array
+    {
+        $settings = $this->getSettingsArray();
+        if (
+            $settings['feeActive'] === true &&
+            !empty($settings['feeAmount']) &&
+            !empty($settings['stripeSecretKey'])
+        ) {
+            return [
+                'stripeSecretKey' => $settings['stripeSecretKey'],
+                'feeAmount' => $settings['feeAmount'],
+                'stripeAccessToken' => $settings['stripeAccessToken'],
+                'connectedAccountId' => $settings['stripeAccountId'],
+            ];
+        }
+        return [];
+    }
 }

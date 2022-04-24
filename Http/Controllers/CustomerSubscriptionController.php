@@ -43,7 +43,7 @@ class CustomerSubscriptionController extends Controller
 
         return $this->success($customer
             ->subscriptions()
-            ->with('subscription')
+            ->with(['subscriptionPrice', 'subscriptionPrice.subscription'])
             ->whereIn('status', ['ACTIVE', 'CANCELED'])
             ->getResults()
             ->all());
@@ -68,39 +68,39 @@ class CustomerSubscriptionController extends Controller
 
         $subscription->status = 'CANCELED';
 
-        if ($stripeSubscriptionId = $subscription->getStripeSubscriptionId()) {
-            try {
-                throw new InvalidRequestException('sdsd');
-                $stripeSubscription = $this->stripeService->getSubscription($stripeSubscriptionId);
-                $stripeSubscription->deleteSubscription();
-            } catch (ApiErrorException $e) {
-                \Log::error('Failed to cancel subscription ID `' . $subscription->id .
-                    '` with Stripe Subscription ID `' . $stripeSubscriptionId . '` with error: ' . $e->getMessage(),
-                    $e->getTrace()
-                );
-
-                if ($e->getHttpStatus() === 404) {
-                    \Log::error('Stripe subscription ID `' . $stripeSubscriptionId . '` no longer exists: ',
-                        $e->getTrace()
-                    );
-                } else {
-                    //Add job to queue to have subscription deletion from stripe attempted again at a later time
-                    SubscriptionDelete::dispatchAfterResponse(
-                        $subscription->getStripeSubscriptionId(),
-                        ['subscriptionId' => $subscription]
-                    );
-                }
-            } catch (\Throwable $e) {
-                \Log::error($e->getMessage(), $e->getTrace());
-            }
-        } else {
-            \Log::alert('Subscription ID `' . $subscription->id .
-                '` has no stripe ID set. and is unable to cancel stripe subscription!'
-            );
-        }
-
-        $subscription->setStripeSubscriptionId(null);
-        $subscription->setStripeSubscriptionEndPeriod(null);
+//        if ($stripeSubscriptionId = $subscription->getStripeSubscriptionId()) {
+//            try {
+//                throw new InvalidRequestException('sdsd');
+//                $stripeSubscription = $this->stripeService->getSubscription($stripeSubscriptionId);
+//                $stripeSubscription->deleteSubscription();
+//            } catch (ApiErrorException $e) {
+//                \Log::error('Failed to cancel subscription ID `' . $subscription->id .
+//                    '` with Stripe Subscription ID `' . $stripeSubscriptionId . '` with error: ' . $e->getMessage(),
+//                    $e->getTrace()
+//                );
+//
+//                if ($e->getHttpStatus() === 404) {
+//                    \Log::error('Stripe subscription ID `' . $stripeSubscriptionId . '` no longer exists: ',
+//                        $e->getTrace()
+//                    );
+//                } else {
+//                    //Add job to queue to have subscription deletion from stripe attempted again at a later time
+//                    SubscriptionDelete::dispatchAfterResponse(
+//                        $subscription->getStripeSubscriptionId(),
+//                        ['subscriptionId' => $subscription]
+//                    );
+//                }
+//            } catch (\Throwable $e) {
+//                \Log::error($e->getMessage(), $e->getTrace());
+//            }
+//        } else {
+//            \Log::alert('Subscription ID `' . $subscription->id .
+//                '` has no stripe ID set. and is unable to cancel stripe subscription!'
+//            );
+//        }
+//
+//        $subscription->setStripeSubscriptionId(null);
+//        $subscription->setStripeSubscriptionEndPeriod(null);
         $subscription->setStripePaymentIntentId(null);
         $subscription->save();
 

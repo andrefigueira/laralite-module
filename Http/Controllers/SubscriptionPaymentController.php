@@ -4,18 +4,18 @@ namespace Modules\Laralite\Http\Controllers;
 
 
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Laralite\Jobs\Stripe\PaymentSuccess;
 use Modules\Laralite\Jobs\Stripe\SubscriptionDelete;
 use Modules\Laralite\Models\Customer;
+use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Models\Subscription\Price;
+use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Traits\ApiResponses;
 use Stripe\Event;
 use Stripe\Exception\ApiErrorException;
-use Stripe\Stripe;
 use Stripe\Webhook;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,12 +29,19 @@ class SubscriptionPaymentController extends Controller
     private $stripeService;
 
     /**
+     * @var SettingsService
+     */
+    private $settingsService;
+
+    /**
      * PaymentController constructor.
      * @param StripeService $stripeService
+     * @param SettingsService $settingsService
      */
-    public function __construct(StripeService $stripeService)
+    public function __construct(StripeService $stripeService, SettingsService $settingsService)
     {
         $this->stripeService = $stripeService;
+        $this->settingsService = $settingsService;
     }
 
     /**
@@ -45,29 +52,30 @@ class SubscriptionPaymentController extends Controller
     public function processPayment(Request $request): JsonResponse
     {
         $token = $request->get('token');
-        $subscriptionRequest = $request->get('subscription');
-        $subscriptionId = $subscriptionRequest['id'] ?? null;;
-        $priceId = $subscriptionRequest['priceId'] ?? null;
-        $result = $this->stripeService->getPaymentIntent($token);
+        $priceId = $request->get('price_id');
+        $paymentIntent = $this->stripeService->getPaymentIntent($token);
 
-        if (!$result->get('id')) {
+        if (!$paymentIntent->get('id')) {
             return response()->json([
                 'success' => false,
                 'message' => "Error! PLease try again later.",
             ], 400);
         }
 
-
-        $price = Price::findOrFail($priceId);
-        $customerSubscription = Customer\Subscription::findOrFail($subscriptionId);
         /** @var Customer $customer */
-        $customer = $customerSubscription->customer()->first();
-        $subscription = $customerSubscription->subscription()->first();
+        $customer = auth('customers')->user();
+        /** @var Price $price */
+        $price = Price::findOrFail($priceId);
+        /** @var Subscription $subscription */
+        $subscription = $price->subscription()->first();
+        /** @var Customer\Subscription $customerSubscription */
+        $customerSubscription = $customer->subscriptions()->firstOrCreate([
+            'price_id' => $price->id,
+        ]);
 
         \Log::info('Payment successful for subscription', [
             'token' => $token,
             'customer' => $customer,
-            'subscription' => $subscription,
             'total' => $price->price,
         ]);
 
@@ -75,6 +83,7 @@ class SubscriptionPaymentController extends Controller
             $customerWallet = $customer->wallet()->first();
             if ($customerWallet) {
                 $customerWallet->balance +=  $creditAmount;
+                $customerWallet->save();
             } else {
                 $customer->wallet()->create([
                     'balance' => $creditAmount
@@ -82,8 +91,12 @@ class SubscriptionPaymentController extends Controller
             }
         }
         $customerSubscription->status = 'ACTIVE';
-        $stripeSubscription = $this->stripeService->getSubscription($customerSubscription->getStripeSubscriptionId());
-        $customerSubscription->expiry_date = $stripeSubscription->getTimeToDate('current_period_end');
+        $customerSubscription->agreed_price = $price->price;
+        $customerSubscription->expiry_date = new \DateTime('+ 1' . $price->recurring_period);
+        //The payment intent will have the payment method attached and will be used to make future charges
+        $customerSubscription->setStripePaymentMethodId($paymentIntent->get('payment_method'));
+        //$stripeSubscription = $this->stripeService->getSubscription($customerSubscription->getStripeSubscriptionId());
+        //$customerSubscription->expiry_date = $stripeSubscription->getTimeToDate('current_period_end');
         $customerSubscription->save();
 
         return (new JsonResponse([
@@ -91,7 +104,7 @@ class SubscriptionPaymentController extends Controller
             'message' => 'Processed payment',
             'data' => [
                 'subscription' => $subscription,
-                'stripe_result' => $result,
+                'stripe_result' => $paymentIntent,
             ],
         ]))->setStatusCode(Response::HTTP_OK);
     }
@@ -99,88 +112,51 @@ class SubscriptionPaymentController extends Controller
     protected function createSubscription(Request $request): JsonResponse
     {
         $priceId = $request->get('price_id');
-        $customerId = $request->get('customer_id');
 
         /** @var Price $price */
         $price = Price::findOrFail($priceId);
+        $totalAmount = $price->price;
+        $currency = strtolower($this->settingsService->getCurrency()['value'] ?? '');
         /** @var Customer $customer */
-        $customer = Customer::findOrFail($customerId);
-        $subscription = null;
+        $customer = auth('customers')->user();
 
-        $customerSubscription = Customer\Subscription::where([
-            'customer_id' => $customer->id,
-            'status' => 'ACTIVE',
-        ])->first();
-
-        if ($customerSubscription) {
-            return $this->error('Customer already has an active subscription', 400);
-        }
-
-        /** @var Customer\Subscription $customerSubscription */
-        $customerSubscription = $customer
-            ->subscriptions()
-            ->where('subscription_id', $price->subscription_id)->first();
-
-        try {
-            if (!$customer->getStripeCustomerId()) {
-                $stripeCustomer = $this->stripeService->saveCustomer([
-                    'name' => $customer->name,
-                    'email' => $customer->email,
-                ]);
-                $customer->setStripeCustomerId($stripeCustomer->get('id'));
-                $customer->save();
-            }
-
-            if ($customerSubscription && $customerSubscription->getStripePaymentIntentId()) {
-                $paymentIntent = $this->stripeService->getPaymentIntent($customerSubscription->getStripePaymentIntentId());
-                if (!$paymentIntent->requiresPayment()) {
-                    $customerSubscription->setStripeSubscriptionId(null);
-                    $customerSubscription->setStripePaymentIntentId(null);
-                    $customerSubscription->save();
-                } else {
-                    return $this->success([
-                        'subscription_id' => $customerSubscription->id,
-                        'client_secret' => $paymentIntent->get('client_secret')
-                    ]);
-                }
-            }
-
-            $subscription = $this->stripeService->createSubscription([
+        // Fees
+        $feeCollection = $this->settingsService->isFeeCollectionActive();
+        // @todo: This is now using the PaymentIntents API
+        // Customer details are not being sent to stripe here, we need to do add additional details to the PI creation.
+        if ($feeCollection !== false) {
+            // Fees are enabled, so send fee amount to connected Stripe Account
+            // `feeAmount` is the amount set in the settings
+            // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
+            $intent = $this->stripeService->createPaymentIntent([
+                'amount' => $totalAmount,
+                'currency' => $currency,
+                'setup_future_usage' => 'off_session',
                 'customer' => $customer->getStripeCustomerId(),
-                'items' => [[
-                    'price' => $price->getStripePriceId(),
-                ]],
-                'payment_behavior' => 'default_incomplete',
-                'expand' => ['latest_invoice.payment_intent'],
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                ],
+                'application_fee_amount' => round(($feeCollection['feeAmount'] / 100) * $totalAmount),
+                'transfer_data' => [
+                    'destination' => $feeCollection['connectedAccountId'],
+                ],
+                'on_behalf_of' => $feeCollection['connectedAccountId'],
             ]);
-        } catch (\Throwable $e) {
-            //TODO handle error
-            throw $e;
-        }
-
-        if (!$customerSubscription) {
-            $customerSubscription = $customer->subscriptions()->create([
-                'subscription_id' => $price->subscription()->first()->id,
-                'status' => 'INACTIVE'
+        } else {
+            $intent = $this->stripeService->createPaymentIntent([
+                'amount' => $totalAmount,
+                'currency' => $currency,
+                'setup_future_usage' => 'off_session',
+                'customer' => $customer->getStripeCustomerId(),
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                ]
             ]);
         }
-
-        $customerSubscription->setStripeSubscriptionId($subscription->get('id'));
-        $customerSubscription->setStripePaymentIntentId(
-            $subscription->getNested('latest_invoice/payment_intent/id')
-        );
-        $customerSubscription->setStripeSubscriptionEndPeriod($subscription->get('current_period_end'));
-        $customerSubscription->expiry_date = $subscription->getTimeToDate('current_period_end');
-        $customerSubscription->save();
-        $this->stripeService->updateSubscription($subscription->get('id'), [
-            'metadata' => [
-                'external_id' => $customerSubscription->id
-            ]
-        ]);
 
         return $this->success([
-            'subscription_id' => $customerSubscription->id,
-            'client_secret' => $subscription->getNested('latest_invoice/payment_intent/client_secret')
+            'price_id' => $price->id,
+            'client_secret' => $intent->get('client_secret')
         ]);
     }
 

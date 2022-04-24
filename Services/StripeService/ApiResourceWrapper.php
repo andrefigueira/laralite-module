@@ -61,4 +61,9 @@ class ApiResourceWrapper
         }
         return ($this->apiResource->status !== 'succeeded' && $this->apiResource->status !== 'canceled');
     }
+
+    public function toArray(): array
+    {
+        return $this->apiResource->toArray();
+    }
 }

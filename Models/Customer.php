@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Modules\Laralite\Models\Customer\Wallet;
+use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Notifications\ResetPasswordNotification;
 use Modules\Laralite\Models\Customer\Subscription as CustomerSubscription;
 
@@ -82,6 +83,12 @@ class Customer extends Authenticatable
     public function subscriptions(): HasMany
     {
         return $this->hasMany(CustomerSubscription::class, 'customer_id', 'id')
+            ->orderBy('created_at', 'desc');
+    }
+
+    public function subscriptionPrice(): HasMany
+    {
+        return $this->hasMany(Price::class, 'price_id', 'id')
             ->orderBy('created_at', 'desc');
     }
 

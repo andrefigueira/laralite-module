@@ -14,6 +14,7 @@ use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Services\OrderService;
+use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Traits\ApiResponses;
 use Ramsey\Uuid\Uuid;
@@ -37,12 +38,23 @@ class PaymentController extends Controller
     private $stripeService;
 
     /**
+     * @var SettingsService
+     */
+    private $settingsService;
+
+    /**
      * PaymentController constructor.
      * @param OrderService $orderService
      * @param StripeService $stripeService
+     * @param SettingsService $settingsService
      */
-    public function __construct(OrderService $orderService, StripeService $stripeService)
+    public function __construct(
+        OrderService $orderService,
+        StripeService $stripeService,
+        SettingsService $settingsService
+    )
     {
+        $this->settingsService = $settingsService;
         $this->orderService = $orderService;
         $this->stripeService = $stripeService;
     }
@@ -254,7 +266,7 @@ class PaymentController extends Controller
         $currency = $request->get('currency');
 
         // Fees
-        $feeCollection = $this->isFeeCollectionActive();
+        $feeCollection = $this->settingsService->isFeeCollectionActive();
         $totalAmount = $amount * 100;
 
         // @todo: This is now using the PaymentIntents API

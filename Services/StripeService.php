@@ -37,6 +37,17 @@ class StripeService
     }
 
     /**
+     * @param string $id
+     * @param $payload
+     * @return StripeService\ApiResourceWrapper
+     * @throws ApiErrorException
+     */
+    public function confirmPaymentIntent(string $id, $payload): StripeService\ApiResourceWrapper
+    {
+        return $this->getApiResourceWrapper($this->client->paymentIntents->confirm($id, $payload));
+    }
+
+    /**
      * @param array $payload
      * @return StripeService\ApiResourceWrapper
      * @throws ApiErrorException

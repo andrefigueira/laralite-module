@@ -17,12 +17,20 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int id
  * @property string status
  * @property string expiry_date
+ * @property int agreed_price
  * @property int customer_id
  * @property int subscription_id
  */
 class Subscription extends Model
 {
     use StripeMetaData;
+
+    const STATUS_ACTIVE = 'ACTIVE';
+    const STATUS_INACTIVE = 'INACTIVE';
+    const STATUS_CANCELED = 'CANCELED';
+    const STATUS_EXPIRED = 'EXPIRED';
+    const STATUS_PAYMENT_DUE = 'PAYMENT_DUE';
+    const STATUS_DISABLED = 'DISABLED';
 
     /**
      * @var string
@@ -31,10 +39,15 @@ class Subscription extends Model
 
     protected $fillable = [
         'customer_id',
-        'subscription_id',
+        'price_id',
         'expiry_date',
         'status',
         'meta_data',
+        'agreed_price'
+    ];
+
+    protected $attributes = [
+        'status' => self::STATUS_INACTIVE
     ];
 
     protected $casts = [
@@ -46,8 +59,8 @@ class Subscription extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function subscription(): HasOne
+    public function subscriptionPrice(): HasOne
     {
-        return $this->hasOne(SubscriptionProduct::class, 'id', 'subscription_id');
+        return $this->hasOne(SubscriptionProduct\Price::class, 'id', 'price_id');
     }
 }
