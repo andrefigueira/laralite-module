@@ -4,11 +4,8 @@ namespace Modules\Laralite\Console;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Customer\Subscription;
-use Modules\Laralite\Models\Subscription\Price;
-use Modules\Laralite\Services\SettingsService;
-use Modules\Laralite\Services\StripeService;
+use Modules\Laralite\Services\CustomerSubscriptionService;
 
 class SubscriptionCharge extends Command
 {
@@ -27,24 +24,19 @@ class SubscriptionCharge extends Command
     protected $description = 'Start charging subscription that have reached there end date';
 
     /**
-     * @var StripeService
+     * @var CustomerSubscriptionService
      */
-    private $stripeService;
-
-    /**
-     * @var SettingsService
-     */
-    private $settingsService;
+    private $customerSubscriptionService;
 
     /**
      * Create a new command instance.
      *
-     * @param StripeService $stripeService
+     * @param CustomerSubscriptionService $customerSubscriptionService
      */
-    public function __construct(StripeService $stripeService, SettingsService $settingsService)
+    public function __construct(CustomerSubscriptionService $customerSubscriptionService)
     {
-        $this->stripeService = $stripeService;
-        $this->settingsService = $settingsService;
+        $this->customerSubscriptionService = $customerSubscriptionService;
+
         parent::__construct();
     }
 
@@ -56,11 +48,9 @@ class SubscriptionCharge extends Command
     public function handle()
     {
         $this->info('Get subscriptions to charge....');
-
-        $currency = $this->settingsService->getCurrency();
         /** @var Subscription $subscription */
         $subscriptions = Subscription::whereIn(
-            'status' ,
+            'status',
             [Subscription::STATUS_ACTIVE, Subscription::STATUS_EXPIRED, Subscription::STATUS_PAYMENT_DUE]
         )->whereDate('expiry_date', '<=', Carbon::now())->get();
 
@@ -70,38 +60,12 @@ class SubscriptionCharge extends Command
         }
 
         foreach ($subscriptions as $subscription) {
-            /** @var Customer $customer */
-            $customer = $subscription->customer()->first();
-            /** @var Price $plan */
-            $price = $subscription->subscriptionPrice()->first();
-
-            if (!$agreedPrice = $subscription->getAttributeValue('agreed_price')) {
-                $m = 'Subscription `' . $subscription->id . '`  agreed price not set when it should be.';
-                $this->info($m);
-                \Log::alert($m);
+            try {
+                $this->customerSubscriptionService->collectionSubscriptionPayment($subscription);
+            } catch (\Throwable $e) {
+                $this->error($e->getMessage());
             }
-
-            $payment_intent = $this->stripeService->createPaymentIntent([
-                'amount' => $agreedPrice ?? $price->price,
-                'currency' => strtolower($currency['value']),
-                'customer' => $customer->getStripeCustomerId(),
-                'payment_method' => $subscription->getStripePaymentMethodId(),
-                'off_session' => true,
-                'confirm' => true,
-            ]);
-
-            $subscription->expiry_date = new \DateTime('+ 1' . $price->recurring_period);
-            $subscription->status = 'ACTIVE';
-            $subscription->save();
-
-            \Log::info('Subscription Charged and updated successfully', [
-                'payment_intent' => $payment_intent->toArray(),
-                'subscription' => $subscription->toArray(),
-                'price' => $price->toArray(),
-            ]);
         }
-
-
         $this->info('All expired Subscriptions have been processed successfully');
     }
 }

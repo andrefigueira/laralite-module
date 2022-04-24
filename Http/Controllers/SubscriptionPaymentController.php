@@ -6,11 +6,13 @@ namespace Modules\Laralite\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Modules\Laralite\Http\Requests\SubscriptionPaymentRequest;
 use Modules\Laralite\Jobs\Stripe\PaymentSuccess;
 use Modules\Laralite\Jobs\Stripe\SubscriptionDelete;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Models\Subscription\Price;
+use Modules\Laralite\Services\CustomerSubscriptionService;
 use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Traits\ApiResponses;
@@ -34,82 +36,66 @@ class SubscriptionPaymentController extends Controller
     private $settingsService;
 
     /**
+     * @var CustomerSubscriptionService
+     */
+    private $customerSubscriptionService;
+
+    /**
      * PaymentController constructor.
      * @param StripeService $stripeService
      * @param SettingsService $settingsService
+     * @param CustomerSubscriptionService $customerSubscriptionService
      */
-    public function __construct(StripeService $stripeService, SettingsService $settingsService)
+    public function __construct(
+        StripeService $stripeService,
+        SettingsService $settingsService,
+        CustomerSubscriptionService  $customerSubscriptionService
+    )
     {
         $this->stripeService = $stripeService;
         $this->settingsService = $settingsService;
+        $this->customerSubscriptionService = $customerSubscriptionService;
     }
 
     /**
-     * @param Request $request
+     * @param SubscriptionPaymentRequest $request
      * @return JsonResponse
      * @throws ApiErrorException
+     * @throws \Exception
      */
-    public function processPayment(Request $request): JsonResponse
+    public function processPayment(SubscriptionPaymentRequest $request): JsonResponse
     {
         $token = $request->get('token');
         $priceId = $request->get('price_id');
         $paymentIntent = $this->stripeService->getPaymentIntent($token);
 
-        if (!$paymentIntent->get('id')) {
-            return response()->json([
-                'success' => false,
-                'message' => "Error! PLease try again later.",
-            ], 400);
+        if (!$paymentIntent->get('id') || !$paymentIntent->paymentCompleted()) {
+            \Log::error('Payment token is either invalid or payment is incomplete');
+            //At this point the payment should have gone throughout successfully so something isn't write here
+            return $this->error("Error! PLease try again later.", 500);
         }
 
         /** @var Customer $customer */
         $customer = auth('customers')->user();
-        /** @var Price $price */
-        $price = Price::findOrFail($priceId);
-        /** @var Subscription $subscription */
-        $subscription = $price->subscription()->first();
-        /** @var Customer\Subscription $customerSubscription */
-        $customerSubscription = $customer->subscriptions()->firstOrCreate([
-            'price_id' => $price->id,
-        ]);
+        $subscription = $this->customerSubscriptionService->saveSubscription($customer, (int)$priceId, $paymentIntent);
 
-        \Log::info('Payment successful for subscription', [
-            'token' => $token,
+        \Log::info('Subscription payment successful', [
+            'token' => $paymentIntent->get('client_secret'),
             'customer' => $customer,
-            'total' => $price->price,
+            'price' => Price::findOrFail($priceId),
         ]);
 
-        if ($creditAmount = $subscription->getAttributeValue('default_initial_credit_amount')) {
-            $customerWallet = $customer->wallet()->first();
-            if ($customerWallet) {
-                $customerWallet->balance +=  $creditAmount;
-                $customerWallet->save();
-            } else {
-                $customer->wallet()->create([
-                    'balance' => $creditAmount
-                ]);
-            }
-        }
-        $customerSubscription->status = 'ACTIVE';
-        $customerSubscription->agreed_price = $price->price;
-        $customerSubscription->expiry_date = new \DateTime('+ 1' . $price->recurring_period);
-        //The payment intent will have the payment method attached and will be used to make future charges
-        $customerSubscription->setStripePaymentMethodId($paymentIntent->get('payment_method'));
-        //$stripeSubscription = $this->stripeService->getSubscription($customerSubscription->getStripeSubscriptionId());
-        //$customerSubscription->expiry_date = $stripeSubscription->getTimeToDate('current_period_end');
-        $customerSubscription->save();
-
-        return (new JsonResponse([
-            'success' => true,
-            'message' => 'Processed payment',
-            'data' => [
+        return $this->success(
+            [
                 'subscription' => $subscription,
                 'stripe_result' => $paymentIntent,
             ],
-        ]))->setStatusCode(Response::HTTP_OK);
+            'Processed payment',
+            Response::HTTP_OK
+        );
     }
 
-    protected function createSubscription(Request $request): JsonResponse
+    protected function getSubscriptionPaymentIntent(Request $request): JsonResponse
     {
         $priceId = $request->get('price_id');
 

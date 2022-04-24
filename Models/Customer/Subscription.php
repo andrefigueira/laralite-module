@@ -30,6 +30,8 @@ class Subscription extends Model
     const STATUS_CANCELED = 'CANCELED';
     const STATUS_EXPIRED = 'EXPIRED';
     const STATUS_PAYMENT_DUE = 'PAYMENT_DUE';
+    const STATUS_PAYMENT_DECLINED = 'PAYMENT_DECLINED';
+    const STATUS_PENDING_PAYMENT = 'PENDING_PAYMENT';
     const STATUS_DISABLED = 'DISABLED';
 
     /**

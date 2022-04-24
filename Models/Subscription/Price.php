@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @package Modules\Laralite\Models\Subscription
  * @mixin Eloquent
  * @property int id
- * @protected int price
+ * @property int price
+ * @property string recurring_period
  */
 class Price extends Model
 {

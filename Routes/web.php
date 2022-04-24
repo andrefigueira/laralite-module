@@ -111,7 +111,7 @@ Route::group(['middleware' => 'auth:customers'], function () {
 
     Route::get('/account/subscription', 'CustomerSubscriptionController@get');
     Route::post('/account/subscription/{id}', 'CustomerSubscriptionController@cancel');
-    Route::post('/subscription/create', 'SubscriptionPaymentController@createSubscription');
+    Route::post('/subscription/get_payment_token', 'SubscriptionPaymentController@getSubscriptionPaymentIntent');
     Route::post('/subscription/process-payment', 'SubscriptionPaymentController@processPayment');
     Route::get('/subscriptions', 'SubscriptionsController@get');
 });

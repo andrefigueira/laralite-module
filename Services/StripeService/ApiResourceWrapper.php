@@ -4,6 +4,7 @@
 namespace Modules\Laralite\Services\StripeService;
 
 
+use Modules\Laralite\Exceptions\AppException;
 use Stripe\ApiResource;
 use Stripe\PaymentIntent;
 use Stripe\Subscription;
@@ -43,7 +44,7 @@ class ApiResourceWrapper
      * @param $path
      * @return mixed
      */
-    public function getNested($path)
+    public function getNested($path): ApiResource
     {
         $path = explode('/', $path);
         $value = $this->apiResource;
@@ -54,12 +55,30 @@ class ApiResourceWrapper
         return $value;
     }
 
+    /**
+     * @return bool
+     * @throws AppException
+     */
+    public function paymentCompleted(): bool
+    {
+        if (!$this->apiResource instanceof PaymentIntent) {
+            throw new AppException('Invalid method call!');
+        }
+        return ($this->apiResource->status === PaymentIntent::STATUS_SUCCEEDED);
+    }
+
+    /**
+     * @return bool
+     * @throws AppException
+     */
     public function requiresPayment(): bool
     {
         if (!$this->apiResource instanceof PaymentIntent) {
-            throw new \Exception('Invalid method call!');
+            throw new AppException('Invalid method call!');
         }
-        return ($this->apiResource->status !== 'succeeded' && $this->apiResource->status !== 'canceled');
+
+        return ($this->apiResource->status !== PaymentIntent::STATUS_SUCCEEDED &&
+            $this->apiResource->status !== PaymentIntent::STATUS_CANCELED);
     }
 
     public function toArray(): array
