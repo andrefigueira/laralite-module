@@ -4,6 +4,7 @@ namespace Modules\Laralite\Models\Customer;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Laralite\Models\Customer;
 
 class Wallet extends Model
 {

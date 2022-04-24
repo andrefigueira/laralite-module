@@ -8,10 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Modules\Laralite\Http\Requests\AccountUpdateRequest;
 use Modules\Laralite\Http\Requests\PasswordChangeRequest;
+use Modules\Laralite\Jobs\Stripe\SubscriptionDelete;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Traits\ApiFailedValidation;
 use Modules\Laralite\Traits\ApiResponses;
+use Stripe\Exception\ApiErrorException;
+use Stripe\Exception\InvalidRequestException;
+use TheSeer\Tokenizer\Exception;
 
 
 class CustomerSubscriptionController extends Controller
@@ -63,14 +67,36 @@ class CustomerSubscriptionController extends Controller
         }
 
         $subscription->status = 'CANCELED';
-        $subscription->expiry_date = null;
 
-        try {
-            $stripeSubscription = $this->stripeService->getSubscription($subscription->getStripeSubscriptionId());
-            $stripeSubscription->deleteSubscription();
-        } catch (\Throwable $e) {
-            \Log::error('Failed to cancel subscription on Stripe', $e->getTrace());
-            return $this->error('Failed to cancel subscription' . $id, 500);
+        if ($stripeSubscriptionId = $subscription->getStripeSubscriptionId()) {
+            try {
+                throw new InvalidRequestException('sdsd');
+                $stripeSubscription = $this->stripeService->getSubscription($stripeSubscriptionId);
+                $stripeSubscription->deleteSubscription();
+            } catch (ApiErrorException $e) {
+                \Log::error('Failed to cancel subscription ID `' . $subscription->id .
+                    '` with Stripe Subscription ID `' . $stripeSubscriptionId . '` with error: ' . $e->getMessage(),
+                    $e->getTrace()
+                );
+
+                if ($e->getHttpStatus() === 404) {
+                    \Log::error('Stripe subscription ID `' . $stripeSubscriptionId . '` no longer exists: ',
+                        $e->getTrace()
+                    );
+                } else {
+                    //Add job to queue to have subscription deletion from stripe attempted again at a later time
+                    SubscriptionDelete::dispatchAfterResponse(
+                        $subscription->getStripeSubscriptionId(),
+                        ['subscriptionId' => $subscription]
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Log::error($e->getMessage(), $e->getTrace());
+            }
+        } else {
+            \Log::alert('Subscription ID `' . $subscription->id .
+                '` has no stripe ID set. and is unable to cancel stripe subscription!'
+            );
         }
 
         $subscription->setStripeSubscriptionId(null);

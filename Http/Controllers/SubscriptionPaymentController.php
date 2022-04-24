@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Laralite\Jobs\Stripe\PaymentSuccess;
+use Modules\Laralite\Jobs\Stripe\SubscriptionDelete;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Services\StripeService;
@@ -71,15 +72,14 @@ class SubscriptionPaymentController extends Controller
         ]);
 
         if ($creditAmount = $subscription->getAttributeValue('default_initial_credit_amount')) {
-            $customer->wallet()->updateOrInsert(
-                [
-                    'customer_id' => $customer->id,
-                    'subscription_plan_id' => $subscription->id
-                ],
-                [
-                    'balance' => \DB::raw('balance + ' . $creditAmount)
-                ]
-            );
+            $customerWallet = $customer->wallet()->first();
+            if ($customerWallet) {
+                $customerWallet->balance +=  $creditAmount;
+            } else {
+                $customer->wallet()->create([
+                    'balance' => $creditAmount
+                ]);
+            }
         }
         $customerSubscription->status = 'ACTIVE';
         $stripeSubscription = $this->stripeService->getSubscription($customerSubscription->getStripeSubscriptionId());
@@ -220,12 +220,17 @@ class SubscriptionPaymentController extends Controller
                 break;
             case Event::INVOICE_PAYMENT_SUCCEEDED:
                 \Log::info($message, $object);
+                //$this->dispatch((new PaymentSuccess($object))->delay(Carbon::now()->addMinutes(1)));
                 PaymentSuccess::dispatchAfterResponse($object);
                 break;
             case EVENT::CUSTOMER_SUBSCRIPTION_DELETED:
                 // handle subscription canceled automatically based
                 // upon your subscription settings. Or if the user
                 // cancels it.
+                SubscriptionDelete::dispatchAfterResponse(
+                    $object['id'],
+                    ['subscriptionId' => $object['metadata']['external_id'] ?? null]
+                );
                 \Log::info($message, $object);
                 break;
             default:
