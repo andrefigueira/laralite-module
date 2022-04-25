@@ -7,6 +7,7 @@ namespace Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Exceptions\AppException;
 use Stripe\ApiResource;
 use Stripe\PaymentIntent;
+use Stripe\PaymentMethod;
 use Stripe\Subscription;
 
 class ApiResourceWrapper
@@ -18,9 +19,20 @@ class ApiResourceWrapper
         $this->apiResource = $apiResource;
     }
 
+    public function getApiResource(): ApiResource
+    {
+        return $this->apiResource;
+    }
+
     public function get($key)
     {
-        return $this->apiResource->offsetGet($key);
+        $path = explode('/', $key);
+        $value = $this->apiResource;
+        foreach ($path as $key) {
+            $value = $value->$key;
+        }
+
+        return $value;
     }
 
     public function getTimeToDate($key)
@@ -38,21 +50,6 @@ class ApiResourceWrapper
             throw new \Exception('Invalid method call!');
         }
         $this->apiResource->delete();
-    }
-
-    /**
-     * @param $path
-     * @return mixed
-     */
-    public function getNested($path): ApiResource
-    {
-        $path = explode('/', $path);
-        $value = $this->apiResource;
-        foreach ($path as $key) {
-            $value = $value->$key;
-        }
-
-        return $value;
     }
 
     /**
@@ -84,5 +81,19 @@ class ApiResourceWrapper
     public function toArray(): array
     {
         return $this->apiResource->toArray();
+    }
+
+    public function getPaymentMethodDetails(): array
+    {
+        if (!$this->apiResource instanceof PaymentMethod) {
+            return [];
+        }
+
+        return [
+            'id' => $this->get('id'),
+            'cardBrand' => $this->get('card/brand'),
+            'last4Digits' => $this->get('card/last4'),
+            'country' => $this->get('card/country')
+        ];
     }
 }

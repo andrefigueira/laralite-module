@@ -114,4 +114,14 @@ trait StripeMetaData
     {
         $this->setStripeMetaData('payment_method_id', $id);
     }
+
+    public function setStripePaymentMethodDetails(?array $details = null)
+    {
+        $this->setStripeMetaData('payment_method_details', $details);
+    }
+
+    public function getPaymentMethodDetails()
+    {
+        return $this->getStripeMetaData('payment_method_details');
+    }
 }

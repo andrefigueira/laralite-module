@@ -7,6 +7,7 @@ use Modules\Laralite\Services\StripeService\Price;
 use Modules\Laralite\Services\StripeService\Product;
 use Modules\Laralite\Services\StripeService\Shared;
 use Stripe\Exception\ApiErrorException;
+use Stripe\PaymentMethod;
 use Stripe\StripeClient;
 
 class StripeService
@@ -97,5 +98,10 @@ class StripeService
     public function getPaymentIntent(string $id): StripeService\ApiResourceWrapper
     {
         return $this->getApiResourceWrapper($this->client->paymentIntents->retrieve($id));
+    }
+
+    public function getPaymentMethod(string $id, $params = null): StripeService\ApiResourceWrapper
+    {
+        return $this->getApiResourceWrapper($this->client->paymentMethods->retrieve($id, $params));
     }
 }

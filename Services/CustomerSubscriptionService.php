@@ -55,7 +55,19 @@ class CustomerSubscriptionService
         $customerSubscription->agreed_price = $price->price;
         $customerSubscription->expiry_date = new \DateTime('+ 1' . $price->recurring_period);
         //The payment intent will have the payment method attached and will be used to make future charges
+        $paymentMethodId = $paymentIntent->get('payment_method');
         $customerSubscription->setStripePaymentMethodId($paymentIntent->get('payment_method'));
+
+        try {
+            $paymentMethod = $this->stripeService->getPaymentMethod($paymentMethodId);
+            $customerSubscription->setStripePaymentMethodDetails($paymentMethod->getPaymentMethodDetails());
+        } catch (\Throwable $e) {
+            \Log::error(
+                'Unable to save payment method details with error: ' . $e->getMessage(),
+                $e->getTrace()
+            );
+        }
+
         $customerSubscription->save();
 
         return $customerSubscription;
