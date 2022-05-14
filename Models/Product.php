@@ -14,7 +14,8 @@ class Product extends Model
         'meta',
         'images',
         'variants',
-        'active'
+        'active',
+        'credit_purchasable'
     ];
 
     protected $casts = [

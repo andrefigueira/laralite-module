@@ -36,9 +36,15 @@ class ProductController extends Controller
 
     public function getProducts(Request $request)
     {
-        $products = Product::with(['category'])->where('active', '=', 1)->where('category_id', '=', 2)->get();
+        $products = Product::with(['category'])->where('active', '=', 1)->whereHas('category', function($q){
+            $q->where('slug', 'tickets');
+        });
 
-        return $products;
+        if ($request->get('credit_purchasable_only', 0) === '1') {
+            $products = $products->where('credit_purchasable', '=', 1);
+        }
+
+        return $products->get();
     }
 
     public function getOne($id)
@@ -84,6 +90,7 @@ class ProductController extends Controller
                 'slug' => $request->get('slug'),
                 'description' => $request->get('description'),
                 'active' =>$request->get('active'),
+                'credit_purchasable' => $request->get('credit_purchasable'),
                 'meta' => $request->get('meta'),
                 'images' => $request->get('images'),
                 'variants' => $request->get('variants'),
@@ -132,6 +139,7 @@ class ProductController extends Controller
                 'slug' => $request->get('slug'),
                 'description' => $request->get('description'),
                 'active' => $request->get('active'),
+                'credit_purchasable' => $request->get('credit_purchasable'),
                 'meta' => $request->get('meta'),
                 'images' => $request->get('images'),
                 'variants' => $request->get('variants'),
