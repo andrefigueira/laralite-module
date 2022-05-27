@@ -31,7 +31,7 @@ class Order extends Model
     /**
      * @var mixed
      */
-    private $tickets;
+    public $tickets;
 
     public function tickets()
     {

@@ -151,7 +151,7 @@
               </tr>-->
               <tr>
                 <td><strong>Customer</strong></td>
-                <td>{{ order.payment_processor_result.receipt_email }}</td>
+                <td></td>
               </tr>
               <tr v-if="order.refunded">
                 <td><strong>Status</strong></td>
@@ -223,56 +223,51 @@
 
             <b-collapse id="payment-details">
               <table class="table table-striped">
-                <tr>
+                <tr v-if="!order.payment_processor_result">
+                  <td><strong>Credits Used</strong></td>
+                  <td>{{ order.basket.products[0].price * order.basket.products[0].quantity}}</td>
+                </tr>
+                <tr v-if="!order.payment_processor_result">
+                  <td><strong>Credit Balance</strong></td>
+                  <td>N/A</td>
+                </tr>
+                <tr v-if="order.payment_processor_result">
                   <td><strong>ID</strong></td>
-                  <td>{{ order.payment_processor_result.id }}</td>
+                  <td>{{ (order.payment_processor_result) ? (order.payment_processor_result.id) : 'na'  }}</td>
                 </tr>
-                <tr>
+                <tr v-if="order.payment_processor_result">
                   <td width="40%"><strong>Payment Descriptor</strong></td>
-                  <td>{{ order.payment_processor_result.calculated_statement_descriptor }}</td>
+                  <td>{{ (order.payment_processor_result) ? (order.payment_processor_result.calculated_statement_descriptor) : 'na' }}</td>
                 </tr>
-                <tr>
+                <tr v-if="order.payment_processor_result">
                   <td width="40%"><strong>Description</strong></td>
-                  <td>{{ order.payment_processor_result.description }}</td>
+                  <td>{{ (order.payment_processor_result) ? (order.payment_processor_result.description) : 'na' }}</td>
                 </tr>
-                <tr>
+                <tr v-if="order.payment_processor_result">
                   <td><strong>Total Amount</strong></td>
-                  <td>${{ order.payment_processor_result.amount / 100 }}</td>
+                  <td>${{ (order.payment_processor_result) ? (order.payment_processor_result.amount / 100) :'na' }}</td>
                 </tr>
-                <tr>
+                <tr v-if="order.payment_processor_result">
                   <td><strong>Tax Applied</strong></td>
                   <td>
-                    {{
-                      _.get(order, 'basket.subtotals[0].taxAmount')
-                          ? '$' + _.get(order, 'basket.subtotals[0].taxAmount') : 'n/a'
-                    }}
-                    ({{
-                      _.get(order, 'basket.subtotals[0].tax')
-                          ? _.get(order, 'basket.subtotals[0].tax') + '%' : 'n/a'
-                    }})
+                    {{ (order.basket.subtotals[0]) ? '$' + (order.basket.subtotals[0].taxAmount) : 'n/a' }}
                   </td>
                 </tr>
-                <tr>
+                <tr v-if="order.payment_processor_result">
                   <td><strong>Service Fee</strong></td>
                   <td>
-                    {{
-                      _.get(order, 'basket.subtotals[0].serviceFee')
-                          ? '$' + _.get(order, 'basket.subtotals[0].serviceFee') : 'n/a'
-                    }}
+                    {{ (order.basket.subtotals[0]) ? (order.basket.subtotals[0].serviceFee) : 'n/a' }}
                   </td>
                 </tr>
-                <tr>
+                <tr v-if="order.payment_processor_result">
                   <td><strong>Fee</strong></td>
                   <td>
-                    {{
-                      order.payment_processor_result.application_fee_amount
-                          ? order.payment_processor_result.application_fee_amount / 100 : 'n/a'
-                    }}
+                    {{ order.payment_processor_result ? order.payment_processor_result.application_fee_amount / 100 : 'n/a' }}
                   </td>
                 </tr>
-                <tr>
+                <tr v-if="order.payment_processor_result">
                   <td><strong>Balance Transaction</strong></td>
-                  <td>{{ order.payment_processor_result.balance_transaction }}</td>
+                  <td>{{ (order.payment_processor_result) ? (order.payment_processor_result.balance_transaction) : 'na' }}</td>
                 </tr>
               </table>
             </b-collapse>
@@ -300,45 +295,49 @@
             </div>
             <b-collapse id="payment-method">
               <table class="table table-striped">
-              <tr v-if="order.payment_processor_result.payment_method">
+                <tr v-if="!order.payment_processor_result">
+                  <td width="40%"><strong>Payment Method Used</strong></td>
+                  <td>Credits</td>
+                </tr>
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>ID</strong></td>
                 <td>{{ order.payment_processor_result.payment_method }}</td>
               </tr>
-              <tr v-if="order.payment_processor_result.payment_method_details">
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Number</strong></td>
                 <td>**** **** **** {{ order.payment_processor_result.payment_method_details.card.last4 }}</td>
               </tr>
-              <tr v-if="order.payment_processor_result.payment_method_details">
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Fingerprint</strong></td>
                 <td>{{ order.payment_processor_result.payment_method_details.card.fingerprint }}</td>
               </tr>
-              <tr v-if="order.payment_processor_result.payment_method_details">
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Expires</strong></td>
                 <td>{{ order.payment_processor_result.payment_method_details.card.exp_month }} /
                   {{ order.payment_processor_result.payment_method_details.card.exp_year }}
                 </td>
               </tr>
-              <tr v-if="order.payment_processor_result.payment_method_details">
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Type</strong></td>
                 <td>{{ order.payment_processor_result.payment_method_details.card.brand }}</td>
               </tr>
-              <tr v-if="order.payment_processor_result.billing_details">
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Owner</strong></td>
                 <td>{{ order.payment_processor_result.billing_details.name }}</td>
               </tr>
-              <tr v-if="order.payment_processor_result.billing_details">
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Post Code</strong></td>
                 <td>{{ order.payment_processor_result.billing_details.address.postal_code }}</td>
               </tr>
-              <tr v-if="order.payment_processor_result.billing_details">
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Origin</strong></td>
                 <td>{{ order.payment_processor_result.billing_details.address.country }}</td>
               </tr>
-              <tr v-if="order.payment_processor_result.payment_method_details">
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>CVC Check</strong></td>
                 <td>{{ order.payment_processor_result.payment_method_details.card.checks.cvc_check }}</td>
               </tr>
-              <tr v-if="order.payment_processor_result.payment_method_details">
+              <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Postal Check</strong></td>
                 <td>{{
                     order.payment_processor_result.payment_method_details.card.checks.address_postal_code_check
