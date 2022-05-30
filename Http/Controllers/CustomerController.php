@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Modules\Laralite\Http\Requests\AccountUpdateRequest;
 use Modules\Laralite\Http\Requests\PasswordChangeRequest;
 use Modules\Laralite\Models\Customer;
+use Modules\Laralite\Models\Order;
 use Modules\Laralite\Traits\ApiFailedValidation;
 use Modules\Laralite\Traits\ApiResponses;
 
@@ -53,7 +54,7 @@ class CustomerController extends Controller
     }
 
 
-    public function orders(): JsonResponse
+    public function orders(Request $request)
     {
         if(!auth('customers')->id()) {
             return $this->error('You are not authorized to access this', 403);
@@ -61,9 +62,18 @@ class CustomerController extends Controller
 
         $customer = auth('customers')->user();
 
-        return $this->success([
+        /*return $this->success([
             'orders'    =>  $customer->orders,
-        ], '');
+        ], '');*/
+
+        $orders = $customer->orders;
+        $perPage = $request->get('perPage', 1);
+
+        if ($request->get('all') === 'true') {
+            return $orders->get();
+        }
+
+        return response()->json($customer->orders()->orderBy('created_at', 'DESC')->paginate($perPage));
     }
 
     public function accountUpdate(AccountUpdateRequest $request)
