@@ -127,6 +127,7 @@ Route::get('/product-list', 'Api\ProductController@getProducts');
 
 Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
 Route::post('/process-payment', 'Api\PaymentController@processPayment');
+Route::post('/process-credit-payment', 'Api\PaymentController@processCreditPayment');
 Route::get('/discount/verify/{code}', 'Api\DiscountController@verify');
 
 Route::get('/email-available', 'CustomerController@emailAvailable');
