@@ -134,7 +134,6 @@
         <b-button size="sm" class="w-100 mr-1" @click="goBack">&larr; Back to orders</b-button>
       </div>
     </div>
-
     <div class="row mt-2">
       <div class="col-sm-12 col-md-6 mb-2">
         <b-card>
@@ -145,13 +144,9 @@
                 <td width="40%"><strong>ID</strong></td>
                 <td>{{ order.confirmation_code }}</td>
               </tr>
-<!--              <tr>
-                <td width="40%"><strong>Confirmation Code</strong></td>
-                <td>{{ order.confirmation_code }}</td>
-              </tr>-->
               <tr>
                 <td><strong>Customer</strong></td>
-                <td></td>
+                <td>{{ order.customer.email }}</td>
               </tr>
               <tr v-if="order.refunded">
                 <td><strong>Status</strong></td>
@@ -170,7 +165,7 @@
               </tr>
               <tr>
                 <td><strong>Date</strong></td>
-                <td>{{ order.created_at }}</td>
+                <td>{{ formatDate(order.created_at) }}</td>
               </tr>
             </table>
           </b-card-text>
@@ -225,7 +220,7 @@
               <table class="table table-striped">
                 <tr v-if="!order.payment_processor_result">
                   <td><strong>Credits Used</strong></td>
-                  <td>{{ order.basket.products[0].price * order.basket.products[0].quantity}}</td>
+                  <td>{{ order.basket.products[0].credits}}</td>
                 </tr>
                 <tr v-if="!order.payment_processor_result">
                   <td><strong>Credit Balance</strong></td>
@@ -305,44 +300,41 @@
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Number</strong></td>
-                <td>**** **** **** {{ order.payment_processor_result.payment_method_details.card.last4 }}</td>
+                <td>**** **** **** {{ order.payment_processor_result.charges.data[0].payment_method_details.card.last4 }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Fingerprint</strong></td>
-                <td>{{ order.payment_processor_result.payment_method_details.card.fingerprint }}</td>
+                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.fingerprint }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Expires</strong></td>
-                <td>{{ order.payment_processor_result.payment_method_details.card.exp_month }} /
-                  {{ order.payment_processor_result.payment_method_details.card.exp_year }}
+                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.exp_month }} /
+                  {{ order.payment_processor_result.charges.data[0].payment_method_details.card.exp_year }}
                 </td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Type</strong></td>
-                <td>{{ order.payment_processor_result.payment_method_details.card.brand }}</td>
+                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.brand }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Owner</strong></td>
-                <td>{{ order.payment_processor_result.billing_details.name }}</td>
+                <td>{{ order.payment_processor_result.charges.data[0].billing_details.name }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Post Code</strong></td>
-                <td>{{ order.payment_processor_result.billing_details.address.postal_code }}</td>
+                <td>{{ order.payment_processor_result.charges.data[0].billing_details.address.postal_code }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Origin</strong></td>
-                <td>{{ order.payment_processor_result.billing_details.address.country }}</td>
+                <td>{{ order.payment_processor_result.charges.data[0].billing_details.address.country }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>CVC Check</strong></td>
-                <td>{{ order.payment_processor_result.payment_method_details.card.checks.cvc_check }}</td>
+                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.checks.cvc_check }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Postal Check</strong></td>
-                <td>{{
-                    order.payment_processor_result.payment_method_details.card.checks.address_postal_code_check
-                  }}
-                </td>
+                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.checks.address_postal_code_check }}</td>
               </tr>
             </table>
             </b-collapse>
@@ -355,6 +347,7 @@
 
 <script>
 import _ from 'lodash';
+import moment from "moment";
 
 export default {
   mounted() {
@@ -540,7 +533,10 @@ export default {
         self.orderConfirmationEmailErrorMessage = error.response.data.message;
         self.orderConfirmationEmailProcessing = false;
       });
-    }
+    },
+    formatDate(date) {
+      return moment(date).format('MMMM Do YYYY');
+    },
   }
 }
 </script>
