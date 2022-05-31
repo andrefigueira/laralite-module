@@ -5,6 +5,7 @@ namespace Modules\Laralite\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Modules\Laralite\Http\Requests\AccountUpdateRequest;
 use Modules\Laralite\Http\Requests\PasswordChangeRequest;
@@ -12,6 +13,7 @@ use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Traits\ApiFailedValidation;
 use Modules\Laralite\Traits\ApiResponses;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class CustomerController extends Controller
@@ -53,7 +55,6 @@ class CustomerController extends Controller
 
         return $this->success($wallet, '');
     }
-
 
     public function orders(Request $request)
     {
@@ -138,5 +139,37 @@ class CustomerController extends Controller
             ['available' => !$customer],
             'Email is ' . $availability
         );
+    }
+
+    public function imageUpload(Request $request)
+    {
+        if(!auth('customers')->id()) {
+            return $this->error('You are not authorized to access this', 403);
+        }
+
+        $file = $request->file('file');
+
+        $allowedImageTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/gif'
+        ];
+
+        if (!in_array($file->getMimeType(), $allowedImageTypes, true)) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Filetype (' . $file->getMimeType() . ') not allowed, must be of type ' . implode(', ', $allowedImageTypes),
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $path = $file->storePublicly('public');
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'File Uploaded successfully',
+            'data' => [
+                'path' => Storage::url($path),
+            ],
+        ]);
     }
 }
