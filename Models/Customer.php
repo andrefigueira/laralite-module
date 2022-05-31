@@ -45,7 +45,8 @@ class Customer extends Authenticatable
         'newsletter_subscription->phone',
         'numbers',
         'numbers->mobile',
-        'meta_data'
+        'meta_data',
+        'profile_image'
     ];
 
     protected $attributes = [

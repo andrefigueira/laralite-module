@@ -31,6 +31,7 @@ class CustomerController extends Controller
                 'id' => $customer->id,
                 'name'  =>  $customer->name,
                 'email' =>  $customer->email,
+                'profile_image' => $customer->profile_image,
                 'newsletter_subscription' => $customer->newsletter_subscription,
             ]
         ], '');
@@ -84,7 +85,7 @@ class CustomerController extends Controller
 
         $customer = auth('customers')->user();
 
-        $data = $request->only('name', 'email', 'newsletter_subscription');
+        $data = $request->only('name', 'email','profile_image', 'newsletter_subscription');
 
         $customer->update($data);
 
@@ -92,6 +93,7 @@ class CustomerController extends Controller
             'user'  =>  [
                 'name'  =>  $customer->name,
                 'email' =>  $customer->email,
+                'profile_image' =>  $customer->profile_image,
                 'newsletter_subscription' => $customer->newsletter_subscription,
             ]
         ], '');
