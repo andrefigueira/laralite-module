@@ -64,10 +64,6 @@ class CustomerController extends Controller
 
         $customer = auth('customers')->user();
 
-        /*return $this->success([
-            'orders'    =>  $customer->orders,
-        ], '');*/
-
         $orders = $customer->orders;
         $perPage = $request->get('perPage', 1);
 
@@ -172,4 +168,21 @@ class CustomerController extends Controller
             ],
         ]);
     }
+
+    public function orderDetails($id): JsonResponse
+    {
+        if(!auth('customers')->id()) {
+            return $this->error('You are not authorized to access this', 403);
+        }
+        $order = Order::where('unique_id', '=', $id)->with(['tickets', 'customer'])->get();
+
+        if ($order === null) {
+            throw new NotFoundHttpException('Order not found');
+        }
+
+        return $this->success([
+            'order' => $order
+        ], '');
+    }
+
 }
