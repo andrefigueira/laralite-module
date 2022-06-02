@@ -152,7 +152,34 @@ return [
                 'icon' => 'fa-shopping-cart',
             ],
             'properties' => [
-                
+
+            ],
+        ],[
+            'name' => 'My ID',
+            'slug' => 'my-id',
+            'settings' => [
+                'icon' => 'fa-shopping-cart',
+            ],
+            'properties' => [
+
+            ],
+        ],[
+            'name' => 'Security',
+            'slug' => 'security',
+            'settings' => [
+                'icon' => 'fa-shopping-cart',
+            ],
+            'properties' => [
+
+            ],
+        ],[
+            'name' => 'Order Details',
+            'slug' => 'orders',
+            'settings' => [
+                'icon' => 'fa-shopping-cart',
+            ],
+            'properties' => [
+
             ],
         ],
     ],
