@@ -7,7 +7,7 @@
                 <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailHeader" style="width:100%!important;background: #000; color: white;">
                     <tr>
                         <td align="center" valign="top">
-                            <img class="site-logo" src="https://trapmusicmuseum.us/images/trap-music-museum-logo.png" alt="" height="80">
+                            <img class="site-logo" src="{{env('APP_URL')}}/images/trap-music-museum-logo.png" alt="" height="80">
                         </td>
                     </tr>
                 </table>
@@ -20,7 +20,7 @@
                         <td align="center" valign="top" style="color: #fff;">
                             <h1 style="margin-top: 0px; margin-bottom: 0px;">Reset Password</h1>
                             <p>You are receiving this email because we received a password reset request for your account.</p>
-                            <a href="{{ $url }}" class="reset-btn">Reset Password</a>
+                            <a href="{{ $url }}" class="reset-btn-password">Reset Password</a>
                             <p>This password reset link will expire in 60 minutes.</p>
                             <p>If you did not request a password reset, no further action is required.</p>
                         </td>
@@ -31,8 +31,8 @@
     </table>
 @endsection
 
-<style scoped>
-    .reset-btn {
+<style>
+    .reset-password-btn {
         background-color: white;
         padding: 12px 15px;
         box-sizing: border-box;

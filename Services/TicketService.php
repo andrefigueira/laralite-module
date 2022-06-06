@@ -15,6 +15,7 @@ use Modules\Laralite\Exceptions\AppException;
 use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
+use Modules\Laralite\Models\TicketScans;
 use Ramsey\Uuid\Uuid;
 
 class TicketService
@@ -44,6 +45,13 @@ class TicketService
             $ticket->visited_counts = '1';
             $ticket->updateStatusLog('REDEEMED');
             $ticket->save();
+
+            $ticketScan = TicketScans::create([
+                'order_id' => $ticket->order_id,
+                'ticket_id' => $ticket->id,
+                'customer_id' => $ticket->customer_id,
+                'status' => $ticket->status
+            ]);
         }
 
         return $ticket;
