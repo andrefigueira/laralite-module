@@ -85,6 +85,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/admin/reporting', 'Admin\ReportingController@index');
 
     Route::get('/admin/sales', 'Admin\AdminController@getSales');
+    Route::get('/admin/scannerlog', 'Admin\AdminController@getScannerLog');
 
 
 });
