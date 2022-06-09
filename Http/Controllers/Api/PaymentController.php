@@ -17,6 +17,8 @@ use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Models\Subscription\Price;
+use Modules\Laralite\Models\Ticket;
+use Modules\Laralite\Models\TicketScans;
 use Modules\Laralite\Services\OrderService;
 use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
@@ -180,6 +182,7 @@ class PaymentController extends Controller
             Log::error('Failed to subscribe customer to newsletter : ' . $e->getMessage(), $e->getTrace());
         }
 
+        $tickets = Ticket::where('order_id', $order->id)->first();
 
         if ($order->getAttributeValue('unique_id')) {
             return (new JsonResponse([
@@ -190,7 +193,7 @@ class PaymentController extends Controller
                     'stripe_result' => $result,
                     'order' => $order,
                     'currency' => $currency,
-                    'tickets' => $order->tickets,
+                    'tickets' => $tickets,
                     'subscribed' => $customer['newsletter_subscription']['email'],
                 ],
             ]))->setStatusCode(Response::HTTP_OK);
@@ -311,7 +314,7 @@ class PaymentController extends Controller
             Log::error('Failed to subscribe customer to newsletter : ' . $e->getMessage(), $e->getTrace());
         }
 
-
+        $tickets = Ticket::where('order_id', $order->id)->first();
 
         if ($order->getAttributeValue('unique_id')) {
             return (new JsonResponse([
@@ -322,7 +325,7 @@ class PaymentController extends Controller
                     'order' => $order,
                     'credit' => $creditTransaction,
                     'currency' => $currency,
-                    'tickets' => $order->tickets,
+                    'tickets' => $tickets,
                     'subscribed' => $customer['newsletter_subscription']['email'],
                 ],
             ]))->setStatusCode(Response::HTTP_OK);

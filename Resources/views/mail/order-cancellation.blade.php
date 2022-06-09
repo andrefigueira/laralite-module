@@ -7,7 +7,7 @@
                 <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailHeader" style="width:100%!important;background: #000; color: white;">
                     <tr>
                         <td align="center" valign="top">
-                            <img class="site-logo" src="https://trapmusicmuseum.us/images/trap-music-museum-logo.png" alt="" height="80">
+                            <img class="site-logo" src="{{env('APP_URL')}}/images/trap-music-museum-logo.png" alt="" height="80">
                         </td>
                     </tr>
                 </table>
