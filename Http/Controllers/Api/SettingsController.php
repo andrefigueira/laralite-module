@@ -47,14 +47,16 @@ class SettingsController extends Controller
 
         if($maintenanceActive) {
             // Create a new file
-            file_put_contents(App::storagePath() . '/framework/down', json_encode([
+            Storage::put(App::storagePath() . '/framework/down', json_encode([
                 "time" => 1643352441,
                 "message" => 'Site is Down',
                 "retry" => null,
                 "allowed" => [],
-           ]));
+            ]));
         } else {
-            unlink( App::storagePath() . '/framework/down');
+            if (Storage::exists(App::storagePath() . '/framework/down')) {
+                unlink( App::storagePath() . '/framework/down');
+            }
         }
 
         $settings = [
