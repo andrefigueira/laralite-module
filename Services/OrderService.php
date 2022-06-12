@@ -19,10 +19,20 @@ class OrderService
      */
     private $ticketService;
 
-    public function __construct(SettingsService $settingsService, TicketService $ticketService)
+    /**
+     * @var StripeService
+     */
+    private $stripeService;
+
+    public function __construct(
+        SettingsService $settingsService,
+        TicketService $ticketService,
+        StripeService $stripeService
+    )
     {
         $this->settingsService = $settingsService;
         $this->ticketService = $ticketService;
+        $this->stripeService = $stripeService;
     }
 
     /**
@@ -63,7 +73,18 @@ class OrderService
      */
     public function saveOrder($orderArray): ?Order
     {
+        /** @var Order $order */
         $order = Order::create($orderArray);
+
+        try {
+            $this->updateOrderPayment($order);
+        } catch (\Throwable $e) {
+            \Log::error(
+                'Failed to update order payment: ' . $e->getMessage(),
+                $e->getTrace()
+            );
+            //TODO create job to have order payment updated
+        }
 
         try {
             $this->sendOrderConfirmationEmail($order);
@@ -72,10 +93,29 @@ class OrderService
                 'Failed sending order confirmation email: ' . $e->getMessage(),
                 $e->getTrace()
             );
+            //TODO create job to have order confirmation sent
         }
 
 
         return $order;
+    }
+
+    private function updateOrderPayment(Order $order)
+    {
+        $paymentId = $order->payment_processor_result->id ?? null;
+        $payload = [
+            'metadata' => [
+                'order_id' => $order->unique_id,
+            ]
+        ];
+        /** @var Customer $customer */
+        $customer = $order->customer()->firstOrFail();
+
+        if ($extCustomerId = $customer->getStripeCustomerId()) {
+            $payload['customer'] = $extCustomerId;
+        }
+
+        $this->stripeService->updatePaymentIntent($paymentId, $payload);
     }
 
     /**

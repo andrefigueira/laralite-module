@@ -146,15 +146,10 @@ class SettingsController extends Controller
                 'code' => $request->get('code'),
             ]);
 
-            // Access the connected account id in the response
-            $connectedAccountId = $stripeResponse->stripe_user_id;
-
             $settingsValue->stripeAccountId = $stripeResponse->stripe_user_id;
             $settingsValue->stripeAccessToken = $stripeResponse->access_token;
             $settingsValue->stripeLiveAccount = $stripeResponse->livemode;
-//          $settingsValue->stripePublishKey = $stripeResponse->stripe_publishable_key;
             $settings->settings = json_encode($settingsValue);
-
             $settings->save();
 
             return Redirect::to('admin/settings');

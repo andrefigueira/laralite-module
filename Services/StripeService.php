@@ -7,7 +7,6 @@ use Modules\Laralite\Services\StripeService\Price;
 use Modules\Laralite\Services\StripeService\Product;
 use Modules\Laralite\Services\StripeService\Shared;
 use Stripe\Exception\ApiErrorException;
-use Stripe\PaymentMethod;
 use Stripe\StripeClient;
 
 class StripeService
@@ -46,6 +45,27 @@ class StripeService
     public function confirmPaymentIntent(string $id, $payload): StripeService\ApiResourceWrapper
     {
         return $this->getApiResourceWrapper($this->client->paymentIntents->confirm($id, $payload));
+    }
+
+    public function refund($id, $payload = []): StripeService\ApiResourceWrapper
+    {
+        $type = $this->getPaymentIdType($id);
+        $payload[$type] = $id;
+        return $this->getApiResourceWrapper($this->client->refunds->create($payload));
+    }
+
+    private function getPaymentIdType($id)
+    {
+        $paymentType = substr($id, 0, 3);
+
+        switch ($paymentType) {
+            case 'ch_':
+                return 'charge';
+            case 'pi_':
+                return 'payment_intent';
+            default:
+                throw new \Exception('invalid payment ID');
+        }
     }
 
     /**
@@ -95,11 +115,38 @@ class StripeService
      * @return StripeService\ApiResourceWrapper
      * @throws ApiErrorException
      */
+    public function getCustomer(string $id): StripeService\ApiResourceWrapper
+    {
+        return $this->getApiResourceWrapper($this->client->customers->retrieve($id));
+    }
+
+    /**
+     * @param string $id
+     * @return StripeService\ApiResourceWrapper
+     * @throws ApiErrorException
+     */
     public function getPaymentIntent(string $id): StripeService\ApiResourceWrapper
     {
         return $this->getApiResourceWrapper($this->client->paymentIntents->retrieve($id));
     }
 
+    /**
+     * @param string $id
+     * @param array $payload
+     * @return StripeService\ApiResourceWrapper
+     * @throws ApiErrorException
+     */
+    public function updatePaymentIntent(string $id, array $payload = []): StripeService\ApiResourceWrapper
+    {
+        return $this->getApiResourceWrapper($this->client->paymentIntents->update($id, $payload));
+    }
+
+    /**
+     * @param string $id
+     * @param null $params
+     * @return StripeService\ApiResourceWrapper
+     * @throws ApiErrorException
+     */
     public function getPaymentMethod(string $id, $params = null): StripeService\ApiResourceWrapper
     {
         return $this->getApiResourceWrapper($this->client->paymentMethods->retrieve($id, $params));

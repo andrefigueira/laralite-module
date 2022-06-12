@@ -96,4 +96,9 @@ class ApiResourceWrapper
             'country' => $this->get('card/country')
         ];
     }
+    
+    public function __toString()
+    {
+        return json_encode($this->toArray());
+    }
 }

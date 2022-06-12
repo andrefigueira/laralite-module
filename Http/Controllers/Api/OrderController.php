@@ -13,6 +13,7 @@ use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 use Modules\Laralite\Services\OrderService;
+use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Services\TicketService;
 use Modules\Laralite\Traits\ApiResponses;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,10 +34,20 @@ class OrderController extends Controller
      */
     private $orderService;
 
-    public function __construct(OrderService $orderService, TicketService $ticketService)
+    /**
+     * @var StripeService
+     */
+    private $stripeService;
+
+    public function __construct(
+        OrderService $orderService,
+        TicketService $ticketService,
+        StripeService $stripeService
+    )
     {
         $this->orderService = $orderService;
         $this->ticketService = $ticketService;
+        $this->stripeService = $stripeService;
     }
 
     public function get(Request $request)
@@ -84,7 +95,7 @@ class OrderController extends Controller
         if (!$orderId) {
             return response()->json([
                 'success' => 'false',
-                'message' => "Error: No order ID given"
+                'message' => "Error: No order ID given",
             ], 400);
         }
 
@@ -98,7 +109,7 @@ class OrderController extends Controller
         } else {
             return response()->json([
                 'success' => 'false',
-                'message' => $response['message']
+                'message' => $response['message'],
             ], 400);
         }
     }
@@ -112,33 +123,27 @@ class OrderController extends Controller
         if (!$paymentId) {
             return [
                 'success' => 'false',
-                'message' => "Error: Cannot locate paymentId from Stripe"
+                'message' => "Error: Cannot locate paymentId from Stripe",
             ];
         }
 
-        $paymentType = substr($paymentId, 0, 3);
-
-        switch ($paymentType) {
-            case 'ch_':
-                $type = 'charge';
-                break;
-            case 'pi_':
-                $type = 'payment_intent';
-                break;
-        }
-
         try {
-            $result = $this->issueRefund($type, $paymentId);
+            $result = $this->stripeService->refund(
+                $paymentId,
+                [
+                    'reverse_transfer' => true,
+                ]
+            );
             $settings = Settings::firstOrFail();
             $currency = json_decode($settings->settings, true)['currency'];
-            if ($result->status == 'succeeded') {
+            if ($result->get('status') === 'succeeded') {
                 $order->refunded = 1;
                 $order->save();
 
                 Mail::to($order->customer->email)->send(new OrderRefundDetails([
                     'order' => $order,
                     'customer' => $order->customer,
-                    'currency' => $currency
+                    'currency' => $currency,
                 ]));
             }
         } catch (\Stripe\Exception\InvalidRequestException $exception) {
@@ -156,27 +161,8 @@ class OrderController extends Controller
         return [
             'success' => true,
             'message' => 'Successfully refunded order',
-            'payment' => $result
+            'payment' => $result,
         ];
-    }
-
-    private function issueRefund($type, $paymentId)
-    {
-        // @todo: Load stripe key from DB
-        $settings = Settings::firstOrFail();
-
-        $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
-
-        // @todo: Load stripe key from .env
-        /*$stripeKey = 'sk_test_51HdwipCYDc7HSRjalZglpakY5as37lC76mOmho2RKGcqYhNf3IcJFi20PcIbPVV9HEXbX9QyZ7BRybYCI5FDI01t00CCj0k2yK';*/
-
-        $stripe = new StripeClient($stripeKey);
-
-        $result = $stripe->refunds->create([
-            $type => $paymentId,
-        ]);
-
-        return $result;
     }
 
     public function cancel(Request $request)
@@ -186,7 +172,7 @@ class OrderController extends Controller
         if (!$orderId) {
             return response()->json([
                 'success' => 'false',
-                'message' => "Error: No order ID given"
+                'message' => "Error: No order ID given",
             ], 400);
         }
 
@@ -196,7 +182,7 @@ class OrderController extends Controller
         $order->order_status = 'cancel';
         $order->save();
 
-        $status = $this->refundOrder($orderId);
+        $this->refundOrder($orderId);
         $settings = Settings::firstOrFail();
         $currency = json_decode($settings->settings, true)['currency'];
 
@@ -214,7 +200,7 @@ class OrderController extends Controller
         Mail::to($order->customer->email)->send(new OrderCancellation([
             'order' => $order,
             'customer' => $order->customer,
-            'currency' => $currency
+            'currency' => $currency,
         ]));
 
         return $this->success(
@@ -236,7 +222,7 @@ class OrderController extends Controller
             if (!$orderId) {
                 return response()->json([
                     'success' => 'false',
-                    'message' => "Error: No order ID given"
+                    'message' => "Error: No order ID given",
                 ], 400);
             }
 
@@ -250,7 +236,7 @@ class OrderController extends Controller
         } else {
             return response()->json([
                 'success' => 'false',
-                'message' => $response['message']
+                'message' => $response['message'],
             ], 400);
         }
     }
@@ -266,7 +252,7 @@ class OrderController extends Controller
         if (!$orderId) {
             return response()->json([
                 'success' => 'false',
-                'message' => "Error: No order ID given"
+                'message' => "Error: No order ID given",
             ], 400);
         }
 
@@ -294,7 +280,7 @@ class OrderController extends Controller
         if (!$orderId) {
             return response()->json([
                 'success' => 'false',
-                'message' => "Error: No order ID given"
+                'message' => "Error: No order ID given",
             ], 400);
         }
 

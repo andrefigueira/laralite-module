@@ -77,17 +77,7 @@ class PaymentController extends Controller
         $customerData = $request->get('customer');
         $sendSms = $customerData['sms'] ?? false;
         $settings = Settings::firstOrFail();
-        $stripeKey = json_decode($settings->settings, true)['stripeSecretKey'];
-        $stripe = new StripeClient($stripeKey);
-
-        if (!$stripe) {
-            return response()->json([
-                'success' => 'false',
-                'message' => "Error in Payment Processing. Try again later!",
-            ], 400);
-        }
-
-        $result = $stripe->paymentIntents->retrieve($token, []);
+        $result = $this->stripeService->getPaymentIntent($token)->toArray();
 
         if (!$result) {
             return response()->json([
@@ -130,6 +120,9 @@ class PaymentController extends Controller
                 $stripeCustomer = $this->stripeService->saveCustomer([
                     'name' => $customer->name,
                     'email' => $customer->email,
+                    'metadata' => [
+                        'customer_id' => $customer->unique_id,
+                    ]
                 ]);
                 $customer->setStripeCustomerId($stripeCustomer->get('id'));
             }
