@@ -4,6 +4,7 @@ namespace Modules\Laralite\Services\StripeService;
 
 use Stripe\ApiResource;
 use Stripe\StripeClient;
+use Stripe\StripeObject;
 
 trait Shared
 {
@@ -12,7 +13,7 @@ trait Shared
      */
     protected $client;
 
-    protected function getApiResourceWrapper(ApiResource $apiResource): ApiResourceWrapper
+    protected function getApiResourceWrapper(StripeObject $apiResource): ApiResourceWrapper
     {
         return new ApiResourceWrapper($apiResource);
     }

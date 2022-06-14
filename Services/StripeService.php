@@ -2,10 +2,13 @@
 
 namespace Modules\Laralite\Services;
 
+use Modules\Laralite\Services\StripeService\Charge;
+use Modules\Laralite\Services\StripeService\Connected;
 use Modules\Laralite\Services\StripeService\Customer;
 use Modules\Laralite\Services\StripeService\Price;
 use Modules\Laralite\Services\StripeService\Product;
 use Modules\Laralite\Services\StripeService\Shared;
+use Modules\Laralite\Services\StripeService\Transfer;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 
@@ -14,6 +17,9 @@ class StripeService
     use Price;
     use Customer;
     use Product;
+    use Transfer;
+    use Connected;
+    use Charge;
     use Shared;
 
     /**
@@ -28,12 +34,13 @@ class StripeService
 
     /**
      * @param array $payload
+     * @param array|null $options
      * @return StripeService\ApiResourceWrapper
      * @throws ApiErrorException
      */
-    public function createPaymentIntent(array $payload): StripeService\ApiResourceWrapper
+    public function createPaymentIntent(array $payload, ?array $options = null): StripeService\ApiResourceWrapper
     {
-        return $this->getApiResourceWrapper($this->client->paymentIntents->create($payload));
+        return $this->getApiResourceWrapper($this->client->paymentIntents->create($payload, $options));
     }
 
     /**

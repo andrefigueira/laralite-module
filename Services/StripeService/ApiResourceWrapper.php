@@ -8,18 +8,19 @@ use Modules\Laralite\Exceptions\AppException;
 use Stripe\ApiResource;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
+use Stripe\StripeObject;
 use Stripe\Subscription;
 
 class ApiResourceWrapper
 {
     protected $apiResource;
 
-    public function __construct(ApiResource $apiResource)
+    public function __construct(StripeObject $apiResource)
     {
         $this->apiResource = $apiResource;
     }
 
-    public function getApiResource(): ApiResource
+    public function getApiResource(): StripeObject
     {
         return $this->apiResource;
     }
@@ -96,7 +97,7 @@ class ApiResourceWrapper
             'country' => $this->get('card/country')
         ];
     }
-    
+
     public function __toString()
     {
         return json_encode($this->toArray());

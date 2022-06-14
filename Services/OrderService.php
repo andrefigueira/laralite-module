@@ -100,22 +100,51 @@ class OrderService
         return $order;
     }
 
-    private function updateOrderPayment(Order $order)
+    private function updateOrderPayment(Order $order): void
     {
         $paymentId = $order->payment_processor_result->id ?? null;
         $payload = [
             'metadata' => [
                 'order_id' => $order->unique_id,
-            ]
+                'description' => 'Order ID : ' . $order->unique_id
+            ],
         ];
         /** @var Customer $customer */
         $customer = $order->customer()->firstOrFail();
+        $payload['metadata']['customerId'] = $customer->unique_id;
+        $payload['metadata']['customerEmail'] = $customer->email;
+        $payload['metadata']['customerName'] = $customer->name;
+        $data = [
+            'order' => $order->toArray(),
+            'customer' => $customer->toArray(),
+        ];
 
         if ($extCustomerId = $customer->getStripeCustomerId()) {
             $payload['customer'] = $extCustomerId;
         }
 
+        if (null === $paymentId) {
+            \Log::alert('cannot update payment with order meta data payment ID is null', $data);
+            return;
+        }
+
         $this->stripeService->updatePaymentIntent($paymentId, $payload);
+
+        try {
+
+            $this->stripeService->updateConnectedPayment(
+                json_decode(json_encode($order->payment_processor_result), true),
+                [
+                    'metadata' => $payload['metadata'],
+                ]
+            );
+        } catch (\Throwable $e) {
+            \Log::error(
+                'Failed to update stripe connected payment with meta data: ' . $e->getMessage(),
+                $e->getTrace()
+            );
+            //TODO create job to have connected payment updated
+        }
     }
 
     /**
@@ -135,7 +164,7 @@ class OrderService
             'order' => $order,
             'customer' => $customer,
             'orderAssets' => $orderAssets,
-            'currency' =>  $this->settingsService->getCurrency()
+            'currency' => $this->settingsService->getCurrency(),
         ]));
     }
 }
