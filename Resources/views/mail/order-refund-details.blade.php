@@ -35,16 +35,18 @@
                         <td>SKU</td>
                         <td>Quantity</td>
                         <td>Price</td>
+                        <td>Tax & Fee</td>
                     </tr>
                     @foreach($form['order']->basket->products as $product)
                         <tr>
                             <td align="left" width="75%">{{ $product->sku }}</td>
                             <td align="left" width="75%">&times;{{ $product->quantity }}</td>
                             <td align="left" width="75%" style="padding: 10px !important;">{{ $form['currency']['currency_symbol']  }} {{ $product->price }}</td>
+                            <td align="left" width="75%" style="padding: 10px !important;">{{ $form['currency']['currency_symbol']  }} {{ number_format(($form['order']->basket->subtotals[0]->taxAmount + $form['order']->basket->subtotals[0]->serviceFee), 2) }}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="5" align="right">Subtotal: {{ $form['currency']['currency_symbol']  }} {{ $product->price * $product->quantity }}</td>
+                        <td colspan="5" align="right">Subtotal: {{ $form['currency']['currency_symbol']  }} {{ number_format((($product->price + $form['order']->basket->subtotals[0]->taxAmount + $form['order']->basket->subtotals[0]->serviceFee) * $product->quantity), 2) }}</td>
                     </tr>
                 </table>
             </td>

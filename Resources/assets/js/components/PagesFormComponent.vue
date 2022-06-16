@@ -52,7 +52,7 @@
                                             <page-components class="m-2" v-model="components" :template="template" :editing="isEditing"></page-components>
                                         </b-card-text>
                                     </b-tab>
-                                    <b-tab title="SEO">
+                                    <!--                                    <b-tab title="SEO">
                                         <b-card-text>
                                             <b-form-group id="page-title-group" label="Title" label-for="page-title">
                                                 <b-form-input
@@ -89,8 +89,7 @@
                                                 ></b-textarea>
                                             </b-form-group>
                                         </b-card-text>
-                                    </b-tab>
-
+                                    </b-tab>-->
                                     <b-tab title="Advanced">
                                         <b-card-text>
                                             <b-form-checkbox
@@ -110,7 +109,7 @@
                 </div><!-- End row -->
             </div><!-- End col -->
             <div class="col-md-3">
-                <div class="page-section p-4">
+              <div class="page-section p-4 mb-2">
                     <label for="primary-option">Page type</label>
                     <v-select class="mb-3" id="primary-option" label="title" v-model="primary" :options="primaryOptions" :clearable="false"></v-select>
 
@@ -123,8 +122,47 @@
                     <label for="template">Template</label>
                     <v-select class="mb-3" id="template" label="name" v-model="template" :options="templates" :clearable="false"></v-select>
 
-                    <button class="btn btn-primary" :disabled="saving" @click="save()">{{ button }}</button>
+<!--                    <button class="btn btn-primary" :disabled="saving" @click="save()">{{ button }}</button>-->
                 </div><!-- End content sidebar -->
+              <div class="page-section p-4">
+                <h5 class="mb-3">Meta Information</h5>
+                <b-form-group id="page-title-group" label="Title" label-for="page-title">
+                  <b-form-input
+                      id="page-title-input"
+                      required
+                      v-model="meta.title"
+                      placeholder="e.g. Homepage"
+                  ></b-form-input>
+                </b-form-group>
+
+                <b-form-group id="page-keywords-group" label="Keywords" label-for="page-keywords">
+                  <b-form-input
+                      id="page-keywords-input"
+                      required
+                      v-model="meta.keywords"
+                      placeholder="e.g. trap,music,museum"
+                  ></b-form-input>
+                </b-form-group>
+
+                <b-form-group id="page-author-group" label="Author" label-for="page-author">
+                  <b-form-input
+                      id="page-author-input"
+                      required
+                      v-model="meta.author"
+                      placeholder="e.g. Andre Figueira"
+                  ></b-form-input>
+                </b-form-group>
+
+                <b-form-group id="page-description-group" label="Description" label-for="page-description">
+                  <b-textarea
+                      id="page-description-input"
+                      required
+                      v-model="meta.description"
+                  ></b-textarea>
+                </b-form-group>
+
+                <button class="btn btn-primary" :disabled="saving" @click="save()">{{ button }}</button>
+              </div>
             </div><!-- End col -->
         </div><!-- End row -->
     </div>
