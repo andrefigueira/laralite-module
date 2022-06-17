@@ -1,13 +1,11 @@
 <template>
   <div class="mt-4">
-    <nav>
       <div class="nav nav-tabs mt-2" id="nav-tab" role="tablist">
-        <button class="nav-link active" id="nav-home-tab" @click="show('Section1')" :style="currentTab === 'Section1' ? 'background-color: #ffffff' :'background-color: #F0F0F0'">Sales</button>
-        <button class="nav-link" id="nav-profile-tab" @click="show('Section2')" :style="currentTab === 'Section2' ? 'background-color: #ffffff': 'background-color: #F0F0F0'">Scanner Log</button>
+        <button class="nav-link active" id="nav-home-tab" @click="show('salesTab')" :style="currentTab === 'salesTab' ? 'background-color: #ffffff' :'background-color: #F0F0F0'">Sales</button>
+        <button class="nav-link" id="nav-profile-tab" @click="show('scannerTab')" :style="currentTab === 'scannerTab' ? 'background-color: #ffffff': 'background-color: #F0F0F0'">Scanner Log</button>
       </div>
-    </nav>
     <div class="tab-content" id="nav-tabContent">
-      <div v-if="currentTab === 'Section1'" id="Section1">
+      <div v-if="currentTab === 'salesTab'" id="salesTab">
           <div class="page-section p-4">
             <div class="row">
               <div class="col-md-6 col-sm-12">
@@ -42,7 +40,7 @@
             <chart-component class="row" type="sales" label="Sales" :startDate="startDate" :endDate="endDate" key="first"></chart-component>
           </div>
       </div>
-      <div v-if="currentTab === 'Section2'" id="Section2">
+      <div v-if="currentTab === 'scannerTab'" id="scannerTab">
           <div class="page-section p-4">
             <div class="row">
               <div class="col-md-6 col-sm-12">
@@ -91,7 +89,7 @@ export default {
       endDate: '',
       logStartDate: '',
       logEndDate: '',
-      currentTab: 'Section1'
+      currentTab: 'salesTab'
     }
   },
   methods: {

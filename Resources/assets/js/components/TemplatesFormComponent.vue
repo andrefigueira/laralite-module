@@ -59,7 +59,7 @@
                             </div>
                             <div class="col-md-6">
                               <b-form-group id="template-description-group" label="Template description" label-for="template-description">
-                                <b-form-textarea id="template-name-input" v-model="description" rows="8" required></b-form-textarea>
+                                <b-form-textarea id="template-name-input" v-model="description" rows="5" required></b-form-textarea>
                               </b-form-group>
                             </div>
                           </div>

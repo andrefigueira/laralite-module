@@ -84,7 +84,7 @@
     .image-upload-wrapper {
         border: 2px dashed #CCC;
         text-align: center;
-        padding: 4rem 0;
+        padding: 2rem 0 !important;
         margin: 0 0 1rem 0;
         cursor: pointer;
         .icon {
@@ -102,7 +102,7 @@
 
     .uploaded-image {
         position: relative;
-        padding: 4rem 0;
+        padding: 1rem 0 !important;
         background: #333;
         overflow: hidden;
         vertical-align: middle;
