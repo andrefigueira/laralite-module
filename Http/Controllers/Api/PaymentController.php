@@ -489,4 +489,19 @@ class PaymentController extends Controller
 
         return $intent;
     }
+
+    public function validateBasket(Request $request): array
+    {
+        $basket = $request->get('basket', []);
+
+        if (empty($basket)) {
+            return $basket;
+        }
+
+        $this->basketService->analyzeAndCorrectBasket($basket);
+
+        return [
+            'basket' => $basket
+        ];
+    }
 }
