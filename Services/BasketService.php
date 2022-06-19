@@ -35,7 +35,8 @@ class BasketService
         $total = 0;
 
         foreach ($products as $key => $product) {
-            $productModel = Product::findOrFail($product['id']);
+            //TODO this query need to be updated to check if product is also active
+            $productModel = Product::find($product['id']);
             $price = $productModel->getVariantPrice($product['sku']);
 
             if ($price === 0) {
