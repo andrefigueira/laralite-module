@@ -6,6 +6,7 @@ namespace Modules\Laralite\Services\StripeService;
 
 use Modules\Laralite\Exceptions\AppException;
 use Stripe\ApiResource;
+use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
 use Stripe\StripeObject;
@@ -63,6 +64,21 @@ class ApiResourceWrapper
             throw new AppException('Invalid method call!');
         }
         return ($this->apiResource->status === PaymentIntent::STATUS_SUCCEEDED);
+    }
+
+    /**
+     * @return $this
+     * @throws AppException
+     * @throws ApiErrorException
+     */
+    public function confirmPayment(): ApiResourceWrapper
+    {
+        if (!$this->apiResource instanceof PaymentIntent) {
+            throw new AppException('Invalid method call!');
+        }
+        $this->apiResource->confirm();
+
+        return $this;
     }
 
     /**

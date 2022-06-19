@@ -114,6 +114,14 @@ class OrderService
         $payload['metadata']['customerId'] = $customer->unique_id;
         $payload['metadata']['customerEmail'] = $customer->email;
         $payload['metadata']['customerName'] = $customer->name;
+        $payload['metadata']['taxAmount'] = (float)round($order->basket->taxAmount, 2);
+        $payload['metadata']['serviceFee'] = (float)round($order->basket->serviceFee, 2);
+        if ($order->basket->discountAmount) {
+            $payload['metadata']['discountAmount'] = (float)round($order->basket->discountAmount, 2);
+            $payload['metadata']['discountCode'] = !empty($order->basket->discounts)
+                ? implode(',', array_column($order->basket->discounts, 'code'))
+                : '' ;
+        }
         $data = [
             'order' => $order->toArray(),
             'customer' => $customer->toArray(),
@@ -128,6 +136,7 @@ class OrderService
             return;
         }
 
+        \Log::info('Stripe update payment intent payload: ', $payload);
         $this->stripeService->updatePaymentIntent($paymentId, $payload);
 
         try {
@@ -143,6 +152,7 @@ class OrderService
                 'Failed to update stripe connected payment with meta data: ' . $e->getMessage(),
                 $e->getTrace()
             );
+            \Log::info('Stripe payload: ', $payload);
             //TODO create job to have connected payment updated
         }
     }

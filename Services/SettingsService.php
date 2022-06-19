@@ -43,4 +43,22 @@ class SettingsService
         }
         return [];
     }
+
+    public function getTaxAmount(): int
+    {
+        $settings = $this->getSettingsArray();
+        if (!empty($settings['taxActive']) && !empty($settings['taxAmount'])) {
+            return $settings['taxAmount'];
+        }
+        return 0;
+    }
+
+    public function getServiceFeeAmount(): int
+    {
+        $settings = $this->getSettingsArray();
+        if (!empty($settings['serviceFeeActive']) && !empty($settings['serviceFeeAmount'])) {
+            return $settings['serviceFeeAmount'];
+        }
+        return 0;
+    }
 }

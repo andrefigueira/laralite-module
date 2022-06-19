@@ -2,8 +2,14 @@
 
 namespace Modules\Laralite\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Discount
+ * @package Modules\Laralite\Models
+ * @mixin Eloquent
+ */
 class Discount extends Model
 {
     protected $fillable = [
@@ -23,4 +29,18 @@ class Discount extends Model
         'id',
         'name'
     ];
+
+    public function applyDiscount(float $total): float
+    {
+        $type = $this->getAttributeValue('type');
+        $value = $this->getAttributeValue('value');
+
+        switch($type) {
+            case 'percent':
+                $discount = ($total * $value) / 100;
+                return  $total - $discount;
+            case 'fixed':
+                return $total - $value;
+        }
+    }
 }

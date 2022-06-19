@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Log;
+use Modules\Laralite\Exceptions\AppException;
 use Modules\Laralite\Http\Requests\PaymentRequest;
 use Modules\Laralite\Models\CreditTransactions;
 use Modules\Laralite\Models\Customer;
@@ -19,6 +20,7 @@ use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Models\Ticket;
 use Modules\Laralite\Models\TicketScans;
+use Modules\Laralite\Services\BasketService;
 use Modules\Laralite\Services\OrderService;
 use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
@@ -49,20 +51,28 @@ class PaymentController extends Controller
     private $settingsService;
 
     /**
+     * @var BasketService
+     */
+    private $basketService;
+
+    /**
      * PaymentController constructor.
      * @param OrderService $orderService
      * @param StripeService $stripeService
      * @param SettingsService $settingsService
+     * @param BasketService $basketService
      */
     public function __construct(
         OrderService $orderService,
         StripeService $stripeService,
-        SettingsService $settingsService
+        SettingsService $settingsService,
+        BasketService $basketService
     )
     {
         $this->settingsService = $settingsService;
         $this->orderService = $orderService;
         $this->stripeService = $stripeService;
+        $this->basketService = $basketService;
     }
 
     /**
@@ -72,18 +82,48 @@ class PaymentController extends Controller
      */
     public function processPayment(PaymentRequest $request): JsonResponse
     {
-        $token = $request->get('token');
-        $basket = $request->get('basket');
-        $customerData = $request->get('customer');
-        $sendSms = $customerData['sms'] ?? false;
-        $settings = Settings::firstOrFail();
-        $result = $this->stripeService->getPaymentIntent($token)->toArray();
+        $paymentMethod = $request->get('paymentMethod');
+        $paymentIntent = $request->get('paymentIntent');
 
-        if (!$result) {
+        if ($paymentIntent) {
+            $sessionData = $this->getSessionPaymentData($request);
+            $basket = $sessionData['basket'];
+            $customerData = $sessionData['customer'];
+            $intent = $this->stripeService->getPaymentIntent($paymentIntent);
+            try {
+                $intent->confirmPayment();
+            } catch (\Throwable $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "An error occurred during payment confirmation process",
+                ], 400);
+            }
+        } else {
+            $basket = $request->get('basket');
+            $customerData = $request->get('customer');
+            $intent = $this->createPaymentIntent($paymentMethod, $basket);
+        }
+
+        if (!$intent->get('client_secret')) {
             return response()->json([
                 'success' => false,
                 'message' => "Error! PLease try again later.",
             ], 400);
+        }
+
+        $token = $intent->get('client_secret');
+        if ($intent->get('status') === 'requires_action' && $intent->get('next_action/type') === 'use_stripe_sdk') {
+            $this->setSessionPaymentData(
+                $request,
+                [
+                    'basket' => $basket,
+                    'customer' => $customerData,
+                ]
+            );
+            return response()->json([
+                'intent_secret' => $token,
+                'requires_action' => true,
+            ], 200);
         }
 
         Log::info('Processing payment for basket', [
@@ -92,8 +132,9 @@ class PaymentController extends Controller
             'customer' => $customerData,
         ]);
 
+        $sendSms = $customerData['sms'] ?? false;
         $customerEmail = $customerData['email'];
-        $currency = json_decode($settings->settings, true)['currency'];
+        $currency = $this->settingsService->getCurrency();
         /** @var Customer $customer */
         $customer = Customer::where([
             'email' => $customerEmail,
@@ -122,7 +163,7 @@ class PaymentController extends Controller
                     'email' => $customer->email,
                     'metadata' => [
                         'customer_id' => $customer->unique_id,
-                    ]
+                    ],
                 ]);
                 $customer->setStripeCustomerId($stripeCustomer->get('id'));
             }
@@ -144,7 +185,7 @@ class PaymentController extends Controller
             'status' => 1,
             'order_status' => "complete",
             'refunded' => 0,
-            'payment_processor_result' => $result,
+            'payment_processor_result' => $intent->toArray(),
         ]);
 
         $mobile = $customerData['numbers']['mobile'] ?? null;
@@ -183,7 +224,7 @@ class PaymentController extends Controller
                 'message' => 'Processed payment',
                 'data' => [
                     'basket' => $basket,
-                    'stripe_result' => $result,
+                    'stripe_result' => $intent->toArray(),
                     'order' => $order,
                     'currency' => $currency,
                     'tickets' => $tickets,
@@ -196,6 +237,24 @@ class PaymentController extends Controller
                 'message' => "Error.",
             ], 400);
         }
+    }
+
+    /**
+     * @param Request $request
+     * @param array $data
+     */
+    private function setSessionPaymentData(Request $request, array $data)
+    {
+        $request->session()->put('paymentSession', $data);
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    private function getSessionPaymentData(Request $request): array
+    {
+        return $request->session()->get('paymentSession', []);
     }
 
     public function processCreditPayment(PaymentRequest $request): JsonResponse
@@ -263,16 +322,16 @@ class PaymentController extends Controller
         ]);
 
         $wallet = Wallet::where('customer_id', $customer->id)->first();
-        $basketProducts =$basket['products'];
-        $price = Arr::pluck($basketProducts,'price')[0];
+        $basketProducts = $basket['products'];
+        $price = Arr::pluck($basketProducts, 'price')[0];
 
         $creditTransaction = CreditTransactions::create(
-            array(
+            [
                 'order_id' => $order->id,
                 'customer_id' => $customer->id,
                 'wallet_id' => $wallet->id,
                 'amount' => $price,
-            )
+            ]
         );
 
         $walletUpdate = Wallet::where('id', $wallet->id)->first();
@@ -392,39 +451,42 @@ class PaymentController extends Controller
         return false;
     }
 
-    protected function intentSecret(Request $request)
+    protected function createPaymentIntent(string $paymentMethodId, array &$basket): StripeService\ApiResourceWrapper
     {
-        $amount = $request->get('amount');
-        $currency = $request->get('currency');
-
-        // Fees
+        $amount = $this->basketService->getBasketTotal($basket);
+        $totalAmount = (int)(round($amount, 2) * 100);
         $feeCollection = $this->settingsService->isFeeCollectionActive();
-        $totalAmount = $amount * 100;
+        $currencySettings = $this->settingsService->getCurrency() ?: [];
+        $feeCollectionAmount = $feeCollection
+            ? (int)(round(($feeCollection['feeAmount'] / 100) * $totalAmount))
+            : 0;
 
-        // @todo: This is now using the PaymentIntents API
-        // Customer details are not being sent to stripe here, we need to do add additional details to the PI creation.
-        if ($feeCollection !== false) {
+        if ($feeCollectionAmount) {
             // Fees are enabled, so send fee amount to connected Stripe Account
             // `feeAmount` is the amount set in the settings
             // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
             $intent = $this->stripeService->createPaymentIntent([
+                'payment_method' => $paymentMethodId,
                 'amount' => $totalAmount,
-                'currency' => $currency,
-                'application_fee_amount' => round(($feeCollection['feeAmount'] / 100) * $totalAmount),
+                'currency' => strtolower($currencySettings['value']),
+                'confirmation_method' => 'manual',
+                'application_fee_amount' => $feeCollectionAmount,
                 'transfer_data' => [
                     'destination' => $feeCollection['connectedAccountId'],
                 ],
                 'on_behalf_of' => $feeCollection['connectedAccountId'],
+                'confirm' => true,
             ]);
         } else {
             $intent = $this->stripeService->createPaymentIntent([
+                'payment_method' => $paymentMethodId,
                 'amount' => $totalAmount,
-                'currency' => $currency,
+                'confirmation_method' => 'manual',
+                'currency' => $currencySettings['value'],
+                'confirm' => true,
             ]);
         }
 
-        return json_encode([
-            'client_secret' => $intent->get('client_secret')
-        ]);
+        return $intent;
     }
 }

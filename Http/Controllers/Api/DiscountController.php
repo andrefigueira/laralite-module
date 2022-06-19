@@ -4,6 +4,8 @@ namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -48,7 +50,7 @@ class DiscountController extends Controller
 
     /**
      * @param $code
-     * @return JsonResponse
+     * @return Builder|Model|JsonResponse|Discount
      */
     public function verify($code)
     {

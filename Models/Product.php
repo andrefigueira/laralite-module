@@ -2,8 +2,14 @@
 
 namespace Modules\Laralite\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Product
+ * @package Modules\Laralite\Models
+ * @mixin Eloquent
+ */
 class Product extends Model
 {
     protected $fillable = [
@@ -28,4 +34,37 @@ class Product extends Model
     {
         return $this->hasOne(ProductCategory::class, 'id', 'category_id');
     }
+
+    public function getVariantPrice(string $sku): float
+    {
+        $variant = $this->getVariantBySku($sku);
+
+        if (null === $variant) {
+            return 0.00;
+        }
+
+        $onSale = $variant['pricing']['on_sale'] ?? false;
+        $standardPrice = $variant['pricing']['price'];
+        $salePrice = $variant['pricing']['sale_price'];
+
+        return $onSale ? (float)$salePrice : (float)$standardPrice;
+    }
+
+    public function getVariantBySku(string $sku): ?array
+    {
+        if (!is_array($this->variants)) {
+            return null;
+        }
+
+        $foundVariant = null;
+        foreach ($this->variants as $variant) {
+            $currentSku = $variant['sku'] ?? '';
+            if ($sku === $currentSku) {
+                $foundVariant = $variant;
+            }
+        }
+
+        return $foundVariant;
+    }
+
 }

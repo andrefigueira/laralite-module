@@ -225,18 +225,16 @@ class TicketService
             /** @var Ticket $ticket */
             $ticket = Ticket::where('unique_id', '=', $uuid)->firstOrFail();
         } catch (\Throwable $exception) {
-            Log::critical('Failed to load ticket by uuid: ' . $uuid);
+            \Log::critical('Failed to load ticket by uuid: ' . $uuid);
             abort(404);
         }
 
         $product = Product::whereJsonContains('variants', ['sku' => $ticket->sku])->firstOrFail();
-
         $productName = $product->name;
         $ticketUuid = $ticket->unique_id;
         $ticketQrCode = $ticket->ticket->image;
         $ticketAdmitQuantity = $ticket->admit_quantity ?? 1;
         $confirmation_code = $ticket->order->confirmation_code;
-
 
         $products = $ticket->order->basket->products;
         $ticketPrice = 0;
