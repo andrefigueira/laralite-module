@@ -23,10 +23,10 @@ class PaymentRequest extends FormRequest
     {
        // dd($this->input('customer.register'));
         return [
-            'customer.email' => 'required|email',
-            'customer.name' => 'required|max:255',
+            'customer.email' => 'required_without:paymentIntent|email',
+            'customer.name' => 'required_without:paymentIntent|max:255',
             'customer.password' => 'nullable|min:8|max:20',
-            'customer.password_confirm' => 'exclude_if:customer.register,false|required|same:customer.password',
+            'customer.password_confirm' => 'exclude_if:customer.register,false|required_without:paymentIntent|same:customer.password',
             'customer.newsletter_subscription' => 'array:email,sms,phone',
             'customer.numbers' => 'array:mobile'
         ];

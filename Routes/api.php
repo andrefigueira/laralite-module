@@ -118,7 +118,6 @@ Route::group(['middleware'=>'auth:api'], static function () {
 //    Route::post('/form', 'Api\FormController@submit');
 });
 
-Route::post('/intent-secret', 'Api\PaymentController@intentSecret');
 // need to figure out a way to protect this route
 Route::get('/stripe-connect', 'Api\SettingsController@stripeConnect');
 
@@ -126,7 +125,7 @@ Route::get('/stripe-connect', 'Api\SettingsController@stripeConnect');
 Route::get('/product-list', 'Api\ProductController@getProducts');
 
 Route::get('/product/load/url/{url}', 'Api\ProductController@getByUrl');
-Route::post('/process-payment', 'Api\PaymentController@processPayment');
+
 Route::post('/process-credit-payment', 'Api\PaymentController@processCreditPayment');
 Route::get('/discount/verify/{code}', 'Api\DiscountController@verify');
 

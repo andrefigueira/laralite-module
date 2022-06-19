@@ -120,7 +120,7 @@ Route::group(['middleware' => 'auth:customers'], function () {
 });
 
 Route::post('/payment/webhook', 'SubscriptionPaymentController@webhook');
-
+Route::post('/process-payment', 'Api\PaymentController@processPayment');
 
 
 Route::get('/ticket/view/{uuid}', 'TicketController@view');
