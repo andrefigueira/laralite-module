@@ -30,17 +30,16 @@ class Discount extends Model
         'name'
     ];
 
-    public function applyDiscount(float $total): float
+    public function getDiscount(float $total): float
     {
         $type = $this->getAttributeValue('type');
         $value = $this->getAttributeValue('value');
 
         switch($type) {
             case 'percent':
-                $discount = ($total * $value) / 100;
-                return  $total - $discount;
+                return ($total * $value) / 100;
             case 'fixed':
-                return $total - $value;
+                return $value;
         }
     }
 }
