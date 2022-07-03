@@ -46,12 +46,21 @@
             </div>
             <div class="col-md-6">
               <b-form-group id="discount-value-group" label="Discount value" label-for="discount-value">
-                <b-form-input
+                <b-form-input v-if="this.discountType === 'percent'"
                     id="discount-value-input"
                     required
                     type="number"
+                    max="100"
+                    min="1"
                     v-model="value"
-                    placeholder="Enter discount value"
+                    placeholder="Enter percentage value"
+                ></b-form-input>
+                <b-form-input v-else-if="this.discountType === 'fixed'"
+                              id="discount-value-input"
+                              required
+                              type="number"
+                              v-model="value"
+                              placeholder="Enter discount value"
                 ></b-form-input>
               </b-form-group>
             </div>
@@ -131,12 +140,6 @@ export default {
     }
   },
   computed: {
-    endDateTime: function () {
-      const date = this.endDate;
-      const time = date && !this.endTime ? '00:00:00' : this.endTime;
-      const dateTime = date + ' ' + time;
-      return dateTime.trim();
-    },
     button() {
       if (this.type === 'create') {
         return 'Create';
@@ -161,7 +164,14 @@ export default {
       }
 
       return method;
-    }
+    },
+    discountValue() {
+      if (!this.value) {
+        return  this.discountType !== 'fixed' ? 0 : 0.00;
+      }
+
+      return this.discountType !== 'fixed' ? this.value : parseFloat((this.value / 100)).toFixed(2);
+    },
   },
   methods: {
     goBack() {
@@ -174,12 +184,26 @@ export default {
         this.code = this.discount.code;
         this.discountType = this.discount.type;
         this.value = this.discount.value;
+        this.value = this.discountValue;
         this.endDate = this.discount.end_date;
         if (this.discount.end_date) {
           let date = new Date(this.discount.end_date);
-          this.endTime = date.getHours()  + ':' +  date.getMinutes() + ':' + date.getSeconds();
+
+          this.endDate = date.getFullYear() + '-' +
+              String(date.getMonth()).padStart(2,0) +
+              '-' + String(date.getDay()).padStart(2,0);
+          this.endTime = String(date.getHours()).padStart(2,0)  + ':' +
+              String(date.getMinutes()).padStart(2,0) + ':' +
+              String(date.getSeconds()).padStart(2,0);
         }
       }
+    },
+    endDateTime: function () {
+
+      const date = this.endDate;
+      const time = date && !this.endTime ? '00:00:00' : this.endTime;
+      const dateTime = date + ' ' + time;
+      return dateTime.trim();
     },
     save() {
       this.saving = true;
@@ -192,7 +216,7 @@ export default {
           code: this.code,
           type: this.discountType,
           value: this.value,
-          end_date: this.endDateTime
+          end_date: this.endDateTime(),
         }
       }, {withCredentials: true}).then(response => {
         this.saving = false;
@@ -222,7 +246,6 @@ export default {
 
         if (error.response.status === 422) {
           console.log('Validation failed');
-
           this.alertShow = true;
           this.alertType = 'danger';
           this.alertMessage = helpers.createErrorsList(error.response.data.errors);

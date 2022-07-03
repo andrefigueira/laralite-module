@@ -25,26 +25,28 @@ class OrderConfirmation extends Mailable
     public function __construct(array $form)
     {
         $this->form = $form;
-        $this->from('noreply@trapmusicmuseum.us');
-        $this->replyTo($form['customer']->email);
-        $this->subject('Trap Music Museum - Order Confirmation');
-
-        if (!empty($form['orderAssets'])) {
-            foreach ($form['orderAssets'] as $ticket) {
-                 $this->attachData(TicketService::generateTicketView($ticket['unique_id']), 'ticket-' . $ticket['unique_id'] . '.pdf', [
-                     'mime' => 'application/pdf',
-                 ]);
-            }
-        }
     }
 
     /**
      * Build the message.
      *
+     * @param TicketService $ticketService
      * @return $this
      */
-    public function build()
+    public function build(TicketService $ticketService): OrderConfirmation
     {
+        $this->from('noreply@trapmusicmuseum.us');
+        $this->replyTo($this->form['customer']->email);
+        $this->subject('Trap Music Museum - Order Confirmation');
+
+        if (!empty($this->form['orderAssets'])) {
+            foreach ($this->form['orderAssets'] as $ticket) {
+                $this->attachData($ticketService->generateTicketView($ticket['unique_id']), 'ticket-' . $ticket['unique_id'] . '.pdf', [
+                    'mime' => 'application/pdf',
+                ]);
+            }
+        }
+
         return $this->view('laralite::mail.order-confirmation', [
             'form' => $this->form,
         ]);

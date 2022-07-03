@@ -185,7 +185,7 @@
               </template>
 
               <template #cell(price)="data">
-                ${{ (data.item.price) * data.item.quantity }}
+                ${{ helpers.priceFormat((data.item.price) * data.item.quantity) }}
               </template>
 
               <template #cell(quantity)="data">
@@ -245,13 +245,19 @@
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Tax Applied</strong></td>
                   <td>
-                    {{ (order.basket.subtotals[0]) ? '$' + (order.basket.subtotals[0].taxAmount) : 'n/a' }}
+                    {{ (order.basket.subtotals[0]) ? '$' + helpers.priceFormat(order.basket.taxAmount) : 'n/a' }}
+                  </td>
+                </tr>
+                <tr v-if="order.basket.discountAmount > 0">
+                  <td><strong>Discount Amount</strong></td>
+                  <td>
+                    ({{ order.basket.discounts[0].code }}) {{  helpers.priceFormat(order.basket.discountAmount) }}
                   </td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Service Fee</strong></td>
                   <td>
-                    {{ (order.basket.subtotals[0]) ? (order.basket.subtotals[0].serviceFee) : 'n/a' }}
+                    {{ (order.basket.serviceFee) ? helpers.priceFormat(order.basket.serviceFee) : 'n/a' }}
                   </td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
@@ -348,6 +354,7 @@
 <script>
 import _ from 'lodash';
 import moment from "moment";
+import helpers from '../helpers';
 
 export default {
   mounted() {
@@ -363,6 +370,7 @@ export default {
   },
   data() {
     return {
+      helpers: helpers,
       _: _,
       orderConfirmationEmail: '',
       disabled: false,

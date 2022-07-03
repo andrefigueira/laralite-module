@@ -6,12 +6,12 @@ use Modules\Laralite\Services\Models\Model;
 
 class Item extends Model implements ItemInterface
 {
-    public function getPrice(): float
+    public function getPrice(): int
     {
-        return (float)$this->data['price'];
+        return (int)$this->data['price'];
     }
 
-    public function setPrice(float $price)
+    public function setPrice(int $price)
     {
         $this->offsetSet('price', $price);
     }
@@ -28,7 +28,7 @@ class Item extends Model implements ItemInterface
 
     public function getCreditPrice()
     {
-        return (float)$this->offsetGet('credit');
+        return (int)$this->offsetGet('credit');
     }
 
     public function getQuantity(): int

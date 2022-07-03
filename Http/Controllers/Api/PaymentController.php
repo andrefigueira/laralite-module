@@ -447,11 +447,10 @@ class PaymentController extends Controller
     {
         $this->basketService->analyzeAndCorrectBasket($basket);
         $amount = $basket->getTotal();
-        $totalAmount = (int)(round($amount, 2) * 100);
         $feeCollection = $this->settingsService->isFeeCollectionActive();
         $currencySettings = $this->settingsService->getCurrency() ?: [];
         $feeCollectionAmount = $feeCollection
-            ? (int)(round(($feeCollection['feeAmount'] / 100) * $totalAmount))
+            ? (int)(round(($feeCollection['feeAmount'] / 100) * $amount))
             : 0;
 
         if ($feeCollectionAmount) {
@@ -460,7 +459,7 @@ class PaymentController extends Controller
             // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
             $intent = $this->stripeService->createPaymentIntent([
                 'payment_method' => $paymentMethodId,
-                'amount' => $totalAmount,
+                'amount' => $amount,
                 'currency' => strtolower($currencySettings['value']),
                 'confirmation_method' => 'manual',
                 'application_fee_amount' => $feeCollectionAmount,
@@ -473,7 +472,7 @@ class PaymentController extends Controller
         } else {
             $intent = $this->stripeService->createPaymentIntent([
                 'payment_method' => $paymentMethodId,
-                'amount' => $totalAmount,
+                'amount' => $amount,
                 'confirmation_method' => 'manual',
                 'currency' => $currencySettings['value'],
                 'confirm' => true,

@@ -35,9 +35,6 @@
             <template v-slot:cell(name)="data">
               {{ data.item.name }}
             </template>
-            <template v-slot:cell(guard_name)="data">
-              {{ data.item.guard_name }}
-            </template>
             <template v-slot:cell(created_at)="data">
               {{ timeFormat(data.item.created_at) }}
             </template>
@@ -77,7 +74,6 @@
             return [
               { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
               { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
-              { key: 'price', label: 'Price', sortable: true, sortDirection: 'desc' },
               { key: 'created_at', label: 'Created At', sortable: true, sortDirection: 'desc'},
               { key: 'updated_at', label: 'Updated At', sortable: true, sortDirection: 'desc'},
               { key: 'actions', label: '' }

@@ -82,7 +82,7 @@
               <span>{{ data.item.customer.email }}</span>
             </template>
             <template v-slot:cell(basket)="data">
-              <span>{{ data.item.basket.subtotals[0].total}}/-</span>
+              <span>{{ helpers.priceFormat(data.item.basket.total) }}</span>
 <!--              <b-badge :class="data.item.tickets.validated ? 'badge-soft-primary' : 'badge-soft-danger'"><i class="fas fa-check-circle"></i>{{ data.item.tickets.validated ? 'Reedemed' : 'Pending' }}</b-badge>-->
             </template>
             <template v-slot:cell(status)="data">
@@ -111,6 +111,7 @@
 
 <script>
 import * as moment from "moment";
+import helpers from "../helpers";
 import AlertComponent from "./AlertComponent";
 
 export default {
@@ -139,6 +140,7 @@ export default {
   },
   data() {
     return {
+      helpers: helpers,
       visible: true,
       disabled: false,
       refundProcessing: false,

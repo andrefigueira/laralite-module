@@ -344,7 +344,7 @@
 import {FormWizard, TabContent} from 'vue-form-wizard'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import {bus} from '../admin'
-import helpers from '../helpers'
+import helpers from "../helpers";
 import {validationMixin} from 'vuelidate'
 import {required, minLength} from 'vuelidate/lib/validators'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -527,7 +527,13 @@ export default {
         this.form.active = this.product.active === 1;
         this.form.meta = this.product.meta;
         this.form.images = this.product.images;
-        this.form.variants = this.product.variants;
+        this.form.variants.pop();
+        for (let i=0; i<this.product.variants.length; i++) {
+          let variant = this.product.variants[i];
+          variant.pricing.price = helpers.priceFormat(variant.pricing.price);
+          variant.pricing.sale_price = helpers.priceFormat(variant.pricing.sale_price);
+          this.form.variants.push(variant);
+        }
       }
 
       let defaultProductCategoryValue = {

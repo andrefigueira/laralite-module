@@ -1,12 +1,8 @@
 <?php
 
-
 namespace Modules\Laralite\Http\Requests;
 
-
-use Illuminate\Foundation\Http\FormRequest;
-
-class AdminRequest extends FormRequest
+class AdminRequest extends FilterableRequest
 {
     /**
      * Determine if the user is authorized to make this request.

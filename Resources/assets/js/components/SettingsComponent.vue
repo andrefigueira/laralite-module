@@ -264,15 +264,18 @@
 
 <script>
 import {minLength, required} from "vuelidate/lib/validators";
+import helpers from "../helpers";
 
 export default {
   mounted() {
     console.log('Component mounted.');
+    this.helpers = helpers;
     this.load();
   },
   props: ['currentSettings'],
   data() {
     return {
+      helpers: null,
       saving: false,
       alertShow: false,
       alertType: 'primary',
@@ -459,7 +462,7 @@ export default {
         this.settings.serviceFeeActive = settingsObject.serviceFeeActive;
       }
       if (settingsObject.serviceFeeAmount) {
-        this.settings.serviceFeeAmount = settingsObject.serviceFeeAmount;
+        this.settings.serviceFeeAmount = this.helpers.priceFormat(settingsObject.serviceFeeAmount);
       }
       if (settingsObject.siteLogo) {
         this.settings.siteLogo = settingsObject.siteLogo;

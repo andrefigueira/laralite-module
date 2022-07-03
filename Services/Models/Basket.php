@@ -35,12 +35,12 @@ class Basket extends Model implements BasketInterface
     /**
      * @return int
      */
-    public function getTotal(): float
+    public function getTotal(): int
     {
-        return isset($this->data['total']) ? (float)$this->data['total'] : 0;
+        return isset($this->data['total']) ? (int)$this->data['total'] : 0;
     }
 
-    public function setTotal(float $total): Basket
+    public function setTotal(int $total): Basket
     {
         $this->data['total'] = $total;
         return $this;
@@ -63,12 +63,12 @@ class Basket extends Model implements BasketInterface
     /**
      * @return int
      */
-    public function getDiscountAmount(): float
+    public function getDiscountAmount(): int
     {
-        return isset($this->data['discountAmount']) ? (float)$this->data['discountAmount'] : 0.00;
+        return isset($this->data['discountAmount']) ? (int)$this->data['discountAmount'] : 0.00;
     }
 
-    public function setDiscountAmount(float $amount): Basket
+    public function setDiscountAmount(int $amount): Basket
     {
         $this->data['discountAmount'] = $amount;
         $this->data['total'] -= $amount;
@@ -78,12 +78,12 @@ class Basket extends Model implements BasketInterface
     /**
      * @return int
      */
-    public function getTaxAmount(): float
+    public function getTaxAmount(): int
     {
-        return isset($this->data['taxAmount']) ? (float)$this->data['taxAmount'] : 0;
+        return isset($this->data['taxAmount']) ? (int)$this->data['taxAmount'] : 0;
     }
 
-    public function setTaxAmount(float $amount): Basket
+    public function setTaxAmount(int $amount): Basket
     {
         $this->data['taxAmount'] = $amount;
         $this->data['total'] += $amount;
@@ -93,12 +93,12 @@ class Basket extends Model implements BasketInterface
     /**
      * @return int
      */
-    public function getServiceFee(): float
+    public function getServiceFee(): int
     {
         return isset($this->data['serviceFee']) ? (int)$this->data['serviceFee'] : 0;
     }
 
-    public function setServiceFee(float $serviceFee): Basket
+    public function setServiceFee(int $serviceFee): Basket
     {
         $this->data['serviceFee'] = $serviceFee;
         $this->data['total'] += $serviceFee;

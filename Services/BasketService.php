@@ -26,9 +26,9 @@ class BasketService
 
     /**
      * @param Basket $basket
-     * @return float
+     * @return int
      */
-    public function getBasketTotal(Basket $basket): float
+    public function getBasketTotal(Basket $basket): int
     {
         $this->analyzeAndCorrectBasket($basket);
         return $basket->getTotal();
@@ -75,7 +75,7 @@ class BasketService
             return $this;
         }
 
-        $this->basket->setTaxAmount((float)($this->basket->getTotal() * $tax) / 100);
+        $this->basket->setTaxAmount((int)($this->basket->getTotal() * $tax) / 100);
         return $this;
     }
 

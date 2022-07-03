@@ -13,7 +13,8 @@ trait ApiFailedValidation
         throw new HttpResponseException(response()->json([
             'success'   => false,
             'message'   => 'Validation errors',
-            'data'      => $validator->errors()
+            'data'      => $validator->errors(),
+            'errors'      => $validator->errors()
         ], Response::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

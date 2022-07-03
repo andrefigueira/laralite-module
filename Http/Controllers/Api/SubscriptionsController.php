@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Log;
+use Modules\Laralite\Http\Requests\SaveSubscription;
 use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\SubscriptionService;
@@ -65,22 +66,14 @@ class SubscriptionsController extends Controller
         }
     }
 
-    public function save(Request $request, $id = null): JsonResponse
+    public function save(SaveSubscription $request, $id = null): JsonResponse
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'description' => 'required',
-            'price' => 'required|numeric',
-            'default_credit_amount' => 'numeric',
-            'default_initial_credit_amount' => 'numeric',
-        ]);
-
         $subscriptionRequest = [
-            'name' => $request->get('name'),
-            'price' =>  $request->get('price'),
-            'description' =>  $request->get('description'),
-            'default_credit_amount' => $request->get('default_credit_amount'),
-            'default_initial_credit_amount' => $request->get('default_initial_credit_amount'),
+            'name' => $request->input('name'),
+            'price' =>  $request->input('price'),
+            'description' =>  $request->input('description'),
+            'default_credit_amount' => $request->input('default_credit_amount'),
+            'default_initial_credit_amount' => $request->input('default_initial_credit_amount'),
             'image' => '',
         ];
 

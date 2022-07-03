@@ -72,7 +72,7 @@ class SettingsController extends Controller
             'taxActive' => $taxActive,
             'taxAmount' => $taxAmount,
             'serviceFeeActive' => $serviceFeeActive,
-            'serviceFeeAmount' => $serviceFeeAmount,
+            'serviceFeeAmount' => $serviceFeeAmount ? bcmul($serviceFeeAmount, 100) : '0',
             'siteLogo'  => $siteLogo,
             'buttonPrimaryColor'    =>  $buttonPrimaryColor,
             'textPrimaryColor'     =>  $textPrimaryColor,

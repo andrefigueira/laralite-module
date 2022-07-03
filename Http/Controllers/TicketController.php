@@ -7,8 +7,18 @@ use Modules\Laralite\Services\TicketService;
 
 class TicketController extends Controller
 {
+    /**
+     * @var TicketService
+     */
+    private TicketService $ticketService;
+
+    public function __construct(TicketService $ticketService)
+    {
+        $this->ticketService = $ticketService;
+    }
+
     public function view($uuid)
     {
-        return TicketService::generateTicketView($uuid, 'HTML');
+        return $this->ticketService->generateTicketView($uuid, 'HTML');
     }
 }

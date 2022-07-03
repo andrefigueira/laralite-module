@@ -4,6 +4,7 @@ namespace Modules\Laralite\Http\Controllers\Api;
 
 use Log;
 use App\Http\Controllers\Controller;
+use Modules\Laralite\Http\Requests\SaveProductRequest;
 use Modules\Laralite\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -77,24 +78,19 @@ class ProductController extends Controller
         }
     }
 
-    public function create(Request $request)
+    public function create(SaveProductRequest $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'slug' => 'required',
-        ]);
-
         try {
             $product = Product::create([
-                'name' => $request->get('name'),
-                'slug' => $request->get('slug'),
-                'description' => $request->get('description'),
-                'active' =>$request->get('active'),
-                'credit_purchasable' => $request->get('credit_purchasable'),
-                'meta' => $request->get('meta'),
-                'images' => $request->get('images'),
-                'variants' => $request->get('variants'),
-                'category_id' => $request->get('category_id'),
+                'name' => $request->input('name'),
+                'slug' => $request->input('slug'),
+                'description' => $request->input('description'),
+                'active' =>$request->input('active'),
+                'credit_purchasable' => $request->input('credit_purchasable'),
+                'meta' => $request->input('meta'),
+                'images' => $request->input('images'),
+                'variants' => $request->input('variants'),
+                'category_id' => $request->input('category_id'),
             ]);
 
             Log::info('Created product', [
@@ -124,26 +120,21 @@ class ProductController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(SaveProductRequest $request, $id)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'slug' => 'required',
-        ]);
-
         try {
             $product = Product::where('id', '=', $id)->firstOrFail();
 
             $product->update([
-                'name' => $request->get('name'),
-                'slug' => $request->get('slug'),
-                'description' => $request->get('description'),
-                'active' => $request->get('active'),
-                'credit_purchasable' => $request->get('credit_purchasable'),
-                'meta' => $request->get('meta'),
-                'images' => $request->get('images'),
-                'variants' => $request->get('variants'),
-                'category_id' => $request->get('category_id'),
+                'name' => $request->input('name'),
+                'slug' => $request->input('slug'),
+                'description' => $request->input('description'),
+                'active' => $request->input('active'),
+                'credit_purchasable' => $request->input('credit_purchasable'),
+                'meta' => $request->input('meta'),
+                'images' => $request->input('images'),
+                'variants' => $request->input('variants'),
+                'category_id' => $request->input('category_id'),
             ]);
 
             Log::info('Updated product', [

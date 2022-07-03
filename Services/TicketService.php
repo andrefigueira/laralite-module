@@ -21,6 +21,16 @@ use Ramsey\Uuid\Uuid;
 class TicketService
 {
     /**
+     * @var SettingsService
+     */
+    private SettingsService $settingsService;
+
+    public function __construct(SettingsService $settingsService)
+    {
+        $this->settingsService = $settingsService;
+    }
+
+    /**
      * @param string|int|Ticket $idOrModel
      * @param array $relationships
      * @return Ticket|null
@@ -219,7 +229,7 @@ class TicketService
      * @param false $htmlView
      * @return Application|Factory|Response|View
      */
-    public static function generateTicketView(string $uuid, $htmlView = false)
+    public function generateTicketView(string $uuid, $htmlView = false)
     {
         try {
             /** @var Ticket $ticket */
@@ -238,12 +248,11 @@ class TicketService
 
         $products = $ticket->order->basket->products;
         $ticketPrice = 0;
-        $settings = Settings::firstOrFail();
-        $currency = json_decode($settings->settings, true)['currency']['currency_symbol'];
+        $currency = $this->settingsService->getCurrency()['currency_symbol'] ?? '';
 
         foreach ($products as $product) {
             if ($ticket->sku === $product->sku) {
-                $ticketPrice = $product->price;
+                $ticketPrice = ($product->price / 100);
                 break;
             }
         }

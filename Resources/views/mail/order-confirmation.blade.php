@@ -29,15 +29,21 @@
             <td align="center" valign="top">
 <!--                <h4 style="color: white; text-align: left !important;"><strong>Order Summary:</strong></h4>-->
                 @foreach($form['order']->basket->products as $product)
+                    @php
+                        $taxAmount = $form['order']->basket->taxAmount / 100;
+                        $serviceFee = $form['order']->basket->serviceFee / 100;
+                        $discountAmount = $form['order']->basket->discountAmount / 100;
+                        $productPrice = $product->price / 100;
+                    @endphp
                     <div style="color: white; text-align: center !important;">
                         <h2>Confirmation Code: {{ $form['order']->confirmation_code }}</h2>
                         <h2>Admit Quantity: {{ $product->quantity }}</h2>
-                        <h2>Ticket Price: {{ $form['currency']['currency_symbol']  }} {{ $product->price }}</h2>
-                        <h2>Tax & Fee: {{ $form['currency']['currency_symbol']  }} {{ number_format(($form['order']->basket->taxAmount + $form['order']->basket->serviceFee), 2) }}</h2>
-                        @if ($form['order']->basket->discountAmount)
-                        <h2>Discount Amount: {{ $form['currency']['currency_symbol']  }} {{ number_format(($form['order']->basket->taxAmount + $form['order']->basket->serviceFee), 2) }}</h2>
+                        <h2>Ticket Price: {{ $form['currency']['currency_symbol']  }} {{ $productPrice }}</h2>
+                        <h2>Tax & Fee: {{ $form['currency']['currency_symbol']  }} {{ number_format(($taxAmount + $serviceFee), 2) }}</h2>
+                        @if ($discountAmount)
+                        <h2>Discount Amount: {{ $form['currency']['currency_symbol']  }} {{ number_format(($discountAmount), 2) }}</h2>
                         @endif
-                        <h2>Total Price: {{ $form['currency']['currency_symbol'] }} {{ number_format((($product->price * $product->quantity) - $form['order']->basket->discountAmount) + ($form['order']->basket->taxAmount + $form['order']->basket->serviceFee), 2) }}</h2>
+                        <h2>Total Price: {{ $form['currency']['currency_symbol'] }} {{ (number_format((($productPrice * $product->quantity) - $discountAmount) + ($taxAmount + $serviceFee), 2)) }}</h2>
                         <h2>General Admission</h2>
                     </div>
                 @endforeach

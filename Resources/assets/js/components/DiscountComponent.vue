@@ -33,6 +33,9 @@
                     <template v-slot:cell(created_at)="data">
                         {{ timeFormat(data.item.created_at) }}
                     </template>
+                    <template #cell(value)="data">
+                      {{ data.item.type === 'fixed' ? helpers.priceFormat(data.item.value) :  data.item.value}}
+                    </template>
                     <template v-slot:cell(actions)="data">
                       <a v-b-tooltip:hover title="Delete" class="float-right mr-2" style="width: 10%; cursor: pointer" @click="doDelete(data.item)"><i class="ri-delete-bin-6-fill"></i></a>
                       <confirm-dialogue-component ref="confirmDialogue"></confirm-dialogue-component>
@@ -58,10 +61,14 @@
 
 <script>
     import * as moment from "moment";
+    import helpers from "../helpers";
     import ConfirmDialogueComponent from "./ConfirmDialogueComponent";
 
     export default {
       components: {ConfirmDialogueComponent},
+      beforeMount() {
+        this.helpers = helpers;
+      },
       computed: {
         filteredFields() {
           if(!this.visible) {
@@ -82,6 +89,7 @@
       },
       data() {
         return {
+          helpers: null,
           visible: true,
             // Alert settings
             alert: {

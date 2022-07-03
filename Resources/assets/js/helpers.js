@@ -5,7 +5,6 @@ export default {
             return v.toString(16);
         });
     },
-
     createErrorsList(errorsObject) {
         let errors = '<ul class="errors">';
         for (let [key, value] of Object.entries(errorsObject)) {
@@ -15,7 +14,6 @@ export default {
 
         return errors;
     },
-
     loadComponent(namespace, component) {
         Vue.component(component, () => import('./components/' + namespace + component + '.vue'));
     },
@@ -23,8 +21,10 @@ export default {
     isInView(elem) {
         return $(elem).offset().top - $(window).scrollTop() < $(elem).height() ;
     },
-
     goToTop() {
         window.scrollTo(0,0);
+    },
+    priceFormat(value) {
+        return parseFloat(value / 100).toFixed(2)
     }
 }

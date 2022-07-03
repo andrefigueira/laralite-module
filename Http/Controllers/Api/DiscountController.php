@@ -142,7 +142,6 @@ class DiscountController extends Controller
     {
         try {
             $discount = Discount::where('id', '=', $id)->firstOrFail();
-
             $discount->update($request->validated());
 
             Log::info('Updated discount', [
@@ -150,7 +149,7 @@ class DiscountController extends Controller
                 'discount' => $discount,
             ]);
 
-            return $discount;
+            return response()->json($discount);
         } catch (\Throwable $exception) {
             Log::error('Failed to update discount', [
                 'message' => $exception->getMessage(),

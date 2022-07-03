@@ -114,10 +114,10 @@ class OrderService
         $payload['metadata']['customerId'] = $customer->unique_id;
         $payload['metadata']['customerEmail'] = $customer->email;
         $payload['metadata']['customerName'] = $customer->name;
-        $payload['metadata']['taxAmount'] = (float)round($order->basket->taxAmount, 2);
-        $payload['metadata']['serviceFee'] = (float)round($order->basket->serviceFee, 2);
+        $payload['metadata']['taxAmount'] = $order->basket->taxAmount;
+        $payload['metadata']['serviceFee'] = $order->basket->serviceFee;
         if ($order->basket->discountAmount) {
-            $payload['metadata']['discountAmount'] = (float)round($order->basket->discountAmount, 2);
+            $payload['metadata']['discountAmount'] = $order->basket->discountAmount;
             $payload['metadata']['discountCode'] = !empty($order->basket->discounts)
                 ? implode(',', array_column($order->basket->discounts, 'code'))
                 : '' ;
