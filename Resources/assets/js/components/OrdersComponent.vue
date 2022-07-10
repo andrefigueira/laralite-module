@@ -70,6 +70,7 @@
             </template>
             <template v-slot:cell(confirmation_code)="data">
               <span>{{ data.item.confirmation_code }}</span>
+              <span>{{ data.item.customer.name }}</span>
               <b-badge class="badge-soft-danger" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
             </template>
             <template v-slot:cell(created_at)="data">
