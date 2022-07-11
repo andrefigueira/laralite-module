@@ -25,6 +25,6 @@ export default {
         window.scrollTo(0,0);
     },
     priceFormat(value) {
-        return parseFloat(value / 100).toFixed(2)
+        return parseFloat(value).toFixed(2)
     }
 }

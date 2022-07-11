@@ -83,12 +83,10 @@
               <span>{{ data.item.customer.email }}</span>
             </template>
             <template v-slot:cell(basket)="data">
-              <span>{{ helpers.priceFormat(data.item.basket.total) }}</span>
-<!--              <b-badge :class="data.item.tickets.validated ? 'badge-soft-primary' : 'badge-soft-danger'"><i class="fas fa-check-circle"></i>{{ data.item.tickets.validated ? 'Reedemed' : 'Pending' }}</b-badge>-->
+              <span>${{ helpers.priceFormat(data.item.basket.subtotals[0].total) }}</span>
             </template>
             <template v-slot:cell(status)="data">
-<!--              <span>{{ data.item.tickets.validated ? 'Reedemed' : 'Pending' }}</span>-->
-              <b-badge :class="data.item.tickets.status === 'REDEEMED' ? 'badge-soft-primary' : 'badge-soft-danger'"><i class="fas fa-check-circle"></i>{{ data.item.tickets.validated === 'REDEEMED' ? 'Reedemed' : 'Pending' }}</b-badge>
+              <b-badge :class="data.item.tickets[0].status === 'REDEEMED' ? 'badge-soft-primary' : 'badge-soft-danger'"><i class="fas fa-check-circle"></i>{{ data.item.tickets[0].status === 'REDEEMED' ? 'Reedemed' : 'Pending' }}</b-badge>
             </template>
             <template v-slot:cell(actions)="data">
               <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="btn btn-sm btn-primary float-right mr-3" style="font-size: 12px">View</a>
