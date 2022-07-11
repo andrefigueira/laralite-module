@@ -148,21 +148,19 @@
                 <td><strong>Customer</strong></td>
                 <td>{{ order.customer.email }}</td>
               </tr>
-              <tr v-if="order.refunded">
+              <tr>
                 <td><strong>Status</strong></td>
                 <td>
-                  <b-badge class="badge-soft-warning"><i class="fas fa-check-circle"></i>Refunded</b-badge>
+                  <b-badge v-if="!order.refunded" :class="order.tickets[0].status === 'REDEEMED' ? 'badge-soft-primary' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ order.tickets[0].status === 'REDEEMED' ? 'Reedemed' : 'Pending' }}</b-badge>
+                  <b-badge v-if="order.refunded" :class="order.refunded ? 'badge-soft-danger' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ order.refunded ? 'Refunded' : 'Pending' }}</b-badge>
                 </td>
               </tr>
-              <tr v-if="order.order_status === 'complete' || order.order_status === null">
+<!--              <tr v-if="!order.refunded || (order.order_status === 'complete' || order.order_status === null)">
                 <td><strong>Status</strong></td>
                 <td>
-                  <b-badge class="badge-soft-primary"
-                           v-if="order.order_status === 'complete' || order.order_status === null"><i
-                      class="fas fa-check-circle"></i>Accepted
-                  </b-badge>
+                  <b-badge class="badge-soft-primary" v-if="order.order_status === 'complete' || order.order_status === null"><i class="fas fa-check-circle"></i>Accepted</b-badge>
                 </td>
-              </tr>
+              </tr>-->
               <tr>
                 <td><strong>Date</strong></td>
                 <td>{{ formatDate(order.created_at) }}</td>
