@@ -232,20 +232,20 @@
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td width="40%"><strong>Payment Descriptor</strong></td>
-                  <td>{{ (order.payment_processor_result) ? (order.payment_processor_result.calculated_statement_descriptor) : 'na' }}</td>
+                  <td>{{ (order.payment_processor_result.charges.data[0].calculated_statement_descriptor) ? (order.payment_processor_result.charges.data[0].calculated_statement_descriptor) : 'NA' }}</td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td width="40%"><strong>Description</strong></td>
-                  <td>{{ (order.payment_processor_result) ? (order.payment_processor_result.description) : 'na' }}</td>
+                  <td>{{ (order.payment_processor_result.charges.data[0].description) ? (order.payment_processor_result.charges.data[0].description) : 'NA' }}</td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Total Amount</strong></td>
-                  <td>${{ (order.payment_processor_result) ? (order.payment_processor_result.amount / 100) :'na' }}</td>
+                  <td>${{ (order.payment_processor_result) ? (order.payment_processor_result.amount / 100) :'NA' }}</td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Tax Applied</strong></td>
                   <td>
-                    {{ (order.basket.subtotals[0]) ? '$' + helpers.priceFormat(order.basket.taxAmount) : 'n/a' }}
+                    {{ (order.basket.subtotals[0]) ? '$' + helpers.priceFormat(order.basket.subtotals[0].taxAmount) : 'NA' }}
                   </td>
                 </tr>
                 <tr v-if="order.basket.discountAmount > 0">
@@ -257,18 +257,18 @@
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Service Fee</strong></td>
                   <td>
-                    {{ (order.basket.serviceFee) ? helpers.priceFormat(order.basket.serviceFee) : 'n/a' }}
+                    {{ (order.basket.subtotals[0].serviceFee) ? '$' + helpers.priceFormat(order.basket.subtotals[0].serviceFee) : 'NA' }}
                   </td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Fee</strong></td>
                   <td>
-                    {{ order.payment_processor_result ? order.payment_processor_result.application_fee_amount / 100 : 'n/a' }}
+                    {{ order.payment_processor_result ? '$' + order.payment_processor_result.application_fee_amount / 100 : 'NA' }}
                   </td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Balance Transaction</strong></td>
-                  <td>{{ (order.payment_processor_result) ? (order.payment_processor_result.balance_transaction) : 'na' }}</td>
+                  <td>{{ (order.payment_processor_result.charges.data[0].balance_transaction) ? (order.payment_processor_result.charges.data[0].balance_transaction) : 'NA' }}</td>
                 </tr>
               </table>
             </b-collapse>
@@ -324,7 +324,7 @@
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Owner</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].billing_details.name }}</td>
+                <td>{{ order.payment_processor_result.charges.data[0].billing_details.name ? order.payment_processor_result.charges.data[0].billing_details.name : 'NA' }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Post Code</strong></td>
@@ -332,7 +332,7 @@
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Origin</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].billing_details.address.country }}</td>
+                <td>{{ order.payment_processor_result.charges.data[0].billing_details.address.country ? order.payment_processor_result.charges.data[0].billing_details.address.country : 'NA' }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>CVC Check</strong></td>
