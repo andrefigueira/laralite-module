@@ -57,10 +57,10 @@
             :per-page="perPage"
             :current-page="currentPage"
             :filter="filter"
-            sortDesc>
+            sortDesc class="table">
             <template v-slot:cell(unique_id)="data" class="min-width-0">
               <div class="row">
-                <div class="col-1"><input type="checkbox" class="" :value="data.item" :id="data.item.unique_id" v-model="checkedOrders"></div>
+                <div class="col-1"><input type="checkbox" class="checkbox" :value="data.item" :id="data.item.unique_id" v-model="checkedOrders"></div>
 <!--                <div class="col-10">
                   <span style="font-size: 0.7rem; display: none">{{ data.item.unique_id }}</span><br>
                   <b-badge class="badge-soft-info">{{ data.item.customer.email }}</b-badge>
@@ -69,8 +69,8 @@
               </div>
             </template>
             <template v-slot:cell(confirmation_code)="data">
-              <span>{{ data.item.confirmation_code }}</span>
-              <span>{{ data.item.customer.name }}</span>
+              <span>{{ data.item.confirmation_code }}</span></br>
+              <span class="text-small text-muted">{{ data.item.customer.name }}</span>
               <b-badge class="badge-soft-danger" v-if="data.item.refunded"><i class="fas fa-check-circle"></i>Refunded</b-badge>
             </template>
             <template v-slot:cell(created_at)="data">
@@ -81,12 +81,13 @@
             </template>
             <template v-slot:cell(customer_email)="data">
               <span>{{ data.item.customer.email }}</span>
-            </template>
+            </template>'REDEEMED'
             <template v-slot:cell(basket)="data">
               <span>${{ helpers.priceFormat(data.item.basket.subtotals[0].total) }}</span>
             </template>
             <template v-slot:cell(status)="data">
-              <b-badge :class="data.item.tickets[0].status === 'REDEEMED' ? 'badge-soft-primary' : 'badge-soft-danger'"><i class="fas fa-check-circle"></i>{{ data.item.tickets[0].status === 'REDEEMED' ? 'Reedemed' : 'Pending' }}</b-badge>
+              <b-badge v-if="!data.item.refunded" :class="data.item.tickets[0].status === 'REDEEMED' ? 'badge-soft-primary' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ data.item.tickets[0].status === 'REDEEMED' ? 'Reedemed' : 'Pending' }}</b-badge>
+              <b-badge v-if="data.item.refunded" :class="data.item.refunded ? 'badge-soft-danger' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ data.item.refunded ? 'Refunded' : 'Pending' }}</b-badge>
             </template>
             <template v-slot:cell(actions)="data">
               <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="btn btn-sm btn-primary float-right mr-3" style="font-size: 12px">View</a>
@@ -271,5 +272,8 @@ input[type="checkbox"]{
   .hideDiv {
     display: none!important;
   }
+}
+.checkbox {
+  vertical-align: -webkit-baseline-middle !important;
 }
 </style>
