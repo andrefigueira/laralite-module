@@ -7,6 +7,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 use Modules\Laralite\Console\CreateUser;
+use Modules\Laralite\Console\ProcessOrdersImport;
 use Modules\Laralite\Console\RefreshComponents;
 use Modules\Laralite\Console\RefreshTemplates;
 use Modules\Laralite\Console\ReportDeploy;
@@ -46,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
             RefreshTemplates::class,
             CreateUser::class,
             SubscriptionCharge::class,
+            ProcessOrdersImport::class,
         ]);
     }
 }

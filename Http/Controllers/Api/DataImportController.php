@@ -138,6 +138,7 @@ class DataImportController extends Controller
         foreach ($tempRows as $tempRow)
         {
             $basket = [];
+            $refunded = false;
             $order = ImportedOrder::firstWhere(['ext_order_id' => $tempRow['order_id']]);
             $orderStatus = 'unknown';
 
@@ -204,11 +205,19 @@ class DataImportController extends Controller
             if ($tempRow->financial_status === 'PAID') {
                 $result['paid'] = true;
                 $orderStatus = 'complete';
+
+                if ($tempRow->fulfillment_status === 'FULFILLED') {
+                    $orderStatus = 'fulfilled';
+                }
             }
 
-            if ($tempRow->fulfillment_status === 'FULFILLED') {
-                $orderStatus = 'fulfilled';
+            if ($tempRow->financial_status === 'refunded') {
+                $result['paid'] = true;
+                $refunded = true;
+                $orderStatus = 'refunded';
             }
+
+
 
             $result['amount'] = $basket['total'];
             $result['source'] = [
@@ -248,6 +257,7 @@ class DataImportController extends Controller
                 'customer_id' => $customer->id,
                 'basket' => $basket,
                 'payment_processor_result' => $result,
+                'refunded' => $refunded,
                 'status' => 1,
                 'order_status' => $orderStatus,
                 'created_at' => $createdDate,
