@@ -10,6 +10,7 @@ use stdClass;
  * @property string order_status
  * @property bool refunded
  * @property Customer customer
+ * @mixin \Eloquent
  */
 class Order extends Model
 {
@@ -21,7 +22,10 @@ class Order extends Model
         'status',
         'order_status',
         'refunded',
-        'confirmation_code'
+        'confirmation_code',
+        'created_at',
+        'updated_at',
+
     ];
 
     protected $casts = [

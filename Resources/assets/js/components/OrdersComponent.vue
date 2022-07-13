@@ -83,11 +83,11 @@
               <span>{{ data.item.customer.email }}</span>
             </template>'REDEEMED'
             <template v-slot:cell(basket)="data">
-              <span>${{ helpers.priceFormat(data.item.basket.subtotals[0].total) }}</span>
+              <span>${{ helpers.priceFormat(data.item.basket.total) }}</span>
             </template>
             <template v-slot:cell(status)="data">
-              <b-badge v-if="!data.item.refunded" :class="data.item.tickets[0].status === 'REDEEMED' ? 'badge-soft-primary' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ data.item.tickets[0].status === 'REDEEMED' ? 'Reedemed' : 'Pending' }}</b-badge>
-              <b-badge v-if="data.item.refunded" :class="data.item.refunded ? 'badge-soft-danger' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ data.item.refunded ? 'Refunded' : 'Pending' }}</b-badge>
+              <b-badge v-if="!_.get(data, 'item.refunded')" :class="orderComplete(data.item) ? 'badge-soft-primary' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ orderStatus(data.item.order_status) }}</b-badge>
+              <b-badge v-if="_.get(data, 'item.refunded')" :class="_.get(data, 'item.refunded') ? 'badge-soft-danger' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ _.get(data, 'item.refunded') ? 'Refunded' : 'Pending' }}</b-badge>
             </template>
             <template v-slot:cell(actions)="data">
               <a v-b-tooltip:hover title="View Order" :href="'/admin/orders/view/' + data.item.unique_id" class="btn btn-sm btn-primary float-right mr-3" style="font-size: 12px">View</a>
@@ -111,6 +111,7 @@
 
 <script>
 import * as moment from "moment";
+import _ from 'lodash';
 import helpers from "../helpers";
 import AlertComponent from "./AlertComponent";
 
@@ -138,10 +139,14 @@ export default {
       }
     }
   },
+  beforeMount() {
+    this._ = _;
+  },
   data() {
     return {
       helpers: helpers,
       visible: true,
+      _: null,
       disabled: false,
       refundProcessing: false,
       refundError: false,
@@ -183,6 +188,12 @@ export default {
   methods: {
     onResize() {
       this.visible = window.innerWidth <= 700;
+    },
+    orderComplete(order) {
+      return order.order_status === 'complete' || order.order_status === 'fulfilled';
+    },
+    orderStatus(status) {
+        return _.startCase(_.toLower(status));
     },
     uncheckAll() {
       this.checkedOrders = []

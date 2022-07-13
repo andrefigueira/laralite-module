@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Modules\Laralite\Models\ImportedOrder;
 use Modules\Laralite\Models\TempCsvData;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
@@ -14,7 +15,8 @@ use Modules\Laralite\Models\Product;
 use Symfony\Component\HttpFoundation\Response;
 use Ramsey\Uuid\Uuid;
 
-
+ini_set('memory_limit', '-1');
+ini_set('max_execution_time', '0');
 class DataImportController extends Controller
 {
     public $skuMap = [
@@ -135,6 +137,14 @@ class DataImportController extends Controller
 
         foreach ($tempRows as $tempRow)
         {
+            $basket = [];
+            $order = ImportedOrder::firstWhere(['ext_order_id' => $tempRow['order_id']]);
+            $orderStatus = 'unknown';
+
+            if ($order) {
+                continue;
+            }
+
             try {
                 $customer = Customer::where('email', '=', $tempRow->email)->firstOrFail();
             } catch (\Throwable $exception) {
@@ -147,10 +157,10 @@ class DataImportController extends Controller
                 $customers++;
             }
 
-            // Find product relating to order
-            $newSku = $this->skuMap[$tempRow->lineitem_sku];
 
             try {
+                // Find product relating to order
+                $newSku = $this->skuMap[$tempRow->lineitem_sku];
                 $fetchedProduct = Product::whereJsonContains('variants', ['sku' => $newSku])->firstOrFail();
             } catch (\Throwable $exception) {
                 // No product found ...
@@ -158,7 +168,7 @@ class DataImportController extends Controller
                 $skipped[] = $tempRow;
 
                 Log::info('Skipping CSV row import as no product found', [
-                    'requested_sku' => $newSku,
+                    'requested_sku' => $tempRow->lineitem_sku,
                     'skipped_row' => $tempRow,
                 ]);
 
@@ -168,7 +178,7 @@ class DataImportController extends Controller
             $productSku = $newSku ?: '';
             $productSlug = $fetchedProduct->slug ?: '';
             $productImage = str_replace('\\', '', $fetchedProduct->images[0]) ?: '';
-            $productPrice = $tempRow->lineitem_price ?: '';
+            $productPrice = !empty($tempRow->lineitem_price) ? (int)($tempRow->lineitem_price * 100) : '';
             $productQuantity = (int)$tempRow->lineitem_quantity ?: 0;
 
             // Build basket object
@@ -179,6 +189,13 @@ class DataImportController extends Controller
                 'price' => $productPrice,
                 'quantity' => $productQuantity,
             ];
+            if (!empty($tempRow->discount_code)) {
+                $basket['discounts'][0]['code'] = $tempRow->discount_code;
+                $basket['discounts'][0]['name'] = $tempRow->discount_code;
+            }
+            $basket['discountAmount'] = !empty($tempRow->discount_amount) ? (int)($tempRow->discount_amount * 100) : 0;
+            $basket['taxAmount'] = !empty($tempRow->taxes) ? (int)($tempRow->taxes * 100) : 0;
+            $basket['total'] = !empty($tempRow->total) ? (int)($tempRow->total * 100) : 0;
 
             // Build payment result object
             $result = [];
@@ -186,9 +203,14 @@ class DataImportController extends Controller
 
             if ($tempRow->financial_status === 'PAID') {
                 $result['paid'] = true;
+                $orderStatus = 'complete';
             }
 
-            $result['amount'] = (int)$tempRow->total ?: 0;
+            if ($tempRow->fulfillment_status === 'FULFILLED') {
+                $orderStatus = 'fulfilled';
+            }
+
+            $result['amount'] = $basket['total'];
             $result['source'] = [
                 'name' => $tempRow->billing_name ?: '',
                 'address_city' => $tempRow->billing_city ?: '',
@@ -217,15 +239,26 @@ class DataImportController extends Controller
             ];
             $result['channel_name'] = $tempRow->channel_name ?: '';
 
-            Order::create([
+            $createdDate = new \DateTime($tempRow->created_at);
+            $timeZone = new \DateTimeZone('UTC');
+            $createdDate->setTimezone($timeZone);
+
+            $insertedOrder = Order::create([
                 'unique_id' => Uuid::uuid4(),
                 'customer_id' => $customer->id,
                 'basket' => $basket,
                 'payment_processor_result' => $result,
                 'status' => 1,
+                'order_status' => $orderStatus,
+                'created_at' => $createdDate,
+                'updated_at' => $createdDate,
             ]);
-
+            $importedOrder = new ImportedOrder(['ext_order_id' => $tempRow['order_id'], 'order_id' => $insertedOrder->unique_id]);
+            $importedOrder->save();
             $orders++;
+            if ($orders > 1000) {
+                break;
+            }
         }
 
         // Clear the temporary table

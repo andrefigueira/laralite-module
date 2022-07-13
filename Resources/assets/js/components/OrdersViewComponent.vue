@@ -151,8 +151,8 @@
               <tr>
                 <td><strong>Status</strong></td>
                 <td>
-                  <b-badge v-if="!order.refunded" :class="order.tickets[0].status === 'REDEEMED' ? 'badge-soft-primary' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ order.tickets[0].status === 'REDEEMED' ? 'Reedemed' : 'Pending' }}</b-badge>
-                  <b-badge v-if="order.refunded" :class="order.refunded ? 'badge-soft-danger' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ order.refunded ? 'Refunded' : 'Pending' }}</b-badge>
+                  <b-badge v-if="!_.get(order, 'refunded')" :class="orderComplete(order) ? 'badge-soft-primary' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ orderStatus(order.order_status) }}</b-badge>
+                  <b-badge v-if="_.get(order, 'refunded')" :class="_.get(order, 'refunded') ? 'badge-soft-danger' : 'badge-soft-warning'"><i class="fas fa-check-circle"></i>{{ _.get(order, 'refunded') ? 'Refunded' : 'Pending' }}</b-badge>
                 </td>
               </tr>
 <!--              <tr v-if="!order.refunded || (order.order_status === 'complete' || order.order_status === null)">
@@ -218,7 +218,7 @@
               <table class="table table-striped">
                 <tr v-if="!order.payment_processor_result">
                   <td><strong>Credits Used</strong></td>
-                  <td>{{ order.basket.products[0].credits}}</td>
+                  <td>{{ _.get(order, 'basket.products[0].credits') }}</td>
                 </tr>
                 <tr v-if="!order.payment_processor_result">
                   <td><strong>Credit Balance</strong></td>
@@ -230,11 +230,11 @@
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td width="40%"><strong>Payment Descriptor</strong></td>
-                  <td>{{ (order.payment_processor_result.charges.data[0].calculated_statement_descriptor) ? (order.payment_processor_result.charges.data[0].calculated_statement_descriptor) : 'NA' }}</td>
+                  <td>{{ _.get(order, 'payment_processor_result.charges.data[0].calculated_statement_descriptor', 'NA') }}</td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td width="40%"><strong>Description</strong></td>
-                  <td>{{ (order.payment_processor_result.charges.data[0].description) ? (order.payment_processor_result.charges.data[0].description) : 'NA' }}</td>
+                  <td>{{ _.get(order, 'payment_processor_result.charges.data[0].description', 'NA') }}</td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Total Amount</strong></td>
@@ -243,30 +243,30 @@
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Tax Applied</strong></td>
                   <td>
-                    {{ (order.basket.subtotals[0]) ? '$' + helpers.priceFormat(order.basket.subtotals[0].taxAmount) : 'NA' }}
+                    {{ (_.get(order, 'basket.taxAmount', false)) ? '$' + helpers.priceFormat(order.basket.taxAmount) : 'NA' }}
                   </td>
                 </tr>
                 <tr v-if="order.basket.discountAmount > 0">
                   <td><strong>Discount Amount</strong></td>
                   <td>
-                    ({{ order.basket.discounts[0].code }}) {{  helpers.priceFormat(order.basket.discountAmount) }}
+                    ({{ _.get(order, 'order.basket.discounts[0].code', 'NO CODE USED') }}) {{  helpers.priceFormat(order.basket.discountAmount) }}
                   </td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Service Fee</strong></td>
                   <td>
-                    {{ (order.basket.subtotals[0].serviceFee) ? '$' + helpers.priceFormat(order.basket.subtotals[0].serviceFee) : 'NA' }}
+                    {{ (_.get(order, 'basket.serviceFee', false)) ? '$' + helpers.priceFormat(order.basket.serviceFee) : 'NA' }}
                   </td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Fee</strong></td>
                   <td>
-                    {{ order.payment_processor_result ? '$' + order.payment_processor_result.application_fee_amount / 100 : 'NA' }}
+                    {{ order.payment_processor_result ? '$' + _.get(order, 'payment_processor_result.application_fee_amount', 0) / 100 : 'NA' }}
                   </td>
                 </tr>
                 <tr v-if="order.payment_processor_result">
                   <td><strong>Balance Transaction</strong></td>
-                  <td>{{ (order.payment_processor_result.charges.data[0].balance_transaction) ? (order.payment_processor_result.charges.data[0].balance_transaction) : 'NA' }}</td>
+                  <td>{{ _.get(order, 'payment_processor_result.charges.data[0].balance_transaction', 'NA') }}</td>
                 </tr>
               </table>
             </b-collapse>
@@ -304,41 +304,41 @@
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Number</strong></td>
-                <td>**** **** **** {{ order.payment_processor_result.charges.data[0].payment_method_details.card.last4 }}</td>
+                <td>**** **** **** {{ _.get(order, 'order.payment_processor_result.charges.data[0].payment_method_details.card.last4') }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Fingerprint</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.fingerprint }}</td>
+                <td>{{ _.get(order, 'order.payment_processor_result.charges.data[0].payment_method_details.card.fingerprint') }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Expires</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.exp_month }} /
-                  {{ order.payment_processor_result.charges.data[0].payment_method_details.card.exp_year }}
+                <td>{{ _.get(order, 'payment_processor_result.charges.data[0].payment_method_details.card.exp_month') }} /
+                  {{ _.get(order, 'payment_processor_result.charges.data[0].payment_method_details.card.exp_year') }}
                 </td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Type</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.brand }}</td>
+                <td>{{ _.get(order, 'payment_processor_result.charges.data[0].payment_method_details.card.brand') }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Owner</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].billing_details.name ? order.payment_processor_result.charges.data[0].billing_details.name : 'NA' }}</td>
+                <td>{{ _.get(order, 'payment_processor_result.charges.data[0].billing_details.name', 'NA') }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Post Code</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].billing_details.address.postal_code }}</td>
+                <td>{{ _.get(order, 'payment_processor_result.charges.data[0].billing_details.address.postal_code') }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Origin</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].billing_details.address.country ? order.payment_processor_result.charges.data[0].billing_details.address.country : 'NA' }}</td>
+                <td>{{ _.get(order, 'payment_processor_result.charges.data[0].billing_details.address.country', 'NA') }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>CVC Check</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.checks.cvc_check }}</td>
+                <td>{{ _.get(order, 'payment_processor_result.charges.data[0].payment_method_details.card.checks.cvc_check') }}</td>
               </tr>
               <tr v-if="order.payment_processor_result">
                 <td width="40%"><strong>Postal Check</strong></td>
-                <td>{{ order.payment_processor_result.charges.data[0].payment_method_details.card.checks.address_postal_code_check }}</td>
+                <td>{{ _.get(order, 'payment_processor_result.charges.data[0].payment_method_details.card.checks.address_postal_code_check') }}</td>
               </tr>
             </table>
             </b-collapse>
@@ -420,6 +420,12 @@ export default {
     hideRefund() {
       this.$refs['issueRefund'].hide();
       location.reload();
+    },
+    orderComplete(order) {
+      return order.order_status === 'complete' || order.order_status === 'fulfilled';
+    },
+    orderStatus(status) {
+      return _.startCase(_.toLower(status));
     },
     toggleRefund() {
       let self = this;
