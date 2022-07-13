@@ -51,7 +51,7 @@
 
                         <b-table striped :fields="orderFields" :items="customer.orders" responsive="sm" sortDesc>
                             <template #cell(unique_id)="data">
-                                 {{ data.item.confirmation_code }}
+                                 {{ data.item.unique_id }}
                             </template>
                             <template v-slot:cell(date_created)="data">
                                 {{ timeFormat(data.item.created_at) }}

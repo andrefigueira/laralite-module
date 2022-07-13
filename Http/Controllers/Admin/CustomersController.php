@@ -16,8 +16,7 @@ class CustomersController extends Controller
 
     public function view(string $uniqueId)
     {
-        $customer = Customer::where('unique_id', '=', $uniqueId)->get();
-        $customer->first()->orders;
+        $customer = Customer::where('unique_id', '=', $uniqueId)->with('orders')->get();
 
         if ($customer === null) {
             throw new NotFoundHttpException('Customer not found');
