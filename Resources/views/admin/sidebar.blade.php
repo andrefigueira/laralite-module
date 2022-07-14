@@ -160,7 +160,7 @@
 </nav>--}}
 
 <div>
-    <sidebar-component request="{{ request()->path() }}" role="{{ Auth::user()->hasRole('admin') }}" user="{{ Auth::user()->name }}"></sidebar-component>
+    <sidebar-component request="{{ request()->path() }}" role="{{ Auth::user()->hasRole('admin') }}" user="{{ Auth::user()->name }}" permissions="{{ Auth::user()->getAllPermissions()->pluck('name')  }}"></sidebar-component>
 </div>
 
 
