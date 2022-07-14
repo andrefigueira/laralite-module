@@ -9,9 +9,6 @@
           <img src="/images/logo.png" class="logoImage">
         </div>
         <nav class="d-block pr-3 pl-2">
-<!--          <div class="mb-1">
-            <img class="admin-logo" src="/images/trap-music-museum-logo.png" alt="TrapMusicMuseum Logo">
-          </div>-->
           <ul class="nav">
             <li class="nav-item">
               <a class="nav-link" :class="{ 'active': request === 'admin' || request.match('admin/home') }" href="/admin/home">
@@ -20,9 +17,8 @@
               </a>
             </li>
           </ul>
-
           <div id="accordion" class="sidebar accordion" style="width: 230px !important;">
-            <div class="card" v-if="role">
+            <div class="card" v-if="">
               <div class="card-header" id="headingThree">
                 <a href="#" data-toggle="collapse" data-target="#collapseThree">Ecommerce
                   <i class="ri-arrow-down-s-line float-right"></i></a>
@@ -31,8 +27,7 @@
               <div id="collapseThree" class="collapse" :class="{ 'show': request.match('admin/scanner*') || request.match('admin/product') || request.match('admin/product/edit/*') || request.match('admin/product/create') || request.match('admin/product-category*') || request.match('admin/customers*') || request.match('admin/orders*') || request.match('admin/discounts*') || request.match('admin/subscriptions*') || request.match('admin/reporting*') }" aria-labelledby="headingTwo" data-parent="#accordion">
                 <div class="card-body">
                   <ul class="nav pl-2">
-                    <!--                    @if (Auth::user()->hasRole('admin'))-->
-                    <li class="nav-item" v-if="role">
+                    <li class="nav-item">
                       <a class="nav-link" :class="{ 'active': request.match('admin/scanner*') }" href="/admin/scanner">
                         <i class="ri-qr-code-line"></i>
                         Scanner
@@ -44,7 +39,7 @@
                         Products
                       </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item"  v-if="role">
                       <a class="nav-link" :class="{ 'active': request.match('admin/product-category*') }" href="/admin/product-category">
                         <i class="ri-price-tag-3-line"></i>
                         Product Categories
@@ -56,7 +51,7 @@
                         Orders
                       </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item"  v-if="role">
                       <a class="nav-link" :class="{ 'active': request.match('admin/discounts*') }" href="/admin/discounts">
                         <i class="ri-percent-line"></i>
                         Discounts
@@ -68,13 +63,13 @@
                         Customers
                       </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item"  v-if="role">
                       <a class="nav-link" :class="{ 'active': request.match('admin/reporting*') }" href="/admin/reporting">
                         <i class="ri-file-chart-line"></i>
                         Reporting
                       </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item"  v-if="role">
                       <a class="nav-link" :class="{ 'active': request.match('admin/subscriptions*') }" href="/admin/subscriptions">
                         <i class="ri-cloud-fill"></i>
                         Subscriptions
@@ -197,7 +192,7 @@
               <!--             End collapse-->
             </div>
             <!--End card-->
-            <div class="card" v-if="role">
+            <div class="card">
               <div class="card-header" id="headingFive">
                 <a href="#" data-toggle="collapse" data-target="#collapseFive" class="accordion-button">
                   Account
@@ -242,6 +237,10 @@ export default {
     },
     user: {
       type: String,
+      required: true
+    },
+    permissions: {
+      type: Array,
       required: true
     },
   },
