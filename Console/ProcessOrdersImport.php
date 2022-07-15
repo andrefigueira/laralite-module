@@ -8,6 +8,7 @@ use Modules\Laralite\Models\ImportedOrder;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Product;
 use Modules\Laralite\Models\TempCsvData;
+use Modules\Laralite\Services\OrderService;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -34,6 +35,21 @@ class ProcessOrdersImport extends Command
      * @var string
      */
     protected $description = 'Import orders from temporary table.';
+
+    /**
+     * @var OrderService
+     */
+    private OrderService $orderService;
+
+    /**
+     * ProcessOrdersImport constructor.
+     * @param OrderService $orderService
+     */
+    public function __construct(OrderService $orderService)
+    {
+        $this->orderService = $orderService;
+        parent::__construct();
+    }
 
     /**
      * Execute the console command.
@@ -80,6 +96,9 @@ class ProcessOrdersImport extends Command
 
             try {
                 // Find product relating to order
+                if (!isset($this->skuMap[$tempRow->lineitem_sku])) {
+                    throw new \Exception('Unknown sku');
+                }
                 $newSku = $this->skuMap[$tempRow->lineitem_sku];
                 $fetchedProduct = Product::whereJsonContains('variants', ['sku' => $newSku])->firstOrFail();
                 $this->info('Found product with SKU code ' . $newSku);
@@ -111,25 +130,30 @@ class ProcessOrdersImport extends Command
                 'price' => $productPrice,
                 'quantity' => $productQuantity,
             ];
+
+            $total = $tempRow->total ?: $productPrice * $productQuantity;
+
             if (!empty($tempRow->discount_code)) {
                 $basket['discounts'][0]['code'] = $tempRow->discount_code;
                 $basket['discounts'][0]['name'] = $tempRow->discount_code;
             }
             $basket['discountAmount'] = !empty($tempRow->discount_amount) ? (int)($tempRow->discount_amount * 100) : 0;
             $basket['taxAmount'] = !empty($tempRow->taxes) ? (int)($tempRow->taxes * 100) : 0;
-            $basket['total'] = !empty($tempRow->total) ? (int)($tempRow->total * 100) : 0;
+            $basket['total'] = !empty($total) ? (int)($tempRow->total * 100) : 0;
 
             // Build payment result object
             $result = [];
             $result['id'] = $tempRow->payment_reference ?: '';
 
-            if ($tempRow->financial_status === 'PAID') {
+
+            if ($tempRow->financial_status === 'PAID' && strtolower($tempRow->fulfillment_status) === 'fulfilled') {
                 $result['paid'] = true;
                 $orderStatus = 'complete';
+            }
 
-                if ($tempRow->fulfillment_status === 'FULFILLED') {
-                    $orderStatus = 'fulfilled';
-                }
+            if ($tempRow->financial_status === 'PAID'  && strtolower($tempRow->fulfillment_status) === 'pending') {
+                $result['paid'] = true;
+                $orderStatus = 'pending';
             }
 
             if ($tempRow->financial_status === 'refunded') {
@@ -174,6 +198,7 @@ class ProcessOrdersImport extends Command
             try {
                 $insertedOrder = Order::create([
                     'unique_id' => Uuid::uuid4(),
+                    'confirmation_code' => $this->orderService->generateUniqueCode('TRAP-'),
                     'customer_id' => $customer->id,
                     'basket' => $basket,
                     'payment_processor_result' => $result,
