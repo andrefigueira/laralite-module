@@ -9,6 +9,7 @@ use Modules\Laralite\Mail\OrderRefundDetails;
 use Modules\Laralite\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Modules\Laralite\Models\ImportedOrder;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
@@ -24,20 +25,9 @@ class OrderController extends Controller
 {
     use ApiResponses;
 
-    /**
-     * @var TicketService
-     */
-    private $ticketService;
-
-    /**
-     * @var OrderService
-     */
-    private $orderService;
-
-    /**
-     * @var StripeService
-     */
-    private $stripeService;
+    private TicketService $ticketService;
+    private OrderService $orderService;
+    private StripeService $stripeService;
 
     public function __construct(
         OrderService $orderService,
@@ -259,14 +249,21 @@ class OrderController extends Controller
         $order = Order::where('id', '=', $orderId)->first();
         /** @var Ticket $ticket */
         $ticket = $order->tickets()->first();
+        $importOrder = ImportedOrder::where('order_id', '=', $order->getAttribute('unique_id'));
 
         try {
+            if (!$ticket && $importOrder) {
+                $this->orderService->generateOrderAssets($order);
+                $order->refresh();
+                $ticket = $order->tickets()->first();
+            }
             $ticket = $this->ticketService->redeemTicket($ticket->unique_id);
+            $this->orderService->update($order, ['order_status' => 'complete']);
         } catch (\Exception $e) {
             $this->handleCaughtException($e);
         }
 
-        return $this->success($ticket->toArray(), 'Tickets redeemed successfully');
+        return $this->success($ticket ? $ticket->toArray() : [], 'Tickets redeemed successfully');
     }
 
     /**
@@ -290,11 +287,12 @@ class OrderController extends Controller
 
         try {
             $ticket = $this->ticketService->unredeemTicket($ticket->unique_id);
+            $this->orderService->update($order, ['order_status' => 'pending']);
         } catch (\Exception $e) {
             $this->handleCaughtException($e);
         }
 
-        return $this->success($ticket->toArray(), 'Ticket unredeemed successfully');
+        return $this->success($ticket ? $ticket->toArray() : [], 'Ticket unredeemed successfully');
     }
 
     public function sendOrderConfirmationEmail(Request $request)

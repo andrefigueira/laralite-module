@@ -2,7 +2,6 @@
 
 namespace Modules\Laralite\Services;
 
-
 use Barryvdh\DomPDF\Facade as PDF;
 use Endroid\QrCode\QrCode;
 use Illuminate\Contracts\Foundation\Application;
@@ -12,10 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 use Modules\Laralite\Exceptions\AppException;
+use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Product;
-use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 use Modules\Laralite\Models\TicketScans;
+use Modules\Laralite\Services\Models\Basket\Item;
 use Ramsey\Uuid\Uuid;
 
 class TicketService
@@ -43,7 +43,7 @@ class TicketService
 
         if ($ticket) {
 
-            if ($ticket->order->order_status !== 'complete') {
+            if ($ticket->order->order_status !== 'complete' && $ticket->order->order_status !== 'pending') {
                 throw new AppException('Cannot redeem ticket: order is incomplete');
             }
 
@@ -56,11 +56,11 @@ class TicketService
             $ticket->updateStatusLog('REDEEMED');
             $ticket->save();
 
-            $ticketScan = TicketScans::create([
+            TicketScans::create([
                 'order_id' => $ticket->order_id,
                 'ticket_id' => $ticket->id,
                 'customer_id' => $ticket->customer_id,
-                'status' => $ticket->status
+                'status' => $ticket->status,
             ]);
         }
 
@@ -264,7 +264,7 @@ class TicketService
                 'verify_peer' => false,
                 'verify_peer_name' => false,
                 'allow_self_signed' => true,
-            ]
+            ],
         ]);
 
         if (!$htmlView) {

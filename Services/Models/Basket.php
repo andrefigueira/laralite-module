@@ -15,7 +15,7 @@ class Basket extends Model implements BasketInterface
     }
 
     /**
-     * @return Item[]|Items
+     * @return Items
      */
     public function getItems(): Items
     {

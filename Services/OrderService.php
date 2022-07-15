@@ -6,6 +6,8 @@ use Mail;
 use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
+use Modules\Laralite\Models\Product;
+use Modules\Laralite\Services\Models\Basket\Item;
 
 class OrderService
 {
@@ -36,16 +38,20 @@ class OrderService
     }
 
     /**
-     * @param $order
-     * @param $customer
+     * @param Order $order
      * @return array
      */
-    private function generateOrderAssets(Order $order, Customer $customer): array
+    public function generateOrderAssets(Order $order): array
     {
         $generatedTickets = [];
         $basket = json_decode(json_encode($order->basket->products), true);
         foreach ($basket as $index => $product) {
-            $generatedTickets[] = $this->ticketService->getGeneratedTickets($index, $product, $order, $customer);
+            $generatedTickets[] = $this->ticketService->getGeneratedTickets(
+                $index,
+                $product,
+                $order,
+                $order->customer()->first()
+            );
         }
 
         return $generatedTickets;
@@ -65,6 +71,38 @@ class OrderService
         } while ($codeExists);
 
         return $code;
+    }
+
+    /**
+     * @param Order|string|integer $order
+     * @param array $updateArray
+     */
+    public function update($order, array $updateArray)
+    {
+        if (!$order instanceof Order) {
+            $order = is_int($order)
+                ? Order::findOrFail($order)
+                : Order::where('unique_id', '=', $order)->firstOrFail();
+        }
+
+        $order->update($updateArray);
+    }
+
+
+    private function getOrderModel()
+    {
+
+    }
+
+    /**
+     * @param Order|string|integer $order
+     * @param array $updateArray
+     */
+    public function updateStatus($order, array $updateArray)
+    {
+
+
+        $order->update($updateArray);
     }
 
     /**
@@ -166,7 +204,7 @@ class OrderService
         /** @var Customer $customer */
         $customer = Customer::find($order->getAttributeValue('customer_id'));
         $orderAssets = $order->tickets()->get()->isEmpty()
-            ? $this->generateOrderAssets($order, $customer)
+            ? $this->generateOrderAssets($order)
             : $order->tickets()->get();
         $recipientEmail = $sendToEmail ?: $customer->getAttributeValue('email');
 

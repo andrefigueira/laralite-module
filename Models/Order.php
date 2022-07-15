@@ -2,7 +2,9 @@
 
 namespace Modules\Laralite\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use stdClass;
 
 /**
@@ -10,7 +12,7 @@ use stdClass;
  * @property string order_status
  * @property bool refunded
  * @property Customer customer
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class Order extends Model
 {
@@ -32,6 +34,7 @@ class Order extends Model
         'basket' => 'object',
         'payment_processor_result' => 'object',
     ];
+
     /**
      * @var mixed
      */
@@ -42,7 +45,7 @@ class Order extends Model
         return $this->hasMany(Ticket::class, 'order_id', 'id');
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }

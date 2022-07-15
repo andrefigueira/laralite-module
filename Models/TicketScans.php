@@ -2,15 +2,21 @@
 
 namespace Modules\Laralite\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class TicketScans
+ * @package Modules\Laralite\Models
+ * @mixin Eloquent
+ */
 class TicketScans extends Model
 {
     protected $fillable = [
         'order_id',
         'ticket_id',
         'customer_id',
-        'status'
+        'status',
     ];
 
     public function customer(): BelongsTo
@@ -24,8 +30,8 @@ class TicketScans extends Model
     }
 
     public function ticket(): BelongsTo
-{
-    return $this->belongsTo(Ticket::class, 'ticket_id');
-}
+    {
+        return $this->belongsTo(Ticket::class, 'ticket_id');
+    }
 
 }
