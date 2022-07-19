@@ -7,6 +7,26 @@
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-6">
+            <div class="m-2 mr-0 pr-3">
+              <v-select class="selectOption mb-3 p-1" id="status-option" label="title" v-model="statusFilter"
+                :clearable="false"
+                placeholder="Filter Orders"
+                :options="orderstatuses" style="padding: 18px 10px; cursor: pointer"
+              @input="onStatusSelection">
+                <template v-slot:option="status">
+                        <span>
+                          {{ status.title }}
+                        </span>
+                </template>
+                <template #selected-option="status">
+                      <span>
+                        {{ statusFilter }}
+                      </span>
+                </template>
+              </v-select>
+            </div>
+          </div>
+          <div class="col-md-6">
             <b-input-group size="sm" class="m-2 mr-0 pr-3">
               <b-form-input
                 v-model="filter"
@@ -21,7 +41,7 @@
               </b-input-group-append>
             </b-input-group>
           </div>
-          <div class="col-md-6 align-self-center" v-if="checkedOrders.length">
+          <div class="col-md-12 align-self-center" v-if="checkedOrders.length">
             <b-button variant="secondary" size="sm" class="float-right mr-lg-4 mr-sm-2" @click="uncheckAll" :disabled="checkedOrders.length == 0">Clear All</b-button>
             <b-button variant="danger" size="sm" class="btn btn-danger float-right mr-4" :disabled="checkedOrders.length == 0" v-b-modal.issueRefund>Process Bulk Refunds</b-button>
           </div>
@@ -57,6 +77,7 @@
             :per-page="perPage"
             :current-page="currentPage"
             :filter="filter"
+            :statusFilter="statusFilter"
             sortDesc class="table">
             <template v-slot:cell(unique_id)="data" class="min-width-0">
               <div class="row">
@@ -81,7 +102,7 @@
             </template>
             <template v-slot:cell(customer_email)="data">
               <span>{{ data.item.customer.email }}</span>
-            </template>'REDEEMED'
+            </template>
             <template v-slot:cell(basket)="data">
               <span>${{ helpers.priceFormat(data.item.basket.total) }}</span>
             </template>
@@ -144,6 +165,7 @@ export default {
   },
   data() {
     return {
+      statusFilter: "",
       helpers: helpers,
       visible: true,
       _: null,
@@ -163,8 +185,12 @@ export default {
         dismissCountDown: 0,
         dismissSecs: 3
       },
-
-      // Table settings
+      orderstatuses: [
+          "Refunded",
+          "Redeemed",
+          "Cancel",
+          "Pending"
+      ],
       fields: [
         {key: 'unique_id', label: 'Order ID', sortable: true, sortDirection: 'desc'},
         {key: 'confirmation_code', label: 'Confirmation Code', sortable: true, sortDirection: 'desc'},
@@ -186,6 +212,10 @@ export default {
     }
   },
   methods: {
+    onStatusSelection() {
+      debugger
+        this.$refs.table.refresh()
+      },
     onResize() {
       this.visible = window.innerWidth <= 700;
     },
@@ -210,7 +240,7 @@ export default {
       this.isBusy = true;
 
       const promise = axios.get(
-          '/api/order?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
+          '/api/order?page=' + context.currentPage + '&perPage=' + context.perPage + '&orderstatus=' + this.statusFilter + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
           {withCredentials: true});
 
       return promise.then((data) => {
@@ -286,5 +316,9 @@ input[type="checkbox"]{
 }
 .checkbox {
   vertical-align: -webkit-baseline-middle !important;
+}
+
+.selectOption input::placeholder {
+  color: blue !important;
 }
 </style>
