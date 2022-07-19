@@ -3,6 +3,8 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use AWS\CRT\Log;
+use Illuminate\Support\Facades\DB;
 use Mail;
 use Modules\Laralite\Mail\OrderCancellation;
 use Modules\Laralite\Mail\OrderRefundDetails;
@@ -45,8 +47,26 @@ class OrderController extends Controller
         $orders = Order::with(['customer', 'tickets']);
         $perPage = $request->get('perPage', 1);
 
+
         if ($request->get('all') === 'true') {
             return $orders->get();
+        }
+
+        if($request->input('orderstatus') !== 'null' && $request->input('orderstatus') != ''){
+            if($request->input('orderstatus') === 'Cancel') {
+                $orders->where('order_status', '=', 'cancel');
+            }
+            if($request->input('orderstatus') === 'Complete') {
+                $orders->where('order_status', '=', 'complete');
+            }
+            if($request->input('orderstatus') === 'Refunded') {
+                $orders->where('refunded', '=', 1);
+            }
+            if($request->input('orderstatus') === 'Reedemed') {
+                $orders->whereHas('tickets', function ($q) use ($request) {
+                    $q->where('status', '=', 'REEDEMED');
+                });
+            }
         }
 
         if ($request->input('filter') !== 'null' && $request->input('filter') != '') {
@@ -60,6 +80,9 @@ class OrderController extends Controller
             $orders->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
         }
 
+        DB::enableQueryLog();
+        $result = $orders->orderBy('created_at', 'DESC')->paginate($perPage);
+        \Illuminate\Support\Facades\Log::info(DB::getQueryLog());
         return response()->json($orders->orderBy('created_at', 'DESC')->paginate($perPage));
     }
 
