@@ -1,12 +1,14 @@
 <template>
   <div>
-    <!--    <b-button v-b-toggle.sidebar-1 class="button" style="background-color: transparent !important; border: initial !important;">
+<!--        <b-button id="mobile-sidebar-button" v-b-toggle.sidebar-1 class="button" style="background-color: transparent !important; border: initial !important;">
           <i data-icon="list" class="ri-menu-2-fill align-middle" style="font-size: 28px; color: #5664D2"></i>
         </b-button>-->
     <b-sidebar id="sidebar-1" :visible="visible" no-close-on-route-change class="sidebar hide-menu" no-header  :title="appName" sidebar-class="border-right border-dark" aria-expanded="true" style="border: none !important; display: block !important;">
-      <div class="py-2">
+      <template #default="{ hide }">
+        <b-button class="close-button float-right" variant="primary" @click="hide">X</b-button>
+        <div class="py-2 pt-3">
         <div id="sidebar-no-header-title" class="mt-4 mb-4" style="text-align: center">
-          <img src="/images/logo.png" class="logoImage">
+          <img src="/images/logo.png" class="logoImage mt-4">
         </div>
         <nav class="d-block pr-3 pl-2">
           <ul class="nav">
@@ -219,6 +221,7 @@
           </form>
         </nav>
       </div>
+      </template>
     </b-sidebar>
   </div>
 </template>
@@ -289,5 +292,16 @@ export default {
 .logoImage {
   max-width: 100%;
   width: 100px;
+}
+
+.close-button {
+  padding: 0px 8px !important;
+  margin: 4px !important;
+  font-weight: 500;
+}
+@media screen and (min-width: 800px) {
+  .close-button {
+    display: none;
+  }
 }
 </style>
