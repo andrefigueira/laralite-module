@@ -49,6 +49,7 @@ class CustomerAuthController extends ForgotPasswordController
      */
     public function verify(Request $request)
     {
+        /** @var Customer $customer */
         $customer = Customer::find($request->get('id'));
 
         if (!hash_equals((string) $request->get('hash'), sha1($customer->getEmailForVerification()))) {
@@ -62,7 +63,7 @@ class CustomerAuthController extends ForgotPasswordController
         }
 
         if ($customer->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+            event(new Verified($customer));
         }
 
         if ($response = $this->verified($request)) {
