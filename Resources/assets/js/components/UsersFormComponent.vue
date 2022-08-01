@@ -204,7 +204,6 @@
         },
         computed: {
             noUserDefined() {
-                debugger;
                 return this.user.id !== undefined;
             },
             button() {

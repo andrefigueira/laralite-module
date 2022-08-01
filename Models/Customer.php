@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Modules\Laralite\Models\Customer\Wallet;
 use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Notifications\ResetPasswordNotification;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Modules\Laralite\Models\Customer\Subscription as CustomerSubscription;
 
 /**
@@ -19,7 +20,7 @@ use Modules\Laralite\Models\Customer\Subscription as CustomerSubscription;
  * @package Modules\Laralite\Models
  * @mixin Eloquent
  */
-class Customer extends Authenticatable
+class Customer extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
     use StripeMetaData;

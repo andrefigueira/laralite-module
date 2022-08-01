@@ -433,7 +433,6 @@
           this.isEditing = event.target.value
         },
         leaving: function () {
-          debugger
         },
         goBack() {
           window.history.back();

@@ -140,6 +140,7 @@ class PaymentController extends Controller
                 'name' => $customer->name,
                 'email' => $customer->email,
             ]);
+
             $customer->setStripeCustomerId($stripeCustomer->get('id'));
             $customer->save();
         } else {
@@ -159,6 +160,10 @@ class PaymentController extends Controller
             }
             $customer->update($updateArray);
             $customer->refresh();
+        }
+
+        if (!$customer->hasVerifiedEmail()) {
+            $customer->sendEmailVerificationNotification();
         }
 
         /** @var Order $order */
