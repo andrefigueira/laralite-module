@@ -213,7 +213,6 @@ export default {
   },
   methods: {
     onStatusSelection() {
-      debugger
         this.$refs.table.refresh()
       },
     onResize() {

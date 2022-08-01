@@ -2,6 +2,7 @@
 
 namespace Modules\Laralite\Http\Controllers\Auth;
 
+use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Modules\Laralite\Http\Requests\SignUpRequest;
@@ -11,6 +12,8 @@ use Ramsey\Uuid\Uuid;
 
 class SignupController extends Controller
 {
+    use VerifiesEmails;
+
     /**
      * @var StripeService
      */
@@ -48,6 +51,9 @@ class SignupController extends Controller
                 ]);
                 $customer->setStripeCustomerId($stripeCustomer->get('id'));
                 $customer->save();
+            }
+            if (!$customer->hasVerifiedEmail()) {
+                $customer->sendEmailVerificationNotification();
             }
         } catch(\Throwable $e) {
             \Log::error('User Signup failure', [

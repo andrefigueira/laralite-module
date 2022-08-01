@@ -96,6 +96,7 @@ Route::get('/logout', 'Auth\CustomerAuthController@logout');
 Route::post('/password-reset', 'Auth\CustomerAuthController@sendResetLinkEmail');
 Route::post('/reset', 'Auth\CustomerAuthController@reset');
 Route::post('/signup', 'Auth\SignupController@signup');
+Route::get('/verify-account', 'Auth\CustomerAuthController@verify')->name('verification.verify');
 
 Route::get('/ticket/{uuid}', 'TicketController@generateTicket');
 

@@ -188,7 +188,6 @@
                   if (value) {
                       let index = this.subscriptions.indexOf(subscription);
                       let self = this;
-                      debugger;
 
                       axios.delete('/api/subscriptions/' + subscription.id).then(response => {
                           self.subscriptions.splice(index, 1);
