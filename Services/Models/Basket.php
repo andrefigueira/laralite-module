@@ -3,6 +3,7 @@
 namespace Modules\Laralite\Services\Models;
 
 use Modules\Laralite\Services\Models\Basket\Discounts;
+use Modules\Laralite\Services\Models\Basket\Item;
 use Modules\Laralite\Services\Models\Basket\Items;
 
 class Basket extends Model implements BasketInterface
@@ -15,7 +16,7 @@ class Basket extends Model implements BasketInterface
     }
 
     /**
-     * @return Items
+     * @return Items|Item[]
      */
     public function getItems(): Items
     {
@@ -65,7 +66,7 @@ class Basket extends Model implements BasketInterface
      */
     public function getDiscountAmount(): int
     {
-        return isset($this->data['discountAmount']) ? (int)$this->data['discountAmount'] : 0.00;
+        return isset($this->data['discountAmount']) ? (int)$this->data['discountAmount'] : 0;
     }
 
     public function setDiscountAmount(int $amount): Basket
@@ -103,5 +104,15 @@ class Basket extends Model implements BasketInterface
         $this->data['serviceFee'] = $serviceFee;
         $this->data['total'] += $serviceFee;
         return $this;
+    }
+
+    public function getSubtotal(): int
+    {
+        $subtotal = 0;
+        foreach ($this->getItems() as $item) {
+            $subtotal += (int)($item->getPrice() * $item->getQuantity());
+        }
+
+        return $subtotal - $this->getDiscountAmount();
     }
 }

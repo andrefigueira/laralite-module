@@ -455,7 +455,8 @@ class PaymentController extends Controller
         $feeCollection = $this->settingsService->isFeeCollectionActive();
         $currencySettings = $this->settingsService->getCurrency() ?: [];
         $feeCollectionAmount = $feeCollection
-            ? (int)(round(($feeCollection['feeAmount'] / 100) * $amount))
+            ? (int)(round(($feeCollection['feeAmount'] / 100) * $basket->getSubtotal()))
+            + $this->settingsService->getServiceFeeAmount()
             : 0;
 
         if ($feeCollectionAmount) {
