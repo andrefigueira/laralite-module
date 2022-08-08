@@ -520,6 +520,7 @@ export default {
     load() {
       if (this.product.id !== undefined) {
         this.form.id = this.product.id;
+        this.form.credit_purchasable = this.product.credit_purchasable;
         this.category_id = this.category.id;
         this.form.name = this.product.name;
         this.form.slug = this.product.slug;
