@@ -13,12 +13,12 @@ class SettingsService
 
     public function getStripeKey(): string
     {
-        return json_decode($this->getSettings()->settings, true)['stripeSecretKey'] ?? '';
+        return json_decode($this->getSettings()->settings, true)['stripeSecretKey'] ?? 'UNSET';
     }
 
     private function getSettings(): Settings
     {
-        return Settings::firstOrFail();
+        return Settings::first();
     }
 
     public function getSettingsArray()

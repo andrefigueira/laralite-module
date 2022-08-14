@@ -54,7 +54,7 @@ class RefreshTemplates extends Command
                 foreach ($moduleConfig['templates'] as $template) {
                     $this->info('Creating new template (' . $template['name'] . ')');
 
-                    Template::create([
+                    Template::firstOrCreate(['name' => $template['name']],[
                         'module_name' => $name,
                         'name' => $template['name'],
                         'description' => $template['description'],

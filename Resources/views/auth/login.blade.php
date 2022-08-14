@@ -17,6 +17,13 @@
                             </div>
 
                             <div class="mt-5">
+                                <div>
+                                    @if (session()->has('warning'))
+                                        <div class="alert alert-warning">
+                                            {{ session('warning') }}
+                                        </div>
+                                    @endif
+                                </div>
                                 <form class="form-horizontal form-signin" method="POST" action="{{ route('login') }}">
                                     @csrf
                                     <div class="form-group auth-form-group-custom mb-4">

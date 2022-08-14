@@ -2,8 +2,15 @@
 
 namespace Modules\Laralite\Models;
 
+use Eloquent;
+use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Role;
 
+/**
+ * @mixin Eloquent
+ */
 class Roles extends Role
 {
     /**
@@ -17,8 +24,8 @@ class Roles extends Role
 
     /**
      * @param $users
-     * @return bool
-     * @throws \Exception
+     * @return bool|Collection|Model|User|User[]
+     * @throws Exception
      */
     public function assignUsers($users)
     {
@@ -37,7 +44,7 @@ class Roles extends Role
                 $item = User::findOrFail($users);
                 return $item->assignRole($this);
             }
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw $exception;
         }
     }

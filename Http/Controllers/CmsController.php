@@ -22,14 +22,14 @@ class CmsController extends Controller
             'slug' => $pageSlug,
         ]);
 
-        // Check if we have any straight up matches to the page slug
+        // Check if we have any straight-up matches to the page slug
         $page = Page::where('slug', '=', $pageSlug)
             ->with('template.headerNavigation')
             ->with('template.footerNavigation')
             ->first();
 
         if ($page === null) {
-            // We do not have a straight up match, let's get a list of pages with defined dynamic urls and try match it
+            // We do not have a straight-up match, let's get a list of pages with defined dynamic urls and try match it
             $pagesWithDynamicUrl = Page::where('settings->dynamic_url', '=', 'true')
                 ->with('template.headerNavigation')
                 ->with('template.footerNavigation')
@@ -66,9 +66,12 @@ class CmsController extends Controller
                 ->first();
         }
 
-        if ($page->authentication && !Auth::guard('customers')->check()) {
-            Log::debug('Authentication for customer failed, redirecting to login');
+        if (!$page) {
+            return \Redirect::to('admin/login?siteNotConfigured=1');
+        }
 
+        if ($page && $page->getAttributeValue('authentication') && !Auth::guard('customers')->check()) {
+            Log::debug('Authentication for customer failed, redirecting to login');
             return redirect('/login');
         }
 

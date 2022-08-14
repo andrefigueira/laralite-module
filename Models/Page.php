@@ -2,8 +2,12 @@
 
 namespace Modules\Laralite\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin Eloquent
+ */
 class Page extends Model
 {
     protected $fillable = [

@@ -5,7 +5,8 @@ namespace Modules\Laralite\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property array settings
+ * @property array|string settings
+ * @mixin \Eloquent
  */
 class Settings extends Model
 {

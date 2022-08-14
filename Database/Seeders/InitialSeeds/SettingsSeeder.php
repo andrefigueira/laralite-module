@@ -1,29 +1,29 @@
 <?php
 
-
-namespace Modules\Laralite\Database\Seeders;
+namespace Modules\Laralite\Database\Seeders\InitialSeeds;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-
+use Modules\Laralite\Models\Settings;
 
 class SettingsSeeder extends seeder
 {
     public function run()
     {
-        DB::table('settings')->insert([
+        Settings::firstOrCreate(['id' => 1], [
             'active' => 1,
             'settings' => [
-                'currency' => '',
+                'currency' => [
+                    'value' => 'USD',
+                    'currency_symbol' => '$',
+                ],
                 'feeActive' =>  false,
                 'feeAmount' => null,
                 'siteLogo' => 'KDHlQw6uQy2GzFiUY3iexCo6kpGfj0AAju3P7XeR.png',
                 'buttonPrimaryColor' => '#36B890',
                 'buttonSecondaryColor' => '#EE531C',
                 'textPrimaryColor' => '#1EEF70',
-                'textHighlightColor' => '#D7EF3B']
+                'textHighlightColor' => '#D7EF3B'
+            ]
         ]);
     }
 

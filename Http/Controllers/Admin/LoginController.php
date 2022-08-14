@@ -42,7 +42,7 @@ class LoginController extends Controller
         return back()->withInput($request->only('email', 'remember'));
     }
 
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
         return view('laralite::auth.admin-login');
     }
