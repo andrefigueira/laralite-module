@@ -4,6 +4,7 @@ namespace Modules\Laralite\Providers;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 use Modules\Laralite\Console\CreateUser;
@@ -28,7 +29,15 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(StripeService::class, function (Application $app) {
             $settingsService = $app->make(SettingsService::class);
-            $stripeClient = new StripeClient($settingsService->getStripeKey());
+            try {
+               $stripeKey = $settingsService->getStripeKey();
+            } catch (\Throwable $e) {
+                //This can happen if there is no stipe account setup in the database
+                Log::error('An error occurred when attempting to create the StipeService:' . $e->getMessage());
+            } finally {
+                $stripeKey ??= 'UNKNOWN';
+            }
+            $stripeClient = new StripeClient($stripeKey);
             return new StripeService($stripeClient);
         });
     }

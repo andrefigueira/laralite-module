@@ -50,8 +50,11 @@ class LoginController extends Controller
         return \Auth::guard('admin');
     }
 
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
+        if ($request->get('siteNotConfigured')) {
+            session()->now('warning', 'You need to configure your website before browsing.');
+        }
         return view('laralite::auth.login');
     }
 
