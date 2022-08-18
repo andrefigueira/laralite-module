@@ -8,6 +8,15 @@ use Modules\Laralite\Services\Models\Basket\Items;
 
 class Basket extends Model implements BasketInterface
 {
+    protected array $data = [
+        'serviceFee' => 0,
+        'total' => 0,
+        'discounts' => null,
+        'products' => null,
+        'discountAmount' => 0,
+        'taxAmount' => 0,
+    ];
+
     public function __construct(array $data)
     {
         $data['discounts'] = !empty($data['discounts']) ? new Discounts($data['discounts']) : new Discounts();

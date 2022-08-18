@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export default {
     uuidv4 () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -26,5 +28,9 @@ export default {
     },
     priceFormat(value) {
         return parseFloat(value / 100).toFixed(2)
+    },
+    hasActiveSubscription(customer) {
+        let subscribed = _.find(customer.subscriptions || [], {'status': 'ACTIVE'});
+        return typeof subscribed !== "undefined";
     }
 }

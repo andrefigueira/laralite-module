@@ -8,12 +8,12 @@ class SettingsService
 {
     public function getCurrency()
     {
-        return json_decode($this->getSettings()->settings , true)['currency'] ?? null;
+        return $this->getSettings()->settings['currency'] ?? null;
     }
 
     public function getStripeKey(): string
     {
-        return json_decode($this->getSettings()->settings, true)['stripeSecretKey'] ?? 'UNSET';
+        return $this->getSettings()->settings['stripeSecretKey'] ?? 'UNSET';
     }
 
     private function getSettings(): Settings
@@ -23,7 +23,7 @@ class SettingsService
 
     public function getSettingsArray()
     {
-        return json_decode($this->getSettings()->settings, true);
+        return $this->getSettings()->settings;
     }
 
     public function isFeeCollectionActive(): array

@@ -3,6 +3,7 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Builder;
 use Modules\Laralite\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,11 +26,20 @@ class CustomerController extends Controller
                 ->orWhere('email', 'LIKE', '%' . $request->input('filter') . '%');
         }
 
+        if ($request->input('subscribers') === '1') {
+            $customers->whereHas('subscriptions', function (Builder $q) {
+                $q->where('status', '=', 'ACTIVE');
+            });
+        }
+
         if ($request->input('sortBy') !== null) {
             $customers->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
         }
 
-        return $customers->orderBy('created_at', 'DESC')->paginate($perPage);
+        return $customers
+            ->with('subscriptions')
+            ->orderBy('created_at', 'DESC')
+            ->paginate($perPage);
     }
 
     public function getOne($id)

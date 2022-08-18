@@ -9,11 +9,12 @@ use Modules\Laralite\Models\User;
 use Illuminate\Http\Request;
 use Auth;
 use Log;
+use Modules\Laralite\Services\SettingsService;
 use Psy\Util\Json;
 
 class CmsController extends Controller
 {
-    public function route(Request $request)
+    public function route(Request $request, SettingsService $settingsService)
     {
         $requestSegments = $request->segments();
         $pageSlug = '/' . implode('/', $requestSegments);
@@ -102,18 +103,18 @@ class CmsController extends Controller
         return view($template, [
             'page' => $page,
             'settings' => [
-                'logo' => json_decode($settings->settings, true)['siteLogo'],
-                'buttonPrimaryColor' => json_decode($settings->settings, true)['buttonPrimaryColor'] ?? '',
-                'buttonSecondaryColor' => json_decode($settings->settings, true)['buttonSecondaryColor'] ?? '',
-                'textPrimaryColor' => json_decode($settings->settings, true)['textPrimaryColor'] ?? '',
-                'textHighlightColor' => json_decode($settings->settings, true)['textHighlightColor'] ?? '',
-                'currency' => json_decode($settings->settings, true)['currency'] ?? '',
-                'feeAmount' => json_decode($settings->settings, true)['feeAmount'] ?? '',
-                'taxActive' => json_decode($settings->settings, true)['taxActive'] ?? '',
-                'taxAmount' => json_decode($settings->settings, true)['taxAmount'] ?? '',
-                'serviceFeeActive' => json_decode($settings->settings, true)['serviceFeeActive'] ?? '',
-                'serviceFeeAmount' => json_decode($settings->settings, true)['serviceFeeAmount'] ?? '',
-                'stripePublishKey' => json_decode($settings->settings, true)['stripePublishKey'] ?? '',
+                'logo' => $settingsService->getSettingsArray()['siteLogo'] ?? '',
+                'buttonPrimaryColor' => $settingsService->getSettingsArray()['buttonPrimaryColor'] ?? '',
+                'buttonSecondaryColor' => $settingsService->getSettingsArray()['buttonSecondaryColor'] ?? '',
+                'textPrimaryColor' => $settingsService->getSettingsArray()['textPrimaryColor'] ?? '',
+                'textHighlightColor' => $settingsService->getSettingsArray()['textHighlightColor'] ?? '',
+                'currency' => $settingsService->getSettingsArray()['currency'] ?? '',
+                'feeAmount' => $settingsService->getSettingsArray()['feeAmount'] ?? '',
+                'taxActive' => $settingsService->getSettingsArray()['taxActive'] ?? '',
+                'taxAmount' => $settingsService->getSettingsArray()['taxAmount'] ?? '',
+                'serviceFeeActive' => $settingsService->getSettingsArray()['serviceFeeActive'] ?? '',
+                'serviceFeeAmount' => $settingsService->getSettingsArray()['serviceFeeAmount'] ?? '',
+                'stripePublishKey' => $settingsService->getSettingsArray()['stripePublishKey'] ?? '',
             ],
         ]);
     }
