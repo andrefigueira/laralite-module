@@ -9,7 +9,7 @@ class SettingsSeeder extends seeder
 {
     public function run()
     {
-        Settings::firstOrCreate(['id' => 2], [
+        Settings::firstOrCreate(['id' => 1], [
             'active' => 1,
             'settings' => [
                 'currency' => [
