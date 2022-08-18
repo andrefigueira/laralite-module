@@ -106,7 +106,7 @@
                   class="fas fa-external-link-alt"></i>Find your StripeClient Id</a>
               <b-form-input id="connected-stripe-clientId" v-model="settings.stripeClientId"
                             placeholder="Connected Stripe Client ID"></b-form-input>
-                </br>
+                <br/>
               <label for="connected-stripe-account" class="mt-1" style="font-weight: bold">Stripe Account Secret
                 Key</label>
               <a target="_blank" class="float-right mt-3" style="font-size: 10px; cursor: pointer"
@@ -114,7 +114,7 @@
                   class="fas fa-external-link-alt"></i>Find your Secret Key</a>
               <b-form-input id="connected-stripe-account" v-model="settings.stripeSecretKey"
                             placeholder="Connected Stripe Account ID"></b-form-input>
-              </br>
+              <br/>
               <label for="connected-stripe-publishkey" class="mt-1" style="font-weight: bold">Stripe Account Publish
                 Key</label>
               <a target="_blank" class="float-right mt-3" style="font-size: 10px; cursor: pointer"
@@ -123,7 +123,7 @@
               <b-form-input id="connected-stripe-account" v-model="settings.stripePublishKey"
                             placeholder="Connected Stripe Publish Key"></b-form-input>
               <b-button class="mt-2" variant="warning" block @click="connectStripeAccount()"
-                        :disabled="settings.stripeSecretKey.length == 0 && settings.stripeClientId.length == 0 && settings.stripePublishKey.length == 0">Connect
+                        :disabled="settings.stripeSecretKey.length === 0 || settings.stripeClientId.length === 0 || settings.stripePublishKey.length === 0">Connect
                 Stripe Account
               </b-button>
               <b-button class="mt-3" block @click="hideSecretKeyInfo">Exit</b-button>
@@ -377,6 +377,10 @@ export default {
   },
   methods: {
     hideSecretKey: function (secretKey) {
+      if (typeof  secretKey !== "string") {
+        return '';
+      }
+
       return secretKey.replace(/(.{10})(.*)(?=.2)/,
           function (gp1, gp2, gp3) {
             for (let i = 0; i < gp3.length; i++) {
@@ -425,7 +429,7 @@ export default {
       });
     },
     load() {
-      const settingsObject = JSON.parse(this.currentSettings)
+      const settingsObject = this.currentSettings;
       if (settingsObject.currency) {
         this.settings.currency = settingsObject.currency;
       }

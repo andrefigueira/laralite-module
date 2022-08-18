@@ -134,7 +134,6 @@ class OrderService
             //TODO create job to have order confirmation sent
         }
 
-
         return $order;
     }
 

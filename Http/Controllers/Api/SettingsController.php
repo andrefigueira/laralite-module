@@ -88,7 +88,7 @@ class SettingsController extends Controller
         try {
             Settings::updateOrCreate(['id' => 1], [
                 'active' => 1,
-                'settings' => json_encode($settings)
+                'settings' => $settings
             ]);
 
             Log::info('Settings updated', [
