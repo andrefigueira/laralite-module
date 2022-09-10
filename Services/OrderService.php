@@ -113,15 +113,18 @@ class OrderService
     {
         /** @var Order $order */
         $order = Order::create($orderArray);
+        $this->generateOrderAssets($order);
 
-        try {
-            $this->updateOrderPayment($order);
-        } catch (\Throwable $e) {
-            \Log::error(
-                'Failed to update order payment: ' . $e->getMessage(),
-                $e->getTrace()
-            );
-            //TODO create job to have order payment updated
+        if ($order->getPaymentId()) {
+            try {
+                $this->updateOrderPayment($order);
+            } catch (\Throwable $e) {
+                \Log::error(
+                    'Failed to update order payment: ' . $e->getMessage(),
+                    $e->getTrace()
+                );
+                //TODO create job to have order payment updated
+            }
         }
 
         try {

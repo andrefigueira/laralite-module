@@ -34,11 +34,11 @@ class BasketService
         return $basket->getTotal();
     }
 
-    public function analyzeAndCorrectBasket(Basket $basket)
+    public function analyzeAndCorrectBasket(Basket $basket): void
     {
         $this->setModel($basket);
         $products = $this->basket->getItems() ?? [];
-        $discounts = $this->basket->getDiscounts() ?? [];
+        $discounts = $this->basket->getDiscounts()?: [];
         $total = 0;
 
         foreach ($products as $key => $product) {
@@ -53,37 +53,41 @@ class BasketService
                 continue;
             }
             $price = $productModel->getVariantPrice($sku);
+            $creditsPrice = $productModel->getVariantPrice($sku, true);
 
             if ($price === 0) {
                 $this->basket->getItems()->remove($key);
                 continue;
             }
             $this->basket->getItems()->get($key)->setPrice($price);
+            $this->basket->getItems()->get($key)->setCreditPrice($creditsPrice);
             $this->basket->setTotal($price * $product->getQuantity());
         }
 
-        $this->applyDiscounts($discounts)->applyTaxAmount();
+        $this->applyDiscounts($discounts);
+        $this->applyTaxAmount();
         $this->basket->setServiceFee($this->settingsService->getServiceFeeAmount());
     }
 
-    /**
-     * @return $this
-     */
-    private function applyTaxAmount(): BasketService
+    public function generateBasketFromProducts(array $products)
+    {
+
+    }
+
+    private function applyTaxAmount(): void
     {
         if (!$tax = $this->settingsService->getTaxAmount()) {
-            return $this;
+            return;
         }
 
         $this->basket->setTaxAmount((int)($this->basket->getTotal() * $tax) / 100);
-        return $this;
     }
 
     /**
      * @param Basket\Discounts $discounts
-     * @return BasketService
+     * @return void
      */
-    private function applyDiscounts(Basket\Discounts $discounts): BasketService
+    private function applyDiscounts(Basket\Discounts $discounts): void
     {
         $discountCodes = $discounts->arrayColumn('code');
         $discountModels = Discount::whereIn('code', $discountCodes)
@@ -100,13 +104,11 @@ class BasketService
         }
         $this->basket->setDiscountAmount(round($discountAmount, 2));
 
-        return $this;
     }
 
-    private function setModel(Basket $basket): BasketService
+    private function setModel(Basket $basket): void
     {
         $this->basket = $basket;
-        return $this;
     }
 
     /**

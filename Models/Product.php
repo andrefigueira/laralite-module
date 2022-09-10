@@ -35,19 +35,25 @@ class Product extends Model
         return $this->hasOne(ProductCategory::class, 'id', 'category_id');
     }
 
-    public function getVariantPrice(string $sku): float
+    public function getVariantPrice(string $sku, bool $creditPrice = false): int
     {
         $variant = $this->getVariantBySku($sku);
 
         if (null === $variant) {
-            return 0.00;
+            return 0;
+        }
+
+
+        if ($creditPrice) {
+            return $variant['pricing']['credits'] ?? 0;
         }
 
         $onSale = $variant['pricing']['on_sale'] ?? false;
         $standardPrice = $variant['pricing']['price'];
         $salePrice = $variant['pricing']['sale_price'];
 
-        return $onSale ? (float)$salePrice : (float)$standardPrice;
+
+        return $onSale ? (int)$salePrice : (int)$standardPrice;
     }
 
     public function getVariantBySku(string $sku): ?array

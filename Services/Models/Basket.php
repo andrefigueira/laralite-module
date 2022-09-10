@@ -117,11 +117,28 @@ class Basket extends Model implements BasketInterface
 
     public function getSubtotal(): int
     {
-        $subtotal = 0;
+        $total = $this->getItemsTotal();
+
+        return $total - $this->getDiscountAmount();
+    }
+
+    public function getTotalCredit()
+    {
+        $total = $this->getItemsTotal(true);
+
+        return $total - $this->getDiscountAmount();
+    }
+
+    private function getItemsTotal(bool $inCredits = false)
+    {
+        $total = 0;
         foreach ($this->getItems() as $item) {
-            $subtotal += (int)($item->getPrice() * $item->getQuantity());
+            $price = $inCredits ? $item->getCreditPrice() : $item->getPrice();
+            $total += $price * $item->getQuantity();
         }
 
-        return $subtotal - $this->getDiscountAmount();
+        return $total;
     }
+
+
 }

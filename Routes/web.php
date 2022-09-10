@@ -112,6 +112,7 @@ Route::group(['middleware' => 'auth:customers'], function () {
     Route::get('/orders', 'CustomerController@orders');
     Route::get('/orders/detail/{id}', 'CustomerController@orderDetails');
     Route::post('/image/upload','CustomerController@imageUpload');
+    Route::post('/claim/item', 'Web\CreditPaymentController@itemClaim');
 
     Route::get('/account/subscription', 'CustomerSubscriptionController@get');
     Route::post('/account/subscription/{id}', 'CustomerSubscriptionController@cancel');
