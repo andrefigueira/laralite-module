@@ -101,6 +101,7 @@
     import { bus } from '../admin'
     import helpers from '../helpers'
     import draggable from 'vuedraggable'
+    import _ from 'lodash';
 
     export default {
         components: {
@@ -173,25 +174,29 @@
             window.history.back();
           },
             load() {
+             let self = this;
                 if (this.navigation.id !== undefined) {
                     this.id = this.navigation.id;
                     this.name = this.navigation.name;
                     this.description = this.navigation.description;
-                    this.selectedPages = this.navigation.navigation;
+                    this.selectedPages = _.cloneDeep(this.navigation.navigation);
                 }
 
-                axios.get('/api/page').then(response => {
-                    this.pageOptions = response.data.data.filter(navigationItem => {
-                        let existsInSelectedPages = this.selectedPages.filter(selectedPage => {
-                            return selectedPage.id === navigationItem.id;
-                        });
 
+                axios.get('/api/page?all=true').then(response => {
+                  self.pageOptions = response.data.filter(navigationItem => {
+                        let existsInSelectedPages = self.selectedPages.filter(selectedPage => {
+                            if (selectedPage.id === navigationItem.id) {
+                              _.merge(selectedPage, navigationItem);
+                              return true;
+                            }
+                        });
                         return !(existsInSelectedPages.length > 0);
                     });
 
-                    this.pageOptionsLoaded = true;
+                  self.pageOptionsLoaded = true;
 
-                    this.loading = false;
+                  self.loading = false;
                 }).catch(error => {
                     // handle error
                 });

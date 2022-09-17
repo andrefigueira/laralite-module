@@ -63,6 +63,7 @@ class PageController extends Controller
             $page = Page::create([
                 'primary' => $request->get('primary'),
                 'authentication' => $request->get('authentication'),
+                'anonymousOnly' => $request->get('anonymousOnly'),
                 'parent_id' => $request->get('parent_id'),
                 'template_id' => $request->get('template_id'),
                 'name' => $request->get('name'),
@@ -114,6 +115,7 @@ class PageController extends Controller
             $page->update([
                 'primary' => $request->get('primary'),
                 'authentication' => $request->get('authentication'),
+                'anonymousOnly' => $request->get('anonymousOnly'),
                 'parent_id' => $request->get('parent_id'),
                 'template_id' => $request->get('template_id'),
                 'name' => $request->get('name'),
