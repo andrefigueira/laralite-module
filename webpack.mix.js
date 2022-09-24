@@ -12,9 +12,12 @@ if (mix.inProduction()) {
     mix.version();
 }
 
-mix.js(__dirname + '/Resources/assets/js/admin.js', 'js/admin.js');
+mix.js(__dirname + '/Resources/assets/js/admin.js', 'js/admin.js').vue();
 mix.sass(__dirname + '/Resources/assets/sass/admin.scss', 'css/admin.css');
 mix.sass(__dirname + '/Resources/assets/sass/contents.scss', 'css/contents.css');
 mix.sass(__dirname + '/Resources/assets/sass/custom.scss', 'css/custom.css');
 
 mix.copyDirectory(__dirname + '/Resources/assets/images/', '../../public/images/');
+mix.override((config) => {
+    delete config.watchOptions;
+});

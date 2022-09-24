@@ -347,7 +347,7 @@ import {bus} from '../admin'
 import helpers from "../helpers";
 import {validationMixin} from 'vuelidate'
 import {required, minLength} from 'vuelidate/lib/validators'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import ClassicEditor from 'ckeditor5-custom-build/build/ckeditor';
 
 export default {
   mixins: [validationMixin],
