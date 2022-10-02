@@ -11,6 +11,52 @@
         <qrcode-stream :camera="camera" @decode="onDecode" @init="onInit">
         </qrcode-stream>
         <div v-if="validationPending" class="validation-pending">
+          <b-modal size="lg" ref="userDetails" id="userDetails"
+                   title="Customer Info"
+                   hide-footer
+                   no-close-on-backdrop
+                   @hide="user = null">
+
+            <template v-if="user !== null">
+              <table class="table table-bordered">
+                <tr>
+                  <th scope="row">Id</th>
+                  <td>{{ user.unique_id }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Name</th>
+                  <td>{{ user.name }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Email</th>
+                  <td>{{ user.email }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Subscription Status</th>
+                  <td>
+                    <b-badge v-if="customerHelper.isSubscribed(user)" class="badge-soft-primary"><i class="fas fa-check-circle"></i>
+                      Subscribed
+                    </b-badge>
+                    <b-badge v-if="!customerHelper.isSubscribed(user)" class="badge-soft-standard"><i class="fas fa-times-circle"></i>
+                      Unsubscribed
+                    </b-badge>
+                  </td>
+                </tr>
+              </table>
+            </template>
+            <template v-else>
+              <p>Ticket Not Found</p>
+              <b-button class="mt-3" block @click="hideReedem">Mark as special event</b-button>
+              <b-button class="mt-3" block @click="hideReedem">Exit</b-button>
+            </template>
+          </b-modal>
+
+
+
+
+
+
+
           <b-modal size="lg" ref="reedemTicket" id="reedemTicket" hide-footer no-close-on-backdrop
                    @hide="ticket = null">
             <template #modal-header>
@@ -131,6 +177,7 @@
 <script>
 import {QrcodeStream, QrcodeDropZone, QrcodeCapture} from 'vue-qrcode-reader'
 import * as moment from "moment";
+import customerHelper from "../helpers/customer";
 
 export default {
   data() {
@@ -147,7 +194,9 @@ export default {
       actionSuccess: false,
       actionErrorMessage: '',
       actionSuccessMessage: '',
-      ticket: null
+      ticket: null,
+      user: null,
+      customerHelper: customerHelper
     }
   },
   components: {
@@ -165,6 +214,14 @@ export default {
     ticket(newValue, oldValue) {
       if (newValue !== null) {
         this.$bvModal.show('reedemTicket')
+      } else {
+        this.result = null
+        this.turnCameraOn()
+      }
+    },
+    user(newValue, oldValue) {
+      if (newValue !== null) {
+        this.$bvModal.show('userDetails')
       } else {
         this.result = null
         this.turnCameraOn()
@@ -233,6 +290,18 @@ export default {
           .then((response) => {
             // console.log(response.data)
             this.ticket = response.data
+          })
+          .catch(error => {
+            this.ticket = null;
+            this.getUserDetails();
+            console.log(error);
+          })
+    },
+    getUserDetails() {
+      axios.get('/api/customer/' + this.result)
+          .then((response) => {
+            // console.log(response.data)
+            this.user = response.data
           })
           .catch(error => {
             console.log(error);
