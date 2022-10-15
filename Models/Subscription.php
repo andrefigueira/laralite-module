@@ -11,6 +11,10 @@ use Modules\Laralite\Models\Customer\Subscription as CustomerSubscription;
 /**
  * Class Subscription
  * @package Modules\Laralite\Models
+ * @property string $name
+ * @property string $description
+ * @property Price $price
+ * @property string $recurring_period;
  * @mixin Eloquent
  */
 class Subscription extends Model
