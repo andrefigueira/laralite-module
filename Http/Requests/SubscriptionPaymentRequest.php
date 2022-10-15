@@ -3,6 +3,7 @@
 namespace Modules\Laralite\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Modules\Laralite\Traits\ApiFailedValidation;
 
 class SubscriptionPaymentRequest extends FormRequest
@@ -24,7 +25,12 @@ class SubscriptionPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'token' => 'required|string',
+            'paymentMethod' => Rule::requiredIf(function () {
+                return !$this->request->get('paymentIntent');
+            }),
+            'paymentIntent' => Rule::requiredIf(function () {
+                return !$this->request->get('paymentMethod');
+            }),
             'price_id' => 'exists:subscription_prices,id',
         ];
     }

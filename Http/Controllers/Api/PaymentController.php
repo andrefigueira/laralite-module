@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\Response;
 class PaymentController extends Controller
 {
     use ApiResponses;
+    use SessionPaymentTrait;
 
     private OrderService $orderService;
     private StripeService $stripeService;
@@ -228,24 +229,6 @@ class PaymentController extends Controller
                 'message' => "Error.",
             ], 400);
         }
-    }
-
-    /**
-     * @param Request $request
-     * @param array $data
-     */
-    private function setSessionPaymentData(Request $request, array $data)
-    {
-        $request->session()->put('paymentSession', $data);
-    }
-
-    /**
-     * @param Request $request
-     * @return array
-     */
-    private function getSessionPaymentData(Request $request): array
-    {
-        return $request->session()->get('paymentSession', []);
     }
 
     public function processCreditPayment(PaymentRequest $request): JsonResponse
