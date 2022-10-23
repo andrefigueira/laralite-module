@@ -283,6 +283,9 @@
                     <label for="authentication-option">Authentication required</label>
                     <v-select class="mb-3" id="authentication-option" label="title" v-model="authentication" :options="authenticationOptions" :clearable="false"></v-select>
 
+                    <label for="authentication-option">Anonymous only</label>
+                    <v-select class="mb-3" id="authentication-option" label="title" v-model="anonymousOnly" :options="authenticationOptions" :clearable="false"></v-select>
+
                     <label for="parent">Parent</label>
                     <v-select class="mb-3" id="parent" label="name" v-model="parent" :options="pages" :clearable="false"></v-select>
 
@@ -339,6 +342,10 @@
             }
           ],
           authentication: {
+            title: 'No',
+            value: 0
+          },
+          anonymousOnly: {
             title: 'No',
             value: 0
           },
@@ -466,6 +473,9 @@
             this.authentication = this.authenticationOptions.filter((option) => {
               return option.value === this.page.authentication;
             })[0];
+            this.anonymousOnly = this.authenticationOptions.filter((option) => {
+              return option.value === this.page.anonymousOnly;
+            })[0];
             this.name = this.page.name;
             this.slug = this.page.slug;
             this.components = this.page.components;
@@ -507,6 +517,7 @@
             data: {
               primary: this.primary.value,
               authentication: this.authentication.value,
+              anonymousOnly: this.anonymousOnly.value,
               parent_id: this.parent.id,
               template_id: this.template.id,
               name: this.name,

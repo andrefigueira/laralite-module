@@ -15,6 +15,7 @@ class Page extends Model
         'template_id',
         'primary',
         'authentication',
+        'anonymousOnly',
         'name',
         'slug',
         'meta',

@@ -2,9 +2,12 @@
 
 namespace Modules\Laralite\Services;
 
+use Mail;
 use Modules\Laralite\Exceptions\AppException;
 use Modules\Laralite\Exceptions\PaymentGatewayException;
+use Modules\Laralite\Mail\SubscriptionConfirmation;
 use Modules\Laralite\Models\Customer;
+use Modules\Laralite\Models\Discount;
 use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Services\StripeService\ApiResourceWrapper;
@@ -13,15 +16,8 @@ use Stripe\PaymentIntent;
 
 class CustomerSubscriptionService
 {
-    /**
-     * @var SettingsService
-     */
-    protected $settingsService;
-
-    /**
-     * @var StripeService
-     */
-    protected $stripeService;
+    protected SettingsService $settingsService;
+    protected StripeService $stripeService;
 
     public function __construct(SettingsService $settingsService, StripeService $stripeService)
     {
@@ -33,10 +29,16 @@ class CustomerSubscriptionService
      * @param Customer $customer
      * @param int $priceId
      * @param ApiResourceWrapper $paymentIntent
+     * @param Discount|null $discount
      * @return Customer\Subscription
      * @throws \Exception
      */
-    public function saveSubscription(Customer $customer, int $priceId, ApiResourceWrapper $paymentIntent): Customer\Subscription
+    public function saveSubscription(
+        Customer $customer,
+        int $priceId,
+        ApiResourceWrapper $paymentIntent,
+        ?Discount $discount = null
+    ): Customer\Subscription
     {
         /** @var Price $price */
         $price = Price::findOrFail($priceId);
@@ -69,6 +71,7 @@ class CustomerSubscriptionService
         }
 
         $customerSubscription->save();
+        $this->sendSubscriptionNotification($customer, $customerSubscription, $subscription, $discount);
 
         return $customerSubscription;
     }
@@ -78,7 +81,7 @@ class CustomerSubscriptionService
      * @throws PaymentGatewayException|AppException
      * @throws \Exception
      */
-    public function collectionSubscriptionPayment(Customer\Subscription $subscription)
+    public function collectionSubscriptionPayment(Customer\Subscription $subscription): void
     {
         /** @var Customer $customer */
         $customer = $subscription->customer()->first();
@@ -128,7 +131,7 @@ class CustomerSubscriptionService
         ]);
     }
 
-    private function getSubscriptionStatusByPaymentStatus(string $status)
+    private function getSubscriptionStatusByPaymentStatus(string $status): string
     {
         switch ($status) {
             case PaymentIntent::STATUS_PROCESSING:
@@ -149,12 +152,12 @@ class CustomerSubscriptionService
      * @param Subscription|int $subscription
      * @throws \Exception
      */
-    public function cancel($subscription)
+    public function cancel($subscription): void
     {
         $subscription->delete();
     }
 
-    private function creditCustomerWallet(Customer $customer, $creditAmount)
+    private function creditCustomerWallet(Customer $customer, $creditAmount): void
     {
         $customerWallet = $customer->wallet()->first();
         if ($customerWallet) {
@@ -164,6 +167,25 @@ class CustomerSubscriptionService
             $customer->wallet()->create([
                 'balance' => $creditAmount
             ]);
+        }
+    }
+
+    private function sendSubscriptionNotification(
+        Customer $customer,
+        Customer\Subscription $customerSubscription,
+        Subscription $subscription,
+        Discount $discount = null
+    ): void
+    {
+        try {
+            Mail::to($customer->email)->send(new SubscriptionConfirmation([
+                'customer' => $customer,
+                'subscription' => $customerSubscription,
+                'subscriptionPlan' => $subscription,
+                'discount' => $discount,
+             ]));
+        } catch (\Exception $e) {
+            $k = $e;
         }
     }
 }

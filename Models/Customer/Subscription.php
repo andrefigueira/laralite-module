@@ -2,6 +2,7 @@
 
 namespace Modules\Laralite\Models\Customer;
 
+use DateTime;
 use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @mixin Eloquent
  * @property int id
  * @property string status
- * @property string expiry_date
+ * @property string|DateTime expiry_date
  * @property int agreed_price
  * @property int customer_id
  * @property int subscription_id

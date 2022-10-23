@@ -43,6 +43,7 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::patch('/user/{id}', 'Api\UserController@update');
     Route::post('/user/data', 'Api\UserController@data');
 
+
     Route::post('/roles', 'Api\RolesController@create');
     Route::get('/roles', 'Api\RolesController@get');
     Route::get('/roles/{id}', 'Api\RolesController@getOne');
@@ -86,7 +87,8 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::get('/module', 'Api\ModuleController@get');
 
     Route::get('/customer', 'Api\CustomerController@get');
-    Route::get('/customer/{id}', 'Api\CustomerController@getOne');
+    Route::get('/customer/{id}', 'Api\CustomerController@getOne')->where('id', '[0-9]+');
+    Route::get('/customer/{uuid}', 'Api\CustomerController@getOneByUniqueId')->where('id', '[0-9A-Za-z-]+');
 
     Route::get('/order', 'Api\OrderController@get');
     Route::get('/order/{id}', 'Api\OrderController@getOne');
@@ -114,8 +116,6 @@ Route::group(['middleware'=>'auth:api'], static function () {
 
     Route::get('/oauth/clients', 'Api\ClientController@get');
     Route::get('/oauth/personal-access-tokens', 'Api\PersonalAccessTokenController@get');
-
-//    Route::post('/form', 'Api\FormController@submit');
 });
 
 // need to figure out a way to protect this route

@@ -42,6 +42,22 @@ class CustomerController extends Controller
             ->paginate($perPage);
     }
 
+    public function getOneByUniqueId($uniqueId)
+    {
+        try {
+
+            return Customer::where('unique_id', '=', $uniqueId)->with('subscriptions')->firstOrFail();
+        } catch (\Throwable $exception) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Failed to get customer',
+                'errors' => [
+                    $exception->getMessage(),
+                ],
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function getOne($id)
     {
         try {

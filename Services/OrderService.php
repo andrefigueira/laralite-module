@@ -6,25 +6,23 @@ use Mail;
 use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
-use Modules\Laralite\Models\Product;
-use Modules\Laralite\Services\Models\Basket\Item;
 
 class OrderService
 {
     /**
      * @var SettingsService
      */
-    private $settingsService;
+    private SettingsService $settingsService;
 
     /**
      * @var TicketService
      */
-    private $ticketService;
+    private TicketService $ticketService;
 
     /**
      * @var StripeService
      */
-    private $stripeService;
+    private StripeService $stripeService;
 
     public function __construct(
         SettingsService $settingsService,
@@ -59,9 +57,6 @@ class OrderService
 
     public static function generateUniqueCode($prefix = ''): string
     {
-        $code = '';
-        $codeExists = false;
-
         do {
             $code = $prefix . substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
             $order = Order::where('confirmation_code', $code)->first();
@@ -77,7 +72,7 @@ class OrderService
      * @param Order|string|integer $order
      * @param array $updateArray
      */
-    public function update($order, array $updateArray)
+    public function update($order, array $updateArray): void
     {
         if (!$order instanceof Order) {
             $order = is_int($order)
@@ -88,20 +83,12 @@ class OrderService
         $order->update($updateArray);
     }
 
-
-    private function getOrderModel()
-    {
-
-    }
-
     /**
      * @param Order|string|integer $order
      * @param array $updateArray
      */
     public function updateStatus($order, array $updateArray)
     {
-
-
         $order->update($updateArray);
     }
 
@@ -201,7 +188,7 @@ class OrderService
      * @param Order $order
      * @param string|null $sendToEmail
      */
-    public function sendOrderConfirmationEmail(Order $order, string $sendToEmail = null)
+    public function sendOrderConfirmationEmail(Order $order, string $sendToEmail = null): void
     {
         /** @var Customer $customer */
         $customer = Customer::find($order->getAttributeValue('customer_id'));

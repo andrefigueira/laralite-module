@@ -40,7 +40,7 @@ class SubscriptionService
             $subscription->prices()->create([
                 'name' => $subscriptionArray['name'],
                 'price' => $price,
-                'recurring_period' => 'month',
+                'recurring_period' => 'year',
             ]);
         } else {
             /** @var SubscriptionModel $subscription */
@@ -49,7 +49,7 @@ class SubscriptionService
             $priceModel = $subscription->prices()->getResults()->first() ?: $subscription->prices()->create([
                 'name' => $subscriptionArray['name'],
                 'price' => $price,
-                'recurring_period' => 'month',
+                'recurring_period' => 'year',
             ]);
             $priceModel->price = $price;
             $priceModel->save();

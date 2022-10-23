@@ -5,21 +5,11 @@ namespace Modules\Laralite\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Log;
-use Modules\Laralite\Exceptions\AppException;
 use Modules\Laralite\Http\Requests\PaymentRequest;
-use Modules\Laralite\Models\CreditTransactions;
 use Modules\Laralite\Models\Customer;
-use Modules\Laralite\Models\Customer\Wallet;
 use Modules\Laralite\Models\Order;
-use Modules\Laralite\Models\Product;
-use Modules\Laralite\Models\Settings;
-use Modules\Laralite\Models\Subscription;
-use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Models\Ticket;
-use Modules\Laralite\Models\TicketScans;
 use Modules\Laralite\Services\BasketService;
 use Modules\Laralite\Services\Models\Basket;
 use Modules\Laralite\Services\OrderService;
@@ -29,12 +19,12 @@ use Modules\Laralite\Traits\ApiResponses;
 use Ramsey\Uuid\Uuid;
 use Spatie\Newsletter\NewsletterFacade;
 use Stripe\Exception\ApiErrorException;
-use Stripe\StripeClient;
 use Symfony\Component\HttpFoundation\Response;
 
 class PaymentController extends Controller
 {
     use ApiResponses;
+    use SessionPaymentTrait;
 
     private OrderService $orderService;
     private StripeService $stripeService;
@@ -228,88 +218,6 @@ class PaymentController extends Controller
                 'message' => "Error.",
             ], 400);
         }
-    }
-
-    /**
-     * @param Request $request
-     * @param array $data
-     */
-    private function setSessionPaymentData(Request $request, array $data)
-    {
-        $request->session()->put('paymentSession', $data);
-    }
-
-    /**
-     * @param Request $request
-     * @return array
-     */
-    private function getSessionPaymentData(Request $request): array
-    {
-        return $request->session()->get('paymentSession', []);
-    }
-
-
-
-    /**
-     * @param array $basket
-     * @return int
-     */
-    private function getBasketTotal(array $basket): int
-    {
-        $basketTotal = 0;
-
-        foreach ($basket['products'] as $product) {
-            $fetchedProduct = Product::whereJsonContains('variants', ['sku' => $product['sku']])->firstOrFail();
-            $fetchedProductVariants = $fetchedProduct->variants;
-
-            foreach ($fetchedProductVariants as $productVariant) {
-                if ($productVariant['sku'] === $product['sku']) {
-                    break;
-                }
-            }
-
-            $productVariantOnSale = $productVariant['pricing']['on_sale'];
-
-            if ($productVariantOnSale) {
-                $productVariantPrice = $productVariant['pricing']['sale_price'];
-            } else {
-                $productVariantPrice = $productVariant['pricing']['price'];
-            }
-
-            $formattedProductVariantPrice = preg_replace('/\D/', '', $productVariantPrice);
-            $totalLineItemPrice = $formattedProductVariantPrice * $product['quantity'];
-
-            $basketTotal += $totalLineItemPrice;
-        }
-
-        return $basketTotal;
-    }
-
-    private function isFeeCollectionActive()
-    {
-        try {
-            $settings = Settings::where('id', 1);
-            $settings = $settings->first();
-            $settings = json_decode($settings->settings);
-
-            if (
-                $settings->feeActive === true &&
-                !empty($settings->feeAmount) &&
-                !empty($settings->stripeSecretKey)
-            ) {
-                return [
-                    'stripeSecretKey' => $settings->stripeSecretKey,
-                    'feeAmount' => $settings->feeAmount,
-                    'stripeAccessToken' => $settings->stripeAccessToken,
-                    'connectedAccountId' => $settings->stripeAccountId,
-                ];
-            }
-
-        } catch (\Throwable $exception) {
-            return false;
-        }
-
-        return false;
     }
 
     /**
