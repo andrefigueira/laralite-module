@@ -90,6 +90,10 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
 });
 
+/**
+ * @uses \Modules\Laralite\Http\Controllers\Api\PaymentController::processPayment()
+ * @uses \Modules\Laralite\Http\Controllers\Api\PaymentController::validateBasket()
+ */
 
 Route::post('/login', 'Auth\CustomerAuthController@login');
 Route::get('/logout', 'Auth\CustomerAuthController@logout');
@@ -121,6 +125,7 @@ Route::group(['middleware' => 'auth:customers'], function () {
 });
 
 Route::post('/payment/webhook', 'SubscriptionPaymentController@webhook');
+
 Route::post('/process-payment', 'Api\PaymentController@processPayment');
 Route::post('/basket/validate', 'Api\PaymentController@validateBasket');
 
