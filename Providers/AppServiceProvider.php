@@ -13,8 +13,13 @@ use Modules\Laralite\Console\RefreshComponents;
 use Modules\Laralite\Console\RefreshTemplates;
 use Modules\Laralite\Console\ReportDeploy;
 use Modules\Laralite\Console\SubscriptionCharge;
+use Modules\Laralite\Http\Controllers\Web\CreditPaymentController;
+use Modules\Laralite\Services\BasketService\Credit;
+use Modules\Laralite\Services\BasketService\Standard;
+use Modules\Laralite\Services\BasketServiceInterface;
 use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
+use Psr\Container\ContainerInterface;
 use Stripe\Stripe;
 use Stripe\StripeClient;
 
@@ -40,6 +45,15 @@ class AppServiceProvider extends ServiceProvider
             $stripeClient = new StripeClient($stripeKey);
             return new StripeService($stripeClient);
         });
+
+        $this->app->bind(
+            BasketServiceInterface::class,
+            Standard::class
+        );
+
+        $this->app->when([CreditPaymentController::class])
+            ->needs(BasketServiceInterface::class)
+            ->give(Credit::class);
     }
 
     /**

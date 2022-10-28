@@ -16,7 +16,9 @@ use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 use Modules\Laralite\Repositories\ProductRepository;
-use Modules\Laralite\Services\BasketService;
+use Modules\Laralite\Services\BasketService\Credit;
+use Modules\Laralite\Services\BasketService\Standard;
+use Modules\Laralite\Services\BasketServiceInterface;
 use Modules\Laralite\Services\OrderService;
 use Ramsey\Uuid\Uuid;
 use Spatie\Newsletter\NewsletterFacade;
@@ -25,9 +27,9 @@ use Symfony\Component\HttpFoundation\Response;
 class CreditPaymentController extends Controller
 {
     private OrderService $orderService;
-    private BasketService $basketService;
+    private BasketServiceInterface $basketService;
 
-    public function __construct(OrderService $orderService, BasketService $basketService, ProductRepository $productRep)
+    public function __construct(OrderService $orderService, BasketServiceInterface $basketService, ProductRepository $productRep)
     {
         $this->orderService = $orderService;
         $this->basketService = $basketService;

@@ -2,11 +2,14 @@
 
 namespace Modules\Laralite\Services\Models;
 
+use Modules\Laralite\Services\Models\Basket\Discountable;
 use Modules\Laralite\Services\Models\Basket\Discounts;
+use Modules\Laralite\Services\Models\Basket\FeeAble;
 use Modules\Laralite\Services\Models\Basket\Item;
 use Modules\Laralite\Services\Models\Basket\Items;
+use Modules\Laralite\Services\Models\Basket\Taxable;
 
-class Basket extends Model implements BasketInterface
+class Basket extends Model implements BasketInterface, FeeAble, Discountable, Taxable
 {
     protected array $data = [
         'serviceFee' => 0,
@@ -129,15 +132,14 @@ class Basket extends Model implements BasketInterface
         return $total - $this->getDiscountAmount();
     }
 
-    private function getItemsTotal(bool $inCredits = false)
+    private function getItemsTotal()
     {
-        $total = 0;
+        $subtotal = 0;
         foreach ($this->getItems() as $item) {
-            $price = $inCredits ? $item->getCreditPrice() : $item->getPrice();
-            $total += $price * $item->getQuantity();
+            $subtotal += (int)($item->getPrice() * $item->getQuantity());
         }
 
-        return $total;
+        return $subtotal - $this->getDiscountAmount();
     }
 
 

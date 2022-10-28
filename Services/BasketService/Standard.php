@@ -1,13 +1,16 @@
 <?php
 
-namespace Modules\Laralite\Services;
+namespace Modules\Laralite\Services\BasketService;
 
 use Carbon\Carbon;
 use Modules\Laralite\Models\Discount;
 use Modules\Laralite\Models\Product;
+use Modules\Laralite\Services\BasketServiceInterface;
 use Modules\Laralite\Services\Models\Basket;
+use Modules\Laralite\Services\Models\BasketInterface;
+use Modules\Laralite\Services\SettingsService;
 
-class BasketService
+class Standard implements BasketServiceInterface
 {
     /**
      * @var SettingsService
@@ -15,9 +18,9 @@ class BasketService
     private SettingsService $settingsService;
 
     /**
-     * @var Basket|null
+     * @var BasketInterface|null
      */
-    private ?Basket $basket;
+    private ?BasketInterface $basket;
 
     public function __construct(SettingsService $settingsService)
     {
@@ -28,17 +31,17 @@ class BasketService
      * @param Basket $basket
      * @return int
      */
-    public function getBasketTotal(Basket $basket): int
+    public function getBasketTotal(BasketInterface $basket): int
     {
         $this->analyzeAndCorrectBasket($basket);
         return $basket->getTotal();
     }
 
-    public function analyzeAndCorrectBasket(Basket $basket): void
+    public function analyzeAndCorrectBasket(BasketInterface $basket): void
     {
         $this->setModel($basket);
         $products = $this->basket->getItems() ?? [];
-        $discounts = $this->basket->getDiscounts()?: [];
+        $discounts = $this->basket->getDiscounts() ?? [];
         $total = 0;
 
         foreach ($products as $key => $product) {
@@ -53,27 +56,22 @@ class BasketService
                 continue;
             }
             $price = $productModel->getVariantPrice($sku);
-            $creditsPrice = $productModel->getVariantPrice($sku, true);
 
             if ($price === 0) {
                 $this->basket->getItems()->remove($key);
                 continue;
             }
             $this->basket->getItems()->get($key)->setPrice($price);
-            $this->basket->getItems()->get($key)->setCreditPrice($creditsPrice);
             $this->basket->setTotal($price * $product->getQuantity());
         }
 
-        $this->applyDiscounts($discounts);
-        $this->applyTaxAmount();
+        $this->applyDiscounts($discounts)->applyTaxAmount();
         $this->basket->setServiceFee($this->settingsService->getServiceFeeAmount());
     }
 
-    public function generateBasketFromProducts(array $products)
-    {
-
-    }
-
+    /**
+     * @return void
+     */
     private function applyTaxAmount(): void
     {
         if (!$tax = $this->settingsService->getTaxAmount()) {
@@ -85,9 +83,9 @@ class BasketService
 
     /**
      * @param Basket\Discounts $discounts
-     * @return void
+     * @return Standard
      */
-    private function applyDiscounts(Basket\Discounts $discounts): void
+    private function applyDiscounts(Basket\Discounts $discounts): Standard
     {
         $discountCodes = $discounts->arrayColumn('code');
         $discountModels = Discount::whereIn('code', $discountCodes)
@@ -104,18 +102,21 @@ class BasketService
         }
         $this->basket->setDiscountAmount(round($discountAmount, 2));
 
+        return $this;
     }
 
-    private function setModel(Basket $basket): void
+    private function setModel(Basket $basket): Standard
     {
         $this->basket = $basket;
+
+        return $this;
     }
 
     /**
      * @param array $basket
-     * @return Basket
+     * @return BasketInterface
      */
-    public function getModel(array $basket): Basket
+    public function getModel(array $basket): BasketInterface
     {
         return new Basket($basket);
     }

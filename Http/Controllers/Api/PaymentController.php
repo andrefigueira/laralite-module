@@ -10,7 +10,7 @@ use Modules\Laralite\Http\Requests\PaymentRequest;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
 use Modules\Laralite\Models\Ticket;
-use Modules\Laralite\Services\BasketService;
+use Modules\Laralite\Services\BasketService\Standard;
 use Modules\Laralite\Services\Models\Basket;
 use Modules\Laralite\Services\OrderService;
 use Modules\Laralite\Services\SettingsService;
@@ -29,20 +29,20 @@ class PaymentController extends Controller
     private OrderService $orderService;
     private StripeService $stripeService;
     private SettingsService $settingsService;
-    private BasketService $basketService;
+    private Standard $basketService;
 
     /**
      * PaymentController constructor.
      * @param OrderService $orderService
      * @param StripeService $stripeService
      * @param SettingsService $settingsService
-     * @param BasketService $basketService
+     * @param Standard $basketService
      */
     public function __construct(
         OrderService $orderService,
         StripeService $stripeService,
         SettingsService $settingsService,
-        BasketService $basketService
+        Standard $basketService
     )
     {
         $this->settingsService = $settingsService;
