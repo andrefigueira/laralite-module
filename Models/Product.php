@@ -67,10 +67,17 @@ class Product extends Model
             $currentSku = $variant['sku'] ?? '';
             if ($sku === $currentSku) {
                 $foundVariant = $variant;
+                break;
             }
         }
 
         return $foundVariant;
+    }
+
+    public function variantIsGroupable(string $sku)
+    {
+        $varient = $this->getVariantBySku($sku);
+        return $varient['groupable'] ?? false;
     }
 
 }

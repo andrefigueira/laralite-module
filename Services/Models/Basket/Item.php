@@ -6,6 +6,11 @@ use Modules\Laralite\Services\Models\Model;
 
 class Item extends Model implements ItemInterface
 {
+    public function __construct(array $data)
+    {
+        parent::__construct($data);
+    }
+
     public function getPrice(): int
     {
         return (int)$this->data['price'];
@@ -42,6 +47,6 @@ class Item extends Model implements ItemInterface
 
     public function getQuantity(): int
     {
-        return (int)$this->offsetGet('quantity');
+        return (int)$this->offsetGet('quantity') ?: 1;
     }
 }

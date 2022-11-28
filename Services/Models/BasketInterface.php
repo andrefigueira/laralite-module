@@ -6,4 +6,5 @@ interface BasketInterface
 {
     public function getItems();
     public function getTotal();
+    public function setTotal(int $total);
 }

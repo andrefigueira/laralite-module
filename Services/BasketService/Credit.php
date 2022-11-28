@@ -2,8 +2,10 @@
 
 namespace Modules\Laralite\Services\BasketService;
 
+use Modules\Laralite\Models\Product;
 use Modules\Laralite\Services\BasketServiceInterface;
 use Modules\Laralite\Services\Models\BasketInterface;
+use Modules\Laralite\Services\Models\CreditBasket;
 use Modules\Laralite\Services\SettingsService;
 
 class Credit implements BasketServiceInterface
@@ -14,22 +16,37 @@ class Credit implements BasketServiceInterface
     private SettingsService $settingsService;
 
     /**
-     * @var BasketInterface|null
+     * @param BasketInterface|CreditBasket $basket
+     * @return void
      */
-    private ?BasketInterface $basket;
-
-    public function __construct(SettingsService $settingsService)
+    public function analyzeAndCorrectBasket(BasketInterface $basket): void
     {
-        $this->settingsService = $settingsService;
-    }
+        $products = $basket->getItems() ?? [];
 
-    public function analyzeAndCorrectBasket(BasketInterface $basket)
-    {
-        // TODO: Implement analyzeAndCorrectBasket() method.
+        foreach ($products as $key => $product) {
+            //TODO this query need to be updated to check if product is also active
+            $sku = $product->getSku();
+            /** @var Product $productModel */
+            $productModel = Product::whereJsonContains(
+                'variants',
+                ['sku' => $sku]
+            )->first();
+            if (!$productModel) {
+                continue;
+            }
+            $price = $productModel->getVariantPrice($sku, true);
+
+            if ($price === 0) {
+                $basket->getItems()->remove($key);
+                continue;
+            }
+            $basket->getItems()->get($key)->setPrice($price);
+            $basket->setTotal($price * $product->getQuantity());
+        }
     }
 
     public function getModel(array $basket): BasketInterface
     {
-        // TODO: Implement getModel() method.
+        return new CreditBasket($basket);
     }
 }

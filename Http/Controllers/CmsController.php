@@ -123,7 +123,7 @@ class CmsController extends Controller
     {
 
         $settings = Settings::firstOrFail();
-        $settingsObject = json_decode($settings->settings, true);
+        $settingsObject = $settings->settings;
         return response(
             implode(" ", [
                 $this->dynamicButton($settingsObject['buttonsFont']),

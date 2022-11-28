@@ -132,7 +132,7 @@ class Basket extends Model implements BasketInterface, FeeAble, Discountable, Ta
         return $total - $this->getDiscountAmount();
     }
 
-    private function getItemsTotal()
+    private function getItemsTotal(): int
     {
         $subtotal = 0;
         foreach ($this->getItems() as $item) {

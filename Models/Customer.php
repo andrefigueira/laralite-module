@@ -17,6 +17,7 @@ use Modules\Laralite\Models\Customer\Subscription as CustomerSubscription;
  * Class Customer
  * @property string email
  * @property string name
+ * @property int id
  * @package Modules\Laralite\Models
  * @mixin Eloquent
  */

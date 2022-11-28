@@ -168,8 +168,15 @@ class TicketService
         $quantityToGenerate = $product['quantity'];
         $generatedTickets = [];
 
+        if (!isset($product['groupable'])) {
+            /** @var Product $productModel */
+            $productModel = Product::whereJsonContains('variants', ['sku' => $product['sku']])
+                ->firstOrFail();
+            $product['groupable'] = $productModel->variantIsGroupable($product['sku']);
+        }
+
         // If product variant is `groupable` create just one ticket for the group
-        if (isset($product['groupable']) && $product['groupable'] === true) {
+        if ($product['groupable']) {
 
             $ticketUuid = Uuid::uuid4();
             $generatedTicket = $this->generateTicket($ticketUuid);
@@ -247,12 +254,13 @@ class TicketService
         $confirmation_code = $ticket->order->confirmation_code;
 
         $products = $ticket->order->basket->products;
+        $creditClaim = $ticket->order->basket->creditClaim ?? false;
         $ticketPrice = 0;
         $currency = $this->settingsService->getCurrency()['currency_symbol'] ?? '';
 
         foreach ($products as $product) {
             if ($ticket->sku === $product->sku) {
-                $ticketPrice = ($product->price / 100);
+                $ticketPrice = $creditClaim ? $product->price : ($product->price / 100);
                 break;
             }
         }
@@ -279,7 +287,8 @@ class TicketService
                     'ticketAdmitQuantity',
                     'currency',
                     'confirmation_code',
-                    'productName'
+                    'productName',
+                    'creditClaim'
                 )
             );
 
@@ -293,7 +302,8 @@ class TicketService
             'ticketAdmitQuantity',
             'currency',
             'confirmation_code',
-            'productName'
+            'productName',
+            'creditClaim'
         ));
     }
 }

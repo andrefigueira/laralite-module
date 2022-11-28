@@ -15,6 +15,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable, HasRoles;
 
+    /**
+     * @var mixed
+     */
+    public $id;
     protected $guard_name = 'api';
 
     /**
