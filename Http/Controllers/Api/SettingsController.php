@@ -2,18 +2,14 @@
 
 namespace Modules\Laralite\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Log;
-use Hash;
-use Modules\Laralite\Exceptions\AppException;
-use Redirect;
-use App\Http\Controllers\Controller;
 use Modules\Laralite\Models\Settings;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Stripe\StripeClient;
+use Redirect;
 use Symfony\Component\HttpFoundation\Response;
 
 class SettingsController extends Controller

@@ -4,14 +4,14 @@ namespace Modules\Laralite\Traits;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Modules\Laralite\Exceptions\AppException;
+use Symfony\Component\HttpFoundation\Response;
 
 trait ApiResponses
 {
     protected function success(array $data, ?string $message = null, $code = 200, array $errors = []): JsonResponse
     {
-        return new JsonResponse([
+        return response()->json([
             'success' => true,
             'message' => $message,
             'data' => $data,
@@ -21,7 +21,7 @@ trait ApiResponses
 
     protected function error(string $message, int $code, array $errors = []): JsonResponse
     {
-        return new JsonResponse([
+        return response()->json([
             'success' => false,
             'message' => $message,
             'errors' => $errors,
@@ -30,7 +30,7 @@ trait ApiResponses
 
     protected function unknownError(): JsonResponse
     {
-        return new JsonResponse([
+        return response()->json([
             'success' => false,
             'message' => 'An unknown error has occurred!',
         ], 500);

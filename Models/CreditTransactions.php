@@ -2,10 +2,15 @@
 
 namespace Modules\Laralite\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Laralite\Models\Customer\Wallet;
 
+/**
+ * @mixin Eloquent
+ * @property int amount
+ */
 class CreditTransactions extends Model
 {
     protected $fillable = [

@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Modules\Laralite\Models\Order;
 use Modules\Laralite\Services\TicketService;
 
 class OrderConfirmation extends Mailable
@@ -46,6 +47,8 @@ class OrderConfirmation extends Mailable
                 ]);
             }
         }
+
+        $this->form['creditClaim'] = $this->form['order']->basket->creditClaim ?? false;
 
         return $this->view('laralite::mail.order-confirmation', [
             'form' => $this->form,

@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use stdClass;
 
 /**
+ * @property int id
  * @property stdClass basket
  * @property string order_status
  * @property bool refunded
+ * @property stdClass|null payment_processor_result
  * @property Customer customer
  * @mixin Eloquent
  */
@@ -48,5 +50,19 @@ class Order extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPaymentId(): ?string
+    {
+        $paymentResult = $this->getAttribute('payment_processor_result');
+        return $paymentResult->id ?? null;
+    }
+
+    public function getBasket(): array
+    {
+        return $this->getAttributeValue('basket');
     }
 }

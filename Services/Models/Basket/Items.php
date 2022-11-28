@@ -7,6 +7,9 @@ use Modules\Laralite\Services\Models\Collection;
 use Modules\Laralite\Models\Discount;
 use Modules\Laralite\Services\Models\CollectionInterface;
 
+/**
+ * @method Item get($key)
+ */
 class Items extends Collection
 {
     /**

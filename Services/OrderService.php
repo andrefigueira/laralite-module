@@ -2,26 +2,14 @@
 
 namespace Modules\Laralite\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use Mail;
 use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
 
-class OrderService
+class OrderService extends AbstractOrderService
 {
-    /**
-     * @var SettingsService
-     */
-    private SettingsService $settingsService;
-
-    /**
-     * @var TicketService
-     */
-    private TicketService $ticketService;
-
-    /**
-     * @var StripeService
-     */
     private StripeService $stripeService;
 
     public function __construct(
@@ -30,85 +18,30 @@ class OrderService
         StripeService $stripeService
     )
     {
-        $this->settingsService = $settingsService;
-        $this->ticketService = $ticketService;
         $this->stripeService = $stripeService;
+        parent::__construct($settingsService, $ticketService);
     }
 
     /**
-     * @param Order $order
-     * @return array
+     * @param array $orderData
+     * @return Order
      */
-    public function generateOrderAssets(Order $order): array
-    {
-        $generatedTickets = [];
-        $basket = json_decode(json_encode($order->basket->products), true);
-        foreach ($basket as $index => $product) {
-            $generatedTickets[] = $this->ticketService->getGeneratedTickets(
-                $index,
-                $product,
-                $order,
-                $order->customer()->first()
-            );
-        }
-
-        return $generatedTickets;
-    }
-
-    public static function generateUniqueCode($prefix = ''): string
-    {
-        do {
-            $code = $prefix . substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
-            $order = Order::where('confirmation_code', $code)->first();
-
-            $codeExists = $order && $order->id;
-
-        } while ($codeExists);
-
-        return $code;
-    }
-
-    /**
-     * @param Order|string|integer $order
-     * @param array $updateArray
-     */
-    public function update($order, array $updateArray): void
-    {
-        if (!$order instanceof Order) {
-            $order = is_int($order)
-                ? Order::findOrFail($order)
-                : Order::where('unique_id', '=', $order)->firstOrFail();
-        }
-
-        $order->update($updateArray);
-    }
-
-    /**
-     * @param Order|string|integer $order
-     * @param array $updateArray
-     */
-    public function updateStatus($order, array $updateArray)
-    {
-        $order->update($updateArray);
-    }
-
-    /**
-     * @param $orderArray
-     * @return Order|null
-     */
-    public function saveOrder($orderArray): ?Order
+    public function saveOrder(array $orderData): Order
     {
         /** @var Order $order */
-        $order = Order::create($orderArray);
+        $order = Order::create($orderData);
+        $this->generateOrderAssets($order);
 
-        try {
-            $this->updateOrderPayment($order);
-        } catch (\Throwable $e) {
-            \Log::error(
-                'Failed to update order payment: ' . $e->getMessage(),
-                $e->getTrace()
-            );
-            //TODO create job to have order payment updated
+        if ($order->getPaymentId()) {
+            try {
+                $this->updateOrderPayment($order);
+            } catch (\Throwable $e) {
+                \Log::error(
+                    'Failed to update order payment: ' . $e->getMessage(),
+                    $e->getTrace()
+                );
+                //TODO create job to have order payment updated
+            }
         }
 
         try {
@@ -179,26 +112,5 @@ class OrderService
             \Log::info('Stripe payload: ', $payload);
             //TODO create job to have connected payment updated
         }
-    }
-
-    /**
-     * @param Order $order
-     * @param string|null $sendToEmail
-     */
-    public function sendOrderConfirmationEmail(Order $order, string $sendToEmail = null): void
-    {
-        /** @var Customer $customer */
-        $customer = Customer::find($order->getAttributeValue('customer_id'));
-        $orderAssets = $order->tickets()->get()->isEmpty()
-            ? $this->generateOrderAssets($order)
-            : $order->tickets()->get();
-        $recipientEmail = $sendToEmail ?: $customer->getAttributeValue('email');
-
-        Mail::to($recipientEmail)->send(new OrderConfirmation([
-            'order' => $order,
-            'customer' => $customer,
-            'orderAssets' => $orderAssets,
-            'currency' => $this->settingsService->getCurrency(),
-        ]));
     }
 }

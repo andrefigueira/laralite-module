@@ -5,22 +5,12 @@ namespace Modules\Laralite\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Log;
-use Modules\Laralite\Exceptions\AppException;
 use Modules\Laralite\Http\Requests\PaymentRequest;
-use Modules\Laralite\Models\CreditTransactions;
 use Modules\Laralite\Models\Customer;
-use Modules\Laralite\Models\Customer\Wallet;
 use Modules\Laralite\Models\Order;
-use Modules\Laralite\Models\Product;
-use Modules\Laralite\Models\Settings;
-use Modules\Laralite\Models\Subscription;
-use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Models\Ticket;
-use Modules\Laralite\Models\TicketScans;
-use Modules\Laralite\Services\BasketService;
+use Modules\Laralite\Services\BasketService\Standard;
 use Modules\Laralite\Services\Models\Basket;
 use Modules\Laralite\Services\OrderService;
 use Modules\Laralite\Services\SettingsService;
@@ -29,7 +19,6 @@ use Modules\Laralite\Traits\ApiResponses;
 use Ramsey\Uuid\Uuid;
 use Spatie\Newsletter\NewsletterFacade;
 use Stripe\Exception\ApiErrorException;
-use Stripe\StripeClient;
 use Symfony\Component\HttpFoundation\Response;
 
 class PaymentController extends Controller
@@ -40,20 +29,20 @@ class PaymentController extends Controller
     private OrderService $orderService;
     private StripeService $stripeService;
     private SettingsService $settingsService;
-    private BasketService $basketService;
+    private Standard $basketService;
 
     /**
      * PaymentController constructor.
      * @param OrderService $orderService
      * @param StripeService $stripeService
      * @param SettingsService $settingsService
-     * @param BasketService $basketService
+     * @param Standard $basketService
      */
     public function __construct(
         OrderService $orderService,
         StripeService $stripeService,
         SettingsService $settingsService,
-        BasketService $basketService
+        Standard $basketService
     )
     {
         $this->settingsService = $settingsService;
