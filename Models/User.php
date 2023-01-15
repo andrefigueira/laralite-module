@@ -18,7 +18,6 @@ class User extends Authenticatable
     /**
      * @var mixed
      */
-    public $id;
     protected $guard_name = 'api';
 
     /**
