@@ -3,25 +3,21 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use AWS\CRT\Log;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mail;
 use Modules\Laralite\Mail\OrderCancellation;
 use Modules\Laralite\Mail\OrderRefundDetails;
-use Modules\Laralite\Models\Customer;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Modules\Laralite\Models\ImportedOrder;
 use Modules\Laralite\Models\Order;
-use Modules\Laralite\Models\Settings;
 use Modules\Laralite\Models\Ticket;
 use Modules\Laralite\Services\OrderService;
+use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Services\TicketService;
 use Modules\Laralite\Traits\ApiResponses;
 use Symfony\Component\HttpFoundation\Response;
-use Stripe\StripeClient;
-use Stripe\Exception\InvalidRequestException;
 
 class OrderController extends Controller
 {
@@ -30,16 +26,19 @@ class OrderController extends Controller
     private TicketService $ticketService;
     private OrderService $orderService;
     private StripeService $stripeService;
+    private SettingsService $settingsService;
 
     public function __construct(
         OrderService $orderService,
         TicketService $ticketService,
-        StripeService $stripeService
+        StripeService $stripeService,
+        SettingsService $settingsService
     )
     {
         $this->orderService = $orderService;
         $this->ticketService = $ticketService;
         $this->stripeService = $stripeService;
+        $this->settingsService = $settingsService;
     }
 
     public function get(Request $request)
@@ -147,8 +146,7 @@ class OrderController extends Controller
                     'reverse_transfer' => true,
                 ]
             );
-            $settings = Settings::firstOrFail();
-            $currency = json_decode($settings->settings, true)['currency'];
+            $currency = $this->settingsService->getCurrency();
             if ($result->get('status') === 'succeeded') {
                 $order->refunded = 1;
                 $order->save();
@@ -178,7 +176,7 @@ class OrderController extends Controller
         ];
     }
 
-    public function cancel(Request $request)
+    public function cancel(Request $request): JsonResponse
     {
         $orderId = $request->get('orderId', null);
 
@@ -196,8 +194,7 @@ class OrderController extends Controller
         $order->save();
 
         $this->refundOrder($orderId);
-        $settings = Settings::firstOrFail();
-        $currency = json_decode($settings->settings, true)['currency'];
+        $currency = $this->settingsService->getCurrency();
 
         /** @var Ticket $ticket */
         $ticket = $order->tickets()->first();
