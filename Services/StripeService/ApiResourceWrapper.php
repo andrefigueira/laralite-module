@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Modules\Laralite\Services\StripeService;
-
 
 use Modules\Laralite\Exceptions\AppException;
 use Stripe\ApiResource;
