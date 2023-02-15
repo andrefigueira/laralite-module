@@ -64,6 +64,7 @@ Route::group(['middleware'=>'auth:api'], static function () {
 
     Route::get('/product', 'Api\ProductController@get');
     Route::post('/product', 'Api\ProductController@create');
+    Route::get('/product/types', 'Api\ProductController@getTypes');
     Route::get('/product/{id}', 'Api\ProductController@getOne');
     Route::delete('/product/{id}', 'Api\ProductController@delete');
     Route::patch('/product/{id}', 'Api\ProductController@update');

@@ -12,7 +12,7 @@ use Stripe\Subscription;
 
 class ApiResourceWrapper
 {
-    protected $apiResource;
+    protected StripeObject $apiResource;
 
     public function __construct(StripeObject $apiResource)
     {
@@ -28,14 +28,14 @@ class ApiResourceWrapper
     {
         $path = explode('/', $key);
         $value = $this->apiResource;
-        foreach ($path as $key) {
-            $value = $value->$key;
+        foreach ($path as $keyItem) {
+            $value = $value->$keyItem;
         }
 
         return $value;
     }
 
-    public function getTimeToDate($key)
+    public function getTimeToDate($key): \DateTime
     {
         $time = $this->apiResource->offsetGet($key);
         $date = new \DateTime();
@@ -47,7 +47,7 @@ class ApiResourceWrapper
     public function deleteSubscription()
     {
         if (!$this->apiResource instanceof Subscription) {
-            throw new \Exception('Invalid method call!');
+            throw new \RuntimeException('Invalid method call!');
         }
         $this->apiResource->delete();
     }
@@ -112,8 +112,11 @@ class ApiResourceWrapper
         ];
     }
 
-    public function __toString()
+    /**
+     * @throws \JsonException
+     */
+    public function __toString(): string
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
     }
 }

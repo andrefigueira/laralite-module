@@ -33,9 +33,10 @@
                   <image-upload-component @image-removed="removeUploadedImage"
                                           @image-uploaded="setUploadedImage"></image-upload-component>
 
+                  <label class="mt-3" for="primary-option">Product Type</label>
+                  <resource-selector v-model="productType" type="productTypes"></resource-selector>
                   <label class="mt-3" for="primary-option">Product category</label>
-                  <v-select class="mb-3" id="primary-option" label="name" v-model="category" :options="categoryOptions"
-                            :clearable="false"></v-select>
+                  <resource-selector v-model="category" type="productCategory"></resource-selector>
                 </div><!-- End col -->
                 <div class="col-md-9">
                   <div class="row">
@@ -366,9 +367,10 @@ export default {
     },
     product: {
       type: Object,
-      default: function () {
-        return {};
-      }
+      default: {
+        category_id: null,
+        type: null,
+      },
     },
   },
   data() {
@@ -377,7 +379,8 @@ export default {
       alertShow: false,
       alertType: 'primary',
       alertMessage: '',
-      category: {},
+      category: null,
+      productType: 1,
       categoryOptions: [],
       form: {
         id: '',
@@ -386,6 +389,7 @@ export default {
         active: false,
         credit_purchasable: false,
         category_id: '',
+        type: null,
         meta: {
           title: '',
           keywords: '',
@@ -501,26 +505,11 @@ export default {
       const {$dirty, $error} = this.$v.form[name];
       return $dirty ? !$error : null;
     },
-    loadProductCategoryOptions(defaultOption) {
-      axios.get('/api/product-category-list', {withCredentials: true}).then(response => {
-        this.categoryOptions = response.data;
-        // console.log(this.categoryOptions);
-
-        if (this.product.category_id === undefined) {
-          this.category = this.categoryOptions[0];
-        } else {
-          this.category = this.categoryOptions.filter((productCategory) => {
-            return productCategory.id === this.product.category_id;
-          })[0];
-        }
-      }).catch(error => {
-        // handle error
-      });
-    },
     load() {
       if (this.product.id !== undefined) {
         this.form.id = this.product.id;
-        this.category_id = this.category.id;
+        this.productType = this.product.type;
+        this.category = this.product.category_id;
         this.form.name = this.product.name;
         this.form.slug = this.product.slug;
         this.form.description = this.product.description;
@@ -535,13 +524,6 @@ export default {
           this.form.variants.push(variant);
         }
       }
-
-      let defaultProductCategoryValue = {
-        id: null,
-        name: 'No category'
-      };
-
-      this.loadProductCategoryOptions(defaultProductCategoryValue);
     },
     save() {
       this.$v.form.$touch();

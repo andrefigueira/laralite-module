@@ -4,14 +4,18 @@ namespace Modules\Laralite\Http\Controllers\Api;
 
 use Log;
 use App\Http\Controllers\Controller;
+use Modules\Laralite\Constant\ProductType;
 use Modules\Laralite\Http\Requests\SaveProductRequest;
 use Modules\Laralite\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Modules\Laralite\Traits\ApiResponses;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
+    use ApiResponses;
+
     public function get(Request $request)
     {
         $products = Product::with(['category']);
@@ -61,6 +65,11 @@ class ProductController extends Controller
                 ],
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function getTypes(): JsonResponse
+    {
+        return $this->success(ProductType::getConstantsList());
     }
 
     public function getByUrl($url)
