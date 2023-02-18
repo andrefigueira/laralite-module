@@ -8,11 +8,6 @@ use Stripe\StripeObject;
 
 trait Shared
 {
-    /**
-     * @var StripeClient
-     */
-    protected $client;
-
     protected function getApiResourceWrapper(StripeObject $apiResource): ApiResourceWrapper
     {
         return new ApiResourceWrapper($apiResource);

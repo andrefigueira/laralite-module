@@ -62,6 +62,8 @@ class SubscriptionPaymentController extends Controller
         $priceId = $request->get('price_id');
         $discountCode = $request->get('discountCode');
         $discount = null;
+        $isFree = false;
+        $intent = null;
 
         if ($paymentIntent) {
             $sessionData = $this->getSessionPaymentData($request);
@@ -78,44 +80,51 @@ class SubscriptionPaymentController extends Controller
         } else {
             if ($discountCode) {
                 $discount = Discount::firstWhere('code', '=', $discountCode);
+                $isFree = $discount->isOneHundredPercentDiscount();
             }
-            $intent = $this->createPaymentIntent($paymentMethod, $priceId, $discount);
+            if ($discount && !$isFree) {
+                $intent = $this->createPaymentIntent($paymentMethod, $priceId, $discount);
+            }
         }
 
-        if (!$intent->get('client_secret')) {
-            return response()->json([
-                'success' => false,
-                'message' => "Error! PLease try again later.",
-            ], 400);
-        }
+        if (!$isFree) {
+            if (!$intent->get('client_secret')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Error! PLease try again later.",
+                ], 400);
+            }
 
-        $token = $intent->get('client_secret');
+            $token = $intent->get('client_secret');
 
-        if ($intent->get('status') === 'requires_action' && $intent->get('next_action/type') === 'use_stripe_sdk') {
-            $this->setSessionPaymentData(
-                $request,
-                [
-                    'priceId' => $priceId,
-                ]
-            );
-            return response()->json([
-                'intent_secret' => $token,
-                'requires_action' => true,
-            ], 200);
-        }
+            if ($intent->get('status') === 'requires_action' && $intent->get('next_action/type') === 'use_stripe_sdk') {
+                $this->setSessionPaymentData(
+                    $request,
+                    [
+                        'priceId' => $priceId,
+                    ]
+                );
+                return response()->json([
+                    'intent_secret' => $token,
+                    'requires_action' => true,
+                ], 200);
+            }
 
-        if (!$intent->get('id') || !$intent->paymentCompleted()) {
-            \Log::error('Payment token is either invalid or payment is incomplete');
-            //At this point the payment should have gone throughout successfully so something isn't write here
-            return $this->error("Error! PLease try again later.", 500);
+            if (!$intent->get('id') || !$intent->paymentCompleted()) {
+                \Log::error('Payment token is either invalid or payment is incomplete');
+                //At this point the payment should have gone throughout successfully so something isn't write here
+                return $this->error("Error! PLease try again later.", 500);
+            }
         }
 
         /** @var Customer $customer */
         $customer = auth('customers')->user();
-        $subscription = $this->customerSubscriptionService->saveSubscription($customer, (int)$priceId, $intent, $discount);
+        $subscription = $this->customerSubscriptionService->saveSubscription($customer, (int)$priceId, $intent ?: $paymentMethod, $discount);
 
         \Log::info('Subscription payment successful', [
-            'token' => $intent->get('client_secret'),
+            'token' => $intent ? $intent->get('client_secret') : null,
+            'free' => $isFree,
+            'paymentMethod' => $paymentMethod,
             'customer' => $customer,
             'price' => Price::findOrFail($priceId),
         ]);
@@ -130,6 +139,9 @@ class SubscriptionPaymentController extends Controller
         );
     }
 
+    /**
+     * @throws ApiErrorException
+     */
     protected function createPaymentIntent(
         string  $paymentMethodId,
                 $priceId,

@@ -28,15 +28,15 @@ class CustomerSubscriptionService
     /**
      * @param Customer $customer
      * @param int $priceId
-     * @param ApiResourceWrapper $paymentIntent
+     * @param ApiResourceWrapper|string $paymentIntentOrMethodId
      * @param Discount|null $discount
      * @return Customer\Subscription
      * @throws \Exception
      */
     public function saveSubscription(
-        Customer $customer,
-        int $priceId,
-        ApiResourceWrapper $paymentIntent,
+        Customer  $customer,
+        int       $priceId,
+                  $paymentIntentOrMethodId,
         ?Discount $discount = null
     ): Customer\Subscription
     {
@@ -57,8 +57,13 @@ class CustomerSubscriptionService
         $customerSubscription->agreed_price = $price->price;
         $customerSubscription->expiry_date = new \DateTime('+ 1' . $price->recurring_period);
         //The payment intent will have the payment method attached and will be used to make future charges
-        $paymentMethodId = $paymentIntent->get('payment_method');
-        $customerSubscription->setStripePaymentMethodId($paymentIntent->get('payment_method'));
+        if ($paymentIntentOrMethodId instanceof ApiResourceWrapper) {
+            $paymentMethodId = $paymentIntentOrMethodId->get('payment_method');
+            $customerSubscription->setStripePaymentMethodId($paymentIntentOrMethodId->get('payment_method'));
+            $customerSubscription->setStripePaymentIntentId($paymentIntentOrMethodId->get('id'));
+        } else {
+            $paymentMethodId = $paymentIntentOrMethodId;
+        }
 
         try {
             $paymentMethod = $this->stripeService->getPaymentMethod($paymentMethodId);
@@ -136,15 +141,12 @@ class CustomerSubscriptionService
         switch ($status) {
             case PaymentIntent::STATUS_PROCESSING:
                 return Customer\Subscription::STATUS_PAYMENT_DUE;
-                break;
             case PaymentIntent::STATUS_REQUIRES_ACTION:
             case PaymentIntent::STATUS_REQUIRES_CAPTURE:
             case PaymentIntent::STATUS_REQUIRES_PAYMENT_METHOD:
                 return Customer\Subscription::STATUS_PAYMENT_DECLINED;
-                break;
             default:
                 return Customer\Subscription::STATUS_PENDING_PAYMENT;
-                break;
         }
     }
 

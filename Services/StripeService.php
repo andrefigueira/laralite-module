@@ -9,6 +9,7 @@ use Modules\Laralite\Services\StripeService\Price;
 use Modules\Laralite\Services\StripeService\Product;
 use Modules\Laralite\Services\StripeService\Shared;
 use Modules\Laralite\Services\StripeService\Transfer;
+use RuntimeException;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 
@@ -54,6 +55,9 @@ class StripeService
         return $this->getApiResourceWrapper($this->client->paymentIntents->confirm($id, $payload));
     }
 
+    /**
+     * @throws ApiErrorException
+     */
     public function refund($id, $payload = []): StripeService\ApiResourceWrapper
     {
         $type = $this->getPaymentIdType($id);
@@ -61,7 +65,7 @@ class StripeService
         return $this->getApiResourceWrapper($this->client->refunds->create($payload));
     }
 
-    private function getPaymentIdType($id)
+    private function getPaymentIdType($id): string
     {
         $paymentType = substr($id, 0, 3);
 
@@ -71,7 +75,7 @@ class StripeService
             case 'pi_':
                 return 'payment_intent';
             default:
-                throw new \Exception('invalid payment ID');
+                throw new RuntimeException('invalid payment ID');
         }
     }
 

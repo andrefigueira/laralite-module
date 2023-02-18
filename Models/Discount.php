@@ -32,8 +32,8 @@ class Discount extends Model
 
     public function getDiscount(float $total): int
     {
-        $type = $this->getAttributeValue('type');
-        $value = $this->getAttributeValue('value');
+        $type = $this->getType();
+        $value = $this->getValue();
 
         switch($type) {
             case 'percent':
@@ -41,5 +41,23 @@ class Discount extends Model
             case 'fixed':
                 return $value;
         }
+    }
+
+    public function isOneHundredPercentDiscount(): bool
+    {
+        $type = $this->getType();
+        $value = $this->getValue();
+
+        return ($type === 'percent' && $value >= 100);
+    }
+
+    public function getType(): ?string
+    {
+        return $this->getAttributeValue('type');
+    }
+
+    public function getValue(): ?string
+    {
+        return $this->getAttributeValue('value');
     }
 }
