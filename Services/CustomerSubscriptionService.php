@@ -2,15 +2,18 @@
 
 namespace Modules\Laralite\Services;
 
+use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Mail;
 use Modules\Laralite\Exceptions\AppException;
-use Modules\Laralite\Exceptions\PaymentGatewayException;
+use Modules\Laralite\Exceptions\UnexpectedPaymentGatewayException;
 use Modules\Laralite\Mail\SubscriptionConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Discount;
+use Modules\Laralite\Models\Payment;
 use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Models\Subscription\Price;
-use Modules\Laralite\Services\StripeService\ApiResourceWrapper;
+use Ramsey\Uuid\Uuid;
 use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
 
@@ -28,15 +31,15 @@ class CustomerSubscriptionService
     /**
      * @param Customer $customer
      * @param int $priceId
-     * @param ApiResourceWrapper|string $paymentIntentOrMethodId
+     * @param Payment $payment
      * @param Discount|null $discount
      * @return Customer\Subscription
-     * @throws \Exception
+     * @throws Exception
      */
     public function saveSubscription(
         Customer  $customer,
         int       $priceId,
-                  $paymentIntentOrMethodId,
+        Payment   $payment,
         ?Discount $discount = null
     ): Customer\Subscription
     {
@@ -47,34 +50,25 @@ class CustomerSubscriptionService
         /** @var Customer\Subscription $customerSubscription */
         $customerSubscription = $customer->subscriptions()->firstOrCreate([
             'price_id' => $price->id,
+            'subscription_id' => $subscription->id,
+        ], [
+            'unique_id' => Uuid::uuid4()->toString(),
         ]);
 
+        $payment->setPayableType(Customer\Subscription::class);
+        $payment->payable_id = $customerSubscription->id;
+        $payment->save();
         if ($creditAmount = $subscription->getAttributeValue('default_initial_credit_amount')) {
             $this->creditCustomerWallet($customer, $creditAmount);
         }
 
         $customerSubscription->status = 'ACTIVE';
         $customerSubscription->agreed_price = $price->price;
+        $customerSubscription->start_date = new \DateTime();
         $customerSubscription->expiry_date = new \DateTime('+ 1' . $price->recurring_period);
-        //The payment intent will have the payment method attached and will be used to make future charges
-        if ($paymentIntentOrMethodId instanceof ApiResourceWrapper) {
-            $paymentMethodId = $paymentIntentOrMethodId->get('payment_method');
-            $customerSubscription->setStripePaymentMethodId($paymentIntentOrMethodId->get('payment_method'));
-            $customerSubscription->setStripePaymentIntentId($paymentIntentOrMethodId->get('id'));
-        } else {
-            $paymentMethodId = $paymentIntentOrMethodId;
-        }
-
-        try {
-            $paymentMethod = $this->stripeService->getPaymentMethod($paymentMethodId);
-            $customerSubscription->setStripePaymentMethodDetails($paymentMethod->getPaymentMethodDetails());
-        } catch (\Throwable $e) {
-            \Log::error(
-                'Unable to save payment method details with error: ' . $e->getMessage(),
-                $e->getTrace()
-            );
-        }
-
+        $customerSubscription->setStripePaymentMethodDetails($payment->getStripePaymentMethodDetails());
+        $customerSubscription->setStripePaymentIntentId($payment->getStripePaymentIntentId());
+        $customerSubscription->setStripePaymentMethodId($payment->getStripePaymentMethodId());
         $customerSubscription->save();
         $this->sendSubscriptionNotification($customer, $customerSubscription, $subscription, $discount);
 
@@ -83,8 +77,8 @@ class CustomerSubscriptionService
 
     /**
      * @param Customer\Subscription $subscription
-     * @throws PaymentGatewayException|AppException
-     * @throws \Exception
+     * @throws UnexpectedPaymentGatewayException|AppException
+     * @throws Exception
      */
     public function collectionSubscriptionPayment(Customer\Subscription $subscription): void
     {
@@ -110,7 +104,7 @@ class CustomerSubscriptionService
             ]);
         } catch (ApiErrorException $e) {
             \Log::error('Failed to charge subscription fee with error: ' . $e->getMessage(), $e->getTrace());
-            throw new PaymentGatewayException(
+            throw new UnexpectedPaymentGatewayException(
                 'Failed to charge subscription fee with error: ' . $e->getMessage(),
                 $e->getCode(),
                 $e->getPrevious()
@@ -151,19 +145,22 @@ class CustomerSubscriptionService
     }
 
     /**
-     * @param Subscription|int $subscription
-     * @throws \Exception
+     * @param Subscription|Model|int $subscription
      */
     public function cancel($subscription): void
     {
-        $subscription->delete();
+        if (!$subscription instanceof Customer\Subscription) {
+            $subscription = Subscription::firstOrFail($subscription);
+        }
+        $subscription->status = Subscription::STATUS_CANCELED;
+        $subscription->save();
     }
 
     private function creditCustomerWallet(Customer $customer, $creditAmount): void
     {
         $customerWallet = $customer->wallet()->first();
         if ($customerWallet) {
-            $customerWallet->balance +=  $creditAmount;
+            $customerWallet->balance += $creditAmount;
             $customerWallet->save();
         } else {
             $customer->wallet()->create([
@@ -173,10 +170,10 @@ class CustomerSubscriptionService
     }
 
     private function sendSubscriptionNotification(
-        Customer $customer,
+        Customer              $customer,
         Customer\Subscription $customerSubscription,
-        Subscription $subscription,
-        Discount $discount = null
+        Subscription          $subscription,
+        Discount              $discount = null
     ): void
     {
         try {
@@ -185,8 +182,8 @@ class CustomerSubscriptionService
                 'subscription' => $customerSubscription,
                 'subscriptionPlan' => $subscription,
                 'discount' => $discount,
-             ]));
-        } catch (\Exception $e) {
+            ]));
+        } catch (Exception $e) {
             $k = $e;
         }
     }

@@ -4,20 +4,15 @@ namespace Modules\Laralite\Services\Models;
 
 use Modules\Laralite\Services\Models\Basket\Discountable;
 use Modules\Laralite\Services\Models\Basket\Discounts;
-use Modules\Laralite\Services\Models\Basket\FeeAble;
 use Modules\Laralite\Services\Models\Basket\Item;
 use Modules\Laralite\Services\Models\Basket\Items;
-use Modules\Laralite\Services\Models\Basket\Taxable;
 
-class Basket extends Model implements BasketInterface, FeeAble, Discountable, Taxable
+class SubscriptionBasket extends Model implements BasketInterface, Discountable
 {
     protected array $data = [
-        'serviceFee' => 0,
         'total' => 0,
-        'discounts' => null,
         'products' => null,
         'discountAmount' => 0,
-        'taxAmount' => 0,
     ];
 
     public function __construct(array $data)
@@ -69,36 +64,6 @@ class Basket extends Model implements BasketInterface, FeeAble, Discountable, Ta
     {
         $this->data['discountAmount'] = $amount;
         $this->data['total'] -= $amount;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTaxAmount(): int
-    {
-        return isset($this->data['taxAmount']) ? (int)$this->data['taxAmount'] : 0;
-    }
-
-    public function setTaxAmount(int $amount): Basket
-    {
-        $this->data['taxAmount'] = $amount;
-        $this->data['total'] += $amount;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getServiceFee(): int
-    {
-        return isset($this->data['serviceFee']) ? (int)$this->data['serviceFee'] : 0;
-    }
-
-    public function setServiceFee(int $fee): Basket
-    {
-        $this->data['serviceFee'] = $fee;
-        $this->data['total'] += $fee;
         return $this;
     }
 

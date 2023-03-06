@@ -5,6 +5,8 @@ namespace Modules\Laralite\Models;
 use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use stdClass;
 
 /**
@@ -37,6 +39,8 @@ class Order extends Model
         'payment_processor_result' => 'object',
     ];
 
+    public const TYPE_STANDARD = 1;
+
     /**
      * @var mixed
      */
@@ -52,6 +56,10 @@ class Order extends Model
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
+    public function payments(): MorphMany
+    {
+        return $this->morphMany(Payment::class, 'payable');
+    }
     /**
      * @return null|string
      */

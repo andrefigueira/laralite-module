@@ -31,7 +31,7 @@ class Model implements \ArrayAccess, \JsonSerializable
 
     public function offsetGet($offset)
     {
-        return isset($this->data[$offset]) ? $this->data[$offset] : null;
+        return $this->data[$offset] ?? null;
     }
 
     /**
@@ -42,7 +42,7 @@ class Model implements \ArrayAccess, \JsonSerializable
         $data = $this->data;
 
         foreach ($data as $key => $item) {
-            if ($item instanceof Model || $item instanceof Collection) {
+            if ($item instanceof self || $item instanceof Collection) {
                 $data[$key] = $item->toArray();
             }
         }

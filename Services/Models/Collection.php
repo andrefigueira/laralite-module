@@ -90,7 +90,7 @@ abstract class Collection implements CollectionInterface
         $data = $this->collection->getArrayCopy();
 
         foreach ($data as $key => $item) {
-            if ($item instanceof Model || $item instanceof Collection) {
+            if ($item instanceof Model || $item instanceof self) {
                 $data[$key] = $item->toArray();
             }
         }

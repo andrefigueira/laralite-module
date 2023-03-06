@@ -19,12 +19,11 @@ class Credit implements BasketServiceInterface
      * @param BasketInterface|CreditBasket $basket
      * @return void
      */
-    public function analyzeAndCorrectBasket(BasketInterface $basket): void
+    public function validateBasket(BasketInterface $basket): void
     {
         $products = $basket->getItems() ?? [];
 
         foreach ($products as $key => $product) {
-            //TODO this query need to be updated to check if product is also active
             $sku = $product->getSku();
             /** @var Product $productModel */
             $productModel = Product::whereJsonContains(

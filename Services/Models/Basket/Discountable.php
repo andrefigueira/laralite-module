@@ -9,4 +9,8 @@ interface Discountable extends BasketInterface
     public function getDiscounts();
 
     public function getDiscountAmount();
+
+    public function setDiscountAmount(int $amount);
+
+    public function getDiscountedItemsTotal(): int;
 }

@@ -11,22 +11,14 @@ use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\SubscriptionService;
 use Symfony\Component\HttpFoundation\Response;
+use Modules\Laralite\Models\Customer\Subscription as CustomerSubscription;
 
 class SubscriptionsController extends Controller
 {
-    /**
-     * @var SettingsService
-     */
-    private $settingsService;
+    private SubscriptionService $subscriptionService;
 
-    /**
-     * @var SubscriptionService
-     */
-    private $subscriptionService;
-
-    public function __construct(SettingsService $settingsService, SubscriptionService $subscriptionService)
+    public function __construct(SubscriptionService $subscriptionService)
     {
-        $this->settingsService = $settingsService;
         $this->subscriptionService = $subscriptionService;
     }
 
@@ -48,7 +40,9 @@ class SubscriptionsController extends Controller
             $subscriptions->orderBy($request->input('sortBy'), ($request->input('sortDesc') === 'true' ? 'desc' : 'asc'));
         }
 
-        return $subscriptions->with('prices')->paginate($perPage);
+        return $subscriptions->with('prices')->withCount(['customerSubscription' => static function ($q) {
+            $q->where('customer_subscriptions.status', '=', CustomerSubscription::STATUS_ACTIVE);
+        }])->paginate($perPage);
     }
 
     public function getOne($id)

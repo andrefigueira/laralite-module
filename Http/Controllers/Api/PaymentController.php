@@ -8,11 +8,14 @@ use Illuminate\Http\Request;
 use Log;
 use Modules\Laralite\Http\Requests\PaymentRequest;
 use Modules\Laralite\Models\Customer;
-use Modules\Laralite\Models\Order;
+use Modules\Laralite\Models\Payment;
 use Modules\Laralite\Models\Ticket;
-use Modules\Laralite\Services\BasketService\Standard;
+use Modules\Laralite\Services\BasketServiceInterface;
 use Modules\Laralite\Services\Models\Basket;
+use Modules\Laralite\Services\Models\BasketInterface;
+use Modules\Laralite\Services\Models\Payment\PaymentAmount;
 use Modules\Laralite\Services\OrderService;
+use Modules\Laralite\Services\PaymentService;
 use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Traits\ApiResponses;
@@ -29,26 +32,30 @@ class PaymentController extends Controller
     private OrderService $orderService;
     private StripeService $stripeService;
     private SettingsService $settingsService;
-    private Standard $basketService;
+    private BasketServiceInterface $basketService;
+    private PaymentService $paymentService;
 
     /**
      * PaymentController constructor.
      * @param OrderService $orderService
      * @param StripeService $stripeService
      * @param SettingsService $settingsService
-     * @param Standard $basketService
+     * @param BasketServiceInterface $basketService
+     * @param PaymentService $paymentService
      */
     public function __construct(
-        OrderService $orderService,
-        StripeService $stripeService,
-        SettingsService $settingsService,
-        Standard $basketService
+        OrderService           $orderService,
+        StripeService          $stripeService,
+        SettingsService        $settingsService,
+        BasketServiceInterface $basketService,
+        PaymentService         $paymentService
     )
     {
         $this->settingsService = $settingsService;
         $this->orderService = $orderService;
         $this->stripeService = $stripeService;
         $this->basketService = $basketService;
+        $this->paymentService = $paymentService;
     }
 
     /**
@@ -65,10 +72,11 @@ class PaymentController extends Controller
             $sessionData = $this->getSessionPaymentData($request);
             $basket = $this->basketService->getModel($sessionData['basket']);
             $customerData = $sessionData['customer'];
-            $intent = $this->stripeService->getPaymentIntent($paymentIntent);
             try {
-                $intent->confirmPayment();
+                $payment = Payment::where('ext_id', '=', $paymentIntent)->firstOrFail();
+                $this->paymentService->confirmPayment($payment);
             } catch (\Throwable $e) {
+                Log::error($e->getMessage());
                 return response()->json([
                     'success' => false,
                     'message' => "An error occurred during payment confirmation process",
@@ -77,18 +85,19 @@ class PaymentController extends Controller
         } else {
             $basket = $this->basketService->getModel($request->get('basket', []));
             $customerData = $request->get('customer', []);
-            $intent = $this->createPaymentIntent($paymentMethod, $basket);
+            $payment = $this->paymentService->createPayment($paymentMethod, $this->getPaymentAmountObject($basket));
+            //$intent = $this->createPaymentIntent($paymentMethod, $basket);
         }
 
-        if (!$intent->get('client_secret')) {
+        if (!$payment->getStripeClientSecret()) {
             return response()->json([
                 'success' => false,
                 'message' => "Error! PLease try again later.",
             ], 400);
         }
 
-        $token = $intent->get('client_secret');
-        if ($intent->get('status') === 'requires_action' && $intent->get('next_action/type') === 'use_stripe_sdk') {
+        $token = $payment->getStripeClientSecret();
+        if ($payment->status_id === Payment::STATUS_3DS_AUTHENTICATION_REQUIRED) {
             $this->setSessionPaymentData(
                 $request,
                 [
@@ -156,7 +165,6 @@ class PaymentController extends Controller
             $customer->sendEmailVerificationNotification();
         }
 
-        /** @var Order $order */
         $order = $this->orderService->saveOrder([
             'unique_id' => Uuid::uuid4(),
             //TODO Ticket prefix should come from settings
@@ -166,7 +174,7 @@ class PaymentController extends Controller
             'status' => 1,
             'order_status' => "complete",
             'refunded' => 0,
-            'payment_processor_result' => $intent->toArray(),
+            'payment_processor_result' => $payment,
         ]);
 
         $mobile = $customerData['numbers']['mobile'] ?? null;
@@ -205,7 +213,7 @@ class PaymentController extends Controller
                 'message' => 'Processed payment',
                 'data' => [
                     'basket' => $basket->toArray(),
-                    'stripe_result' => $intent->toArray(),
+                    'stripe_result' => $payment->payment_processor_result,
                     'order' => $order,
                     'currency' => $currency,
                     'tickets' => $tickets,
@@ -220,20 +228,28 @@ class PaymentController extends Controller
         }
     }
 
+    public function getPaymentAmountObject(BasketInterface $basket): PaymentAmount
+    {
+        return new PaymentAmount([
+            'total' => $basket->getTotal(),
+            'subtotal' => $basket->getItemsTotal(),
+        ]);
+    }
+
     /**
      * @param string $paymentMethodId
      * @param Basket $basket
      * @return StripeService\ApiResourceWrapper
      * @throws ApiErrorException
      */
-    private function createPaymentIntent(string $paymentMethodId, Basket $basket): StripeService\ApiResourceWrapper
+    private function createPaymentIntent(string $paymentMethodId, BasketInterface $basket): StripeService\ApiResourceWrapper
     {
-        $this->basketService->analyzeAndCorrectBasket($basket);
+        $this->basketService->validateBasket($basket);
         $amount = $basket->getTotal();
         $feeCollection = $this->settingsService->isFeeCollectionActive();
         $currencySettings = $this->settingsService->getCurrency() ?: [];
         $feeCollectionAmount = $feeCollection
-            ? (int)(round(($feeCollection['feeAmount'] / 100) * $basket->getSubtotal()))
+            ? (int)(round(($feeCollection['feeAmount'] / 100) * $basket->getItemsTotal()))
             + $this->settingsService->getServiceFeeAmount()
             : 0;
 
@@ -269,9 +285,7 @@ class PaymentController extends Controller
     public function validateBasket(Request $request): array
     {
         $basket = $this->basketService->getModel($request->get('basket', []));
-        if (!empty($basket)) {
-            $this->basketService->analyzeAndCorrectBasket($basket);
-        }
+        $this->basketService->validateBasket($basket);
 
         return [
             'basket' => $basket->toArray(),

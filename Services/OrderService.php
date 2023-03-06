@@ -7,6 +7,7 @@ use Mail;
 use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
+use Modules\Laralite\Models\Payment;
 
 class OrderService extends AbstractOrderService
 {
@@ -28,8 +29,17 @@ class OrderService extends AbstractOrderService
      */
     public function saveOrder(array $orderData): Order
     {
+        $payment = $orderData['payment_processor_result'] ?? null;
+        if (!$payment instanceof Payment) {
+            throw new \InvalidArgumentException('`payment_processor_result` must be of `' . Payment::class . '` type.');
+        }
+
+        $orderData['payment_processor_result'] = $payment->payment_processor_result;
         /** @var Order $order */
         $order = Order::create($orderData);
+        $payment->payable_id = $order->id;
+        $payment->payable_type = Order::class;
+        $payment->save();
         $this->generateOrderAssets($order);
 
         if ($order->getPaymentId()) {

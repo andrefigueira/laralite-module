@@ -14,12 +14,16 @@ use Modules\Laralite\Models\Customer\Subscription as CustomerSubscription;
  * @property string $name
  * @property string $description
  * @property Price $price
+ * @property string $status
  * @property string $recurring_period;
  * @mixin Eloquent
  */
 class Subscription extends Model
 {
     use StripeMetaData;
+
+    public const STATUS_ACTIVE = 'ACTIVE';
+    public const STATUS_CANCELED = 'CANCELED';
 
     protected $fillable = [
         'name',

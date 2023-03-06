@@ -3,16 +3,22 @@
 namespace Modules\Laralite\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 use Mail;
+use Modules\Laralite\Exceptions\HttpRequestException;
+use Modules\Laralite\Exceptions\PaymentException;
 use Modules\Laralite\Mail\OrderCancellation;
 use Modules\Laralite\Mail\OrderRefundDetails;
 use Modules\Laralite\Models\ImportedOrder;
 use Modules\Laralite\Models\Order;
+use Modules\Laralite\Models\Payment;
 use Modules\Laralite\Models\Ticket;
 use Modules\Laralite\Services\OrderService;
+use Modules\Laralite\Services\PaymentService;
 use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Services\TicketService;
@@ -27,18 +33,21 @@ class OrderController extends Controller
     private OrderService $orderService;
     private StripeService $stripeService;
     private SettingsService $settingsService;
+    private PaymentService $paymentService;
 
     public function __construct(
-        OrderService $orderService,
-        TicketService $ticketService,
-        StripeService $stripeService,
-        SettingsService $settingsService
+        OrderService    $orderService,
+        TicketService   $ticketService,
+        StripeService   $stripeService,
+        SettingsService $settingsService,
+        PaymentService  $paymentService
     )
     {
         $this->orderService = $orderService;
         $this->ticketService = $ticketService;
         $this->stripeService = $stripeService;
         $this->settingsService = $settingsService;
+        $this->paymentService = $paymentService;
     }
 
     public function get(Request $request)
@@ -51,17 +60,17 @@ class OrderController extends Controller
             return $orders->get();
         }
 
-        if($request->input('orderstatus') !== 'null' && $request->input('orderstatus') != ''){
-            if($request->input('orderstatus') === 'Cancel') {
+        if ($request->input('orderstatus') !== 'null' && $request->input('orderstatus') != '') {
+            if ($request->input('orderstatus') === 'Cancel') {
                 $orders->where('order_status', '=', 'cancel');
             }
-            if($request->input('orderstatus') === 'Complete') {
+            if ($request->input('orderstatus') === 'Complete') {
                 $orders->where('order_status', '=', 'complete');
             }
-            if($request->input('orderstatus') === 'Refunded') {
+            if ($request->input('orderstatus') === 'Refunded') {
                 $orders->where('refunded', '=', 1);
             }
-            if($request->input('orderstatus') === 'Reedemed') {
+            if ($request->input('orderstatus') === 'Reedemed') {
                 $orders->whereHas('tickets', function ($q) use ($request) {
                     $q->where('status', '=', 'REEDEMED');
                 });
@@ -100,6 +109,11 @@ class OrderController extends Controller
         }
     }
 
+    /**
+     * @throws HttpRequestException
+     * @throws PaymentException
+     * @throws JsonException
+     */
     public function refund(Request $request)
     {
         $orderId = $request->get('orderId', null);
@@ -111,7 +125,11 @@ class OrderController extends Controller
             ], 400);
         }
 
-        $response = $this->refundOrder($orderId);
+        $data = [
+            'reason' => $request->post('reason'),
+        ];
+
+        $response = $this->refundOrder($orderId, $data);
 
         if ($response['success']) {
             return new JsonResponse([
@@ -126,53 +144,41 @@ class OrderController extends Controller
         }
     }
 
-    private function refundOrder($orderId)
+    /**
+     * @throws HttpRequestException
+     * @throws PaymentException|JsonException
+     */
+    private function refundOrder($orderId, array $data = []): array
     {
         $order = $this->getOne($orderId);
-        $paymentProcessorResult = $order->payment_processor_result;
-        $paymentId = $paymentProcessorResult->id;
-
-        if (!$paymentId) {
-            return [
-                'success' => 'false',
-                'message' => "Error: Cannot locate paymentId from Stripe",
-            ];
+        try {
+            /** @var Payment $payment */
+            $payment = $order->payments()->firstOrFail();
+        } catch(ModelNotFoundException $e) {
+            //Order is possibly and older order with no payments attached so let create it now
+            $payment = $this->paymentService->createPaymentFromResults($order->payment_processor_result);
+            $payment->setPayableType(Order::class);
+            $payment->setPayableId($order->id);
+            $payment->save();
         }
 
-        try {
-            $result = $this->stripeService->refund(
-                $paymentId,
-                [
-                    'reverse_transfer' => true,
-                ]
-            );
-            $currency = $this->settingsService->getCurrency();
-            if ($result->get('status') === 'succeeded') {
-                $order->refunded = 1;
-                $order->save();
+        $this->paymentService->refundPayment($payment, $data);
+        $currency = $this->settingsService->getCurrency();
+        if (Payment::STATUS_REFUNDED === $payment->status) {
+            $order->refunded = 1;
+            $order->save();
 
-                Mail::to($order->customer->email)->send(new OrderRefundDetails([
-                    'order' => $order,
-                    'customer' => $order->customer,
-                    'currency' => $currency,
-                ]));
-            }
-        } catch (\Stripe\Exception\InvalidRequestException $exception) {
-            return [
-                'success' => false,
-                'message' => $exception->getError(),
-            ];
-        } catch (\Exception $exception) {
-            return [
-                'success' => false,
-                'message' => $exception->getMessage(),
-            ];
+            Mail::to($order->customer->email)->send(new OrderRefundDetails([
+                'order' => $order,
+                'customer' => $order->customer,
+                'currency' => $currency,
+            ]));
         }
 
         return [
             'success' => true,
             'message' => 'Successfully refunded order',
-            'payment' => $result,
+            'payment' => $payment->toArray(),
         ];
     }
 

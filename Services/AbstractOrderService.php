@@ -5,6 +5,7 @@ namespace Modules\Laralite\Services;
 use Modules\Laralite\Mail\OrderConfirmation;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Order;
+use Modules\Laralite\Models\Payment;
 
 abstract class AbstractOrderService implements OrderServiceInterface
 {

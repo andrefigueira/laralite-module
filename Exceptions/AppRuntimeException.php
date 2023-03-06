@@ -4,9 +4,9 @@ namespace Modules\Laralite\Exceptions;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class HttpRequestException extends AppException
+class AppRuntimeException extends \RuntimeException
 {
-    protected int $responseCode = Response::HTTP_BAD_REQUEST;
+    protected int $responseCode = Response::HTTP_INTERNAL_SERVER_ERROR;
 
     public function getResponseCode(): int
     {
