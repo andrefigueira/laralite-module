@@ -17,7 +17,6 @@ class UpdateCustomerSubscriptionsTableTwo extends Migration
             $table->integer('subscription_id')->after('customer_id');
             $table->string('unique_id')->after('id');
             $table->string('start_date')->nullable()->after('agreed_price');
-            $table->unique('unique_id','subscription_unique_id');
         });
     }
 
