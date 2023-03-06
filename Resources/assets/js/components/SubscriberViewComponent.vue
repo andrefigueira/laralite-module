@@ -231,7 +231,6 @@ export default {
       return _.startCase(_.toLower(status));
     },
     toggleRefund() {
-      debugger;
       let self = this;
       self.refundProcessing = true;
       const requestData = {

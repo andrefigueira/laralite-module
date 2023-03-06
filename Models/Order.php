@@ -39,8 +39,6 @@ class Order extends Model
         'payment_processor_result' => 'object',
     ];
 
-    public const TYPE_STANDARD = 1;
-
     /**
      * @var mixed
      */
