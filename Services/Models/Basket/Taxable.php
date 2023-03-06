@@ -7,4 +7,6 @@ use Modules\Laralite\Services\Models\BasketInterface;
 interface Taxable extends BasketInterface
 {
     public function getTaxAmount();
+
+    public function setTaxAmount(int $amount);
 }

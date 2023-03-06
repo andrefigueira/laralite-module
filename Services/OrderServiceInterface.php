@@ -3,6 +3,7 @@
 namespace Modules\Laralite\Services;
 
 use Illuminate\Database\Eloquent\Model;
+use Modules\Laralite\Models\Payment;
 
 interface OrderServiceInterface
 {

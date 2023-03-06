@@ -2,6 +2,7 @@
 
 namespace Modules\Laralite\Services;
 
+use Modules\Laralite\Services\StripeService\ApiResourceWrapper;
 use Modules\Laralite\Services\StripeService\Charge;
 use Modules\Laralite\Services\StripeService\Connected;
 use Modules\Laralite\Services\StripeService\Customer;
@@ -46,11 +47,11 @@ class StripeService
 
     /**
      * @param string $id
-     * @param $payload
-     * @return StripeService\ApiResourceWrapper
+     * @param array|null $payload
+     * @return ApiResourceWrapper
      * @throws ApiErrorException
      */
-    public function confirmPaymentIntent(string $id, $payload): StripeService\ApiResourceWrapper
+    public function confirmPaymentIntent(string $id, array $payload = null): StripeService\ApiResourceWrapper
     {
         return $this->getApiResourceWrapper($this->client->paymentIntents->confirm($id, $payload));
     }
@@ -61,7 +62,7 @@ class StripeService
     public function refund($id, $payload = []): StripeService\ApiResourceWrapper
     {
         $type = $this->getPaymentIdType($id);
-        $payload[$type] = $id;
+        $payload[$type] ??= $id;
         return $this->getApiResourceWrapper($this->client->refunds->create($payload));
     }
 

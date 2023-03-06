@@ -77,6 +77,12 @@
                         Subscriptions
                       </a>
                     </li>
+                    <li class="nav-item"  v-if="role">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/subscribers*') }" href="/admin/subscribers">
+                        <i class="ri-group-fill"></i>
+                        Subscribers
+                      </a>
+                    </li>
                   </ul>
                 </div><!-- End card body -->
               </div><!-- End collapse -->

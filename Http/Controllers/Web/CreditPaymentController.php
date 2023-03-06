@@ -62,7 +62,7 @@ class CreditPaymentController extends Controller
                 ]
             ]
         ]);
-        $this->basketService->analyzeAndCorrectBasket($basket);
+        $this->basketService->validateBasket($basket);
         $order = $this->orderService->saveOrder([
             'unique_id' => Uuid::uuid4(),
             'confirmation_code' => $this->orderService->generateUniqueCode('TRAP-'),

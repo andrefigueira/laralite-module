@@ -60,10 +60,21 @@ class Handler extends ExceptionHandler
             return redirect('/maintenance');
         }
 
-        if ($e instanceof HttpRequestException && $request->getContentType() === 'json') {
-            return $this->error($e->getMessage(), $e->getResponseCode());
-        } else {
-            return parent::render($request, $e);
+        if ($request->getContentType() === 'json') {
+            if ($e instanceof HttpRequestException) {
+                return $this->error($e->getMessage(), $e->getResponseCode());
+            }
+
+            if ($e instanceof AppRuntimeException) {
+                return $this->error($e->getMessage(), $e->getResponseCode());
+            }
+            if (!\Config::get('app.debug')) {
+                $message = 'An unknown error has occurred';
+                \Log::error($message . ' :' . $e->getMessage(), $e->getTrace());
+                return $this->error($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
+
+        return parent::render($request, $e);
     }
 }

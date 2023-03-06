@@ -30,7 +30,7 @@ class Discount extends Model
         'name'
     ];
 
-    public function getDiscount(float $total): int
+    public function getDiscount(int $total): int
     {
         $type = $this->getType();
         $value = $this->getValue();

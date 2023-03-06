@@ -35,6 +35,9 @@
             <template v-slot:cell(name)="data">
               {{ data.item.name }}
             </template>
+            <template v-slot:cell(customer_subscription_count)="data">
+              <span class="badge badge-success">{{ data.item.customer_subscription_count }}</span>
+            </template>
             <template v-slot:cell(created_at)="data">
               {{ timeFormat(data.item.created_at) }}
             </template>
@@ -44,6 +47,7 @@
             <template v-slot:cell(actions)="data">
               <a v-b-tooltip:hover title="Delete" class="float-right mr-2" style="width: 10%; cursor: pointer" @click="doDelete(data.item)"><i class="ri-delete-bin-6-fill"></i></a>
               <confirm-dialogue-component ref="confirmDialogue"></confirm-dialogue-component>
+              <a v-b-tooltip:hover title="View Active Subscriptions" :href="'/admin/subscriptions/' + data.item.id + '/list'" class="float-right mr-2" style="width: 10%; cursor: pointer"><i class="ri-list-check"></i></a>
 <!--              <a v-b-tooltip:hover title="Delete" @click="confirmDelete(data.item.id)" class="float-right mr-2" style="width: 10%; text-decoration: none !important;"><i class="ri-delete-bin-6-fill"></i></a>-->
               <a v-b-tooltip:hover title="Edit" :href="'/admin/subscriptions/edit/' + data.item.id" class="float-right mr-4" style="width: 10%; text-decoration: none !important;"><i class="ri-pencil-fill"></i></a>
             </template>
@@ -74,6 +78,7 @@
             return [
               { key: 'id', label: 'Id', sortable: true, sortDirection: 'desc' },
               { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc' },
+              { key: 'customer_subscription_count', label: 'Active Subscriptions', sortable: true, sortDirection: 'desc' },
               { key: 'created_at', label: 'Created At', sortable: true, sortDirection: 'desc'},
               { key: 'updated_at', label: 'Updated At', sortable: true, sortDirection: 'desc'},
               { key: 'actions', label: '' }

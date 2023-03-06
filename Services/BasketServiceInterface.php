@@ -6,6 +6,6 @@ use Modules\Laralite\Services\Models\BasketInterface;
 
 interface BasketServiceInterface
 {
-    public function analyzeAndCorrectBasket(BasketInterface $basket);
+    public function validateBasket(BasketInterface $basket);
     public function getModel(array $basket): BasketInterface;
 }

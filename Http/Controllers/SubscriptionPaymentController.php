@@ -4,6 +4,7 @@ namespace Modules\Laralite\Http\Controllers;
 
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Laralite\Http\Controllers\Api\SessionPaymentTrait;
@@ -12,9 +13,12 @@ use Modules\Laralite\Jobs\Stripe\PaymentSuccess;
 use Modules\Laralite\Jobs\Stripe\SubscriptionDelete;
 use Modules\Laralite\Models\Customer;
 use Modules\Laralite\Models\Discount;
+use Modules\Laralite\Models\Payment;
 use Modules\Laralite\Models\Subscription;
 use Modules\Laralite\Models\Subscription\Price;
 use Modules\Laralite\Services\CustomerSubscriptionService;
+use Modules\Laralite\Services\Models\Payment\PaymentAmount;
+use Modules\Laralite\Services\PaymentService;
 use Modules\Laralite\Services\SettingsService;
 use Modules\Laralite\Services\StripeService;
 use Modules\Laralite\Traits\ApiResponses;
@@ -31,6 +35,7 @@ class SubscriptionPaymentController extends Controller
     private StripeService $stripeService;
     private SettingsService $settingsService;
     private CustomerSubscriptionService $customerSubscriptionService;
+    private PaymentService $paymentService;
 
     /**
      * PaymentController constructor.
@@ -41,9 +46,11 @@ class SubscriptionPaymentController extends Controller
     public function __construct(
         StripeService               $stripeService,
         SettingsService             $settingsService,
-        CustomerSubscriptionService $customerSubscriptionService
+        CustomerSubscriptionService $customerSubscriptionService,
+        PaymentService $paymentService
     )
     {
+        $this->paymentService = $paymentService;
         $this->stripeService = $stripeService;
         $this->settingsService = $settingsService;
         $this->customerSubscriptionService = $customerSubscriptionService;
@@ -53,7 +60,7 @@ class SubscriptionPaymentController extends Controller
      * @param SubscriptionPaymentRequest $request
      * @return JsonResponse
      * @throws ApiErrorException
-     * @throws \Exception
+     * @throws Exception
      */
     public function processPayment(SubscriptionPaymentRequest $request): JsonResponse
     {
@@ -64,14 +71,16 @@ class SubscriptionPaymentController extends Controller
         $discount = null;
         $isFree = false;
         $intent = null;
+        $payment = null;
 
         if ($paymentIntent) {
             $sessionData = $this->getSessionPaymentData($request);
             $priceId = $sessionData['priceId'];
-            $intent = $this->stripeService->getPaymentIntent($paymentIntent);
             try {
-                $intent->confirmPayment();
+                $payment = Payment::where('ext_id', '=', $paymentIntent)->firstOrFail();
+                $this->paymentService->confirmPayment($payment);
             } catch (\Throwable $e) {
+                \Log::error($e->getMessage(), $e->getTrace());
                 return response()->json([
                     'success' => false,
                     'message' => "An error occurred during payment confirmation process",
@@ -82,22 +91,31 @@ class SubscriptionPaymentController extends Controller
                 $discount = Discount::firstWhere('code', '=', $discountCode);
                 $isFree = $discount->isOneHundredPercentDiscount();
             }
-            if ($discount && !$isFree) {
-                $intent = $this->createPaymentIntent($paymentMethod, $priceId, $discount);
+            if (null === $discount || ($discount && !$isFree)) {
+                $price = Price::findOrFail($priceId);
+                $amount = $discount ? $price->price - $discount->getDiscount($price->price) : $price->price;
+                $payment = $this->paymentService->createPayment(
+                    $paymentMethod,
+                    new PaymentAmount([
+                        'total' => $amount,
+                        'subTotal' => $amount,
+                        'applyFees' => false,
+                    ])
+                );
             }
         }
 
         if (!$isFree) {
-            if (!$intent->get('client_secret')) {
+            if (!$payment->getStripeClientSecret()) {
                 return response()->json([
                     'success' => false,
                     'message' => "Error! PLease try again later.",
                 ], 400);
             }
 
-            $token = $intent->get('client_secret');
+            $token = $payment->getStripeClientSecret();
 
-            if ($intent->get('status') === 'requires_action' && $intent->get('next_action/type') === 'use_stripe_sdk') {
+            if ($payment->status === Payment::STATUS_3DS_AUTHENTICATION_REQUIRED) {
                 $this->setSessionPaymentData(
                     $request,
                     [
@@ -110,19 +128,19 @@ class SubscriptionPaymentController extends Controller
                 ], 200);
             }
 
-            if (!$intent->get('id') || !$intent->paymentCompleted()) {
-                \Log::error('Payment token is either invalid or payment is incomplete');
-                //At this point the payment should have gone throughout successfully so something isn't write here
+            if (!$payment->ext_id || $payment->status !== Payment::STATUS_COMPLETE) {
+                \Log::error('Payment token is either invalid or payment is incomplete', $payment->toArray());
+                //At this point the payment should have gone throughout successfully so something isn't right here
                 return $this->error("Error! PLease try again later.", 500);
             }
         }
 
         /** @var Customer $customer */
         $customer = auth('customers')->user();
-        $subscription = $this->customerSubscriptionService->saveSubscription($customer, (int)$priceId, $intent ?: $paymentMethod, $discount);
+        $subscription = $this->customerSubscriptionService->saveSubscription($customer, (int)$priceId, $payment, $discount);
 
         \Log::info('Subscription payment successful', [
-            'token' => $intent ? $intent->get('client_secret') : null,
+            'token' => $payment->getStripeClientSecret(),
             'free' => $isFree,
             'paymentMethod' => $paymentMethod,
             'customer' => $customer,
@@ -132,66 +150,10 @@ class SubscriptionPaymentController extends Controller
         return $this->success(
             [
                 'subscription' => $subscription,
-                'stripe_result' => $intent,
+                'stripe_result' => $payment->payment_processor_result,
             ],
             'Processed payment',
             Response::HTTP_OK
         );
-    }
-
-    /**
-     * @throws ApiErrorException
-     */
-    protected function createPaymentIntent(
-        string  $paymentMethodId,
-                $priceId,
-        ?Discount $discount = null
-    ): StripeService\ApiResourceWrapper
-    {
-        /** @var Price $price */
-        $price = Price::findOrFail($priceId);
-        $totalAmount = $price->price;
-        if ($discount) {
-            $totalAmount -= $discount->getDiscount($totalAmount);
-        }
-        $currency = strtolower($this->settingsService->getCurrency()['value'] ?? '');
-        /** @var Customer $customer */
-        $customer = auth('customers')->user();
-
-        // Fees
-        $feeCollection = $this->settingsService->isFeeCollectionActive();
-        // @todo: This is now using the PaymentIntents API
-        // Customer details are not being sent to stripe here, we need to do add additional details to the PI creation.
-        if ($feeCollection !== false) {
-            // Fees are enabled, so send fee amount to connected Stripe Account
-            // `feeAmount` is the amount set in the settings
-            // `connectedStripeAccount` is the ID of the connected stripe account also set in settings
-            $intent = $this->stripeService->createPaymentIntent([
-                'payment_method' => $paymentMethodId,
-                'amount' => $totalAmount,
-                'currency' => $currency,
-                'setup_future_usage' => 'off_session',
-                'customer' => $customer->getStripeCustomerId(),
-                'application_fee_amount' => round(($feeCollection['feeAmount'] / 100) * $totalAmount),
-                'transfer_data' => [
-                    'destination' => $feeCollection['connectedAccountId'],
-                ],
-                'on_behalf_of' => $feeCollection['connectedAccountId'],
-                'confirmation_method' => 'manual',
-                'confirm' => true,
-            ]);
-        } else {
-            $intent = $this->stripeService->createPaymentIntent([
-                'payment_method' => $paymentMethodId,
-                'amount' => $totalAmount,
-                'currency' => $currency,
-                'setup_future_usage' => 'off_session',
-                'customer' => $customer->getStripeCustomerId(),
-                'confirmation_method' => 'manual',
-                'confirm' => true,
-            ]);
-        }
-
-        return $intent;
     }
 }

@@ -32,4 +32,14 @@ class CreditBasket extends Model implements BasketInterface
         $this->data['total'] = $total;
         return $this;
     }
+
+    public function getItemsTotal()
+    {
+        $itemsTotal = 0;
+        foreach ($this->getItems() as $item) {
+            $itemsTotal += ($item->getPrice() * $item->getQuantity());
+        }
+
+        return $itemsTotal;
+    }
 }

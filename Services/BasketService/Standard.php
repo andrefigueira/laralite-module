@@ -8,7 +8,9 @@ use Modules\Laralite\Models\Product;
 use Modules\Laralite\Services\BasketServiceInterface;
 use Modules\Laralite\Services\Models\Basket;
 use Modules\Laralite\Services\Models\BasketInterface;
+use Modules\Laralite\Services\Models\Payment\PaymentAmount;
 use Modules\Laralite\Services\SettingsService;
+use Modules\Laralite\Services\StripeService;
 
 class Standard implements BasketServiceInterface
 {
@@ -27,22 +29,9 @@ class Standard implements BasketServiceInterface
         $this->settingsService = $settingsService;
     }
 
-    /**
-     * @param Basket $basket
-     * @return int
-     */
-    public function getBasketTotal(BasketInterface $basket): int
+    public function validateBasket(BasketInterface $basket): void
     {
-        $this->analyzeAndCorrectBasket($basket);
-        return $basket->getTotal();
-    }
-
-    public function analyzeAndCorrectBasket(BasketInterface $basket): void
-    {
-        $this->setModel($basket);
-        $products = $this->basket->getItems() ?? [];
-        $discounts = $this->basket->getDiscounts() ?? [];
-        $total = 0;
+        $products = $basket->getItems() ?? [];
 
         foreach ($products as $key => $product) {
             //TODO this query need to be updated to check if product is also active
@@ -58,35 +47,44 @@ class Standard implements BasketServiceInterface
             $price = $productModel->getVariantPrice($sku);
 
             if ($price === 0) {
-                $this->basket->getItems()->remove($key);
+                $basket->getItems()->remove($key);
                 continue;
             }
-            $this->basket->getItems()->get($key)->setPrice($price);
-            $this->basket->setTotal($price * $product->getQuantity());
+            $basket->getItems()->get($key)->setPrice($price);
+            $basket->setTotal($price * $product->getQuantity());
         }
 
-        $this->applyDiscounts($discounts)->applyTaxAmount();
-        $this->basket->setServiceFee($this->settingsService->getServiceFeeAmount());
+        $this->applyDiscounts($basket);
+        $this->applyTaxAmount($basket);
+
+        if ($basket instanceof Basket\FeeAble) {
+            $basket->setServiceFee($this->settingsService->getServiceFeeAmount());
+        }
     }
 
     /**
+     * @param BasketInterface $basket
      * @return void
      */
-    private function applyTaxAmount(): void
+    private function applyTaxAmount(BasketInterface $basket): void
     {
-        if (!$tax = $this->settingsService->getTaxAmount()) {
+        if (!$basket instanceof Basket\Taxable || !$tax = $this->settingsService->getTaxAmount()) {
             return;
         }
 
-        $this->basket->setTaxAmount((int)($this->basket->getTotal() * $tax) / 100);
+        $basket->setTaxAmount((int)($basket->getTotal() * $tax) / 100);
     }
 
     /**
-     * @param Basket\Discounts $discounts
-     * @return Standard
+     * @param BasketInterface $basket
+     * @return void
      */
-    private function applyDiscounts(Basket\Discounts $discounts): Standard
+    private function applyDiscounts(BasketInterface $basket): void
     {
+        if (!$basket instanceof Basket\Discountable) {
+            return;
+        }
+        $discounts = $basket->getDiscounts();
         $discountCodes = $discounts->arrayColumn('code');
         $discountModels = Discount::whereIn('code', $discountCodes)
             ->where(function ($query) {
@@ -98,18 +96,10 @@ class Standard implements BasketServiceInterface
 
         /** @var Discount $discount */
         foreach ($discountModels as $discount) {
-            $discountAmount += $discount->getDiscount($this->basket->getTotal());
+            $discountAmount += $discount->getDiscount($basket->getTotal());
         }
-        $this->basket->setDiscountAmount(round($discountAmount, 2));
+        $basket->setDiscountAmount(round($discountAmount, 2));
 
-        return $this;
-    }
-
-    private function setModel(Basket $basket): Standard
-    {
-        $this->basket = $basket;
-
-        return $this;
     }
 
     /**
@@ -118,6 +108,8 @@ class Standard implements BasketServiceInterface
      */
     public function getModel(array $basket): BasketInterface
     {
-        return new Basket($basket);
+        $basket = new Basket($basket);
+        $this->validateBasket($basket);
+        return $basket;
     }
 }

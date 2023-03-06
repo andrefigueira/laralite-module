@@ -13,4 +13,14 @@ trait MetaData
 
         return $metaData;
     }
+
+    public function setMetaDataValue($key, $value): self
+    {
+
+        $metaData = $this->getMetaData();
+        $metaData[$key] = $value;
+        $this->setAttribute('meta_data', $metaData);
+
+        return $this;
+    }
 }
