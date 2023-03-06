@@ -78,9 +78,9 @@
                       </a>
                     </li>
                     <li class="nav-item"  v-if="role">
-                      <a class="nav-link" :class="{ 'active': request.match('admin/subscribers*') }" href="/admin/subscribers">
+                      <a class="nav-link" :class="{ 'active': request.match('admin/members*') }" href="/admin/members">
                         <i class="ri-group-fill"></i>
-                        Subscribers
+                        Members
                       </a>
                     </li>
                   </ul>

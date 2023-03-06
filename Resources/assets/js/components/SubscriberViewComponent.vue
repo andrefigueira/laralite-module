@@ -33,7 +33,7 @@
 
     <div class="row mt-2">
       <div class="col-12">
-        <b-button size="sm" class="w-100 mr-1" @click="goBack">&larr; Back to subscribers</b-button>
+        <b-button size="sm" class="w-100 mr-1" @click="goBack">&larr; Back to members</b-button>
       </div>
     </div>
     <div class="row mt-2">
@@ -182,7 +182,7 @@ export default {
   },
   methods: {
     goBack() {
-      window.location = '/admin/subscribers';
+      window.location = '/admin/members';
     },
     getStatusClass(status) {
       switch (status) {
@@ -195,7 +195,7 @@ export default {
     tableDataProvider(context) {
       this.isBusy = true;
       const promise = axios.get(
-          '/api/subscribers/' + this.customerSubscription.id +'/payments?page=' + context.currentPage + '&perPage=' +
+          '/api/members/' + this.customerSubscription.id +'/payments?page=' + context.currentPage + '&perPage=' +
           context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
           { withCredentials: true }
       );
@@ -239,7 +239,7 @@ export default {
       };
 
       axios.patch(
-          '/api/subscribers/' + this.customerSubscription.id + '/payments/' + this.payments.paymentId,
+          '/api/members/' + this.customerSubscription.id + '/payments/' + this.payments.paymentId,
           requestData
       ).then(function (result) {
         self.refundError = false;

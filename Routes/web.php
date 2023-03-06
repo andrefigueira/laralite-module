@@ -58,8 +58,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/admin/subscriptions/edit/{id}', 'Admin\SubscriptionsController@edit');
 
 
-    Route::get('/admin/subscribers', 'Admin\CustomerSubscriptionsController@index');
-    Route::get('/admin/subscribers/{id}', 'Admin\CustomerSubscriptionsController@view');
+    Route::get('/admin/members', 'Admin\CustomerSubscriptionsController@index');
+    Route::get('/admin/members/{id}', 'Admin\CustomerSubscriptionsController@view');
 
     Route::get('/admin/customers', 'Admin\CustomersController@index');
     Route::get('/admin/customers/edit/{id}', 'Admin\CustomersController@edit');

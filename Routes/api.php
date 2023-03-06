@@ -62,9 +62,9 @@ Route::group(['middleware'=>'auth:api'], static function () {
     Route::delete('/subscriptions/{id}', 'Api\SubscriptionsController@delete');
     Route::patch('/subscriptions/{id}', 'Api\SubscriptionsController@save');
 
-    Route::get('/subscribers', 'Api\CustomerSubscriptionsController@get');
-    Route::get('/subscribers/{id}/payments', 'Api\CustomerSubscriptionsController@getPayments');
-    Route::patch('/subscribers/{id}/payments/{payId}', 'Api\CustomerSubscriptionsController@refundSubscriptionPayment');
+    Route::get('/members', 'Api\CustomerSubscriptionsController@get');
+    Route::get('/members/{id}/payments', 'Api\CustomerSubscriptionsController@getPayments');
+    Route::patch('/members/{id}/payments/{payId}', 'Api\CustomerSubscriptionsController@refundSubscriptionPayment');
 
     Route::get('/product', 'Api\ProductController@get');
     Route::post('/product', 'Api\ProductController@create');

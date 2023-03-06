@@ -49,7 +49,7 @@
           {{ timeFormat(data.item.updated_at) }}
         </template>
         <template v-slot:cell(actions)="data">
-          <a v-b-tooltip:hover title="View" :href="'/admin/subscribers/' + data.item.id" class="btn btn-sm btn-primary float-right mr-3" style="font-size: 12px">View</a>
+          <a v-b-tooltip:hover title="View" :href="'/admin/members/' + data.item.id" class="btn btn-sm btn-primary float-right mr-3" style="font-size: 12px">View</a>
         </template>
       </b-table>
     </div>
@@ -140,7 +140,7 @@ export default {
       this.isBusy = true;
 
       const promise = axios.get(
-          '/api/subscribers?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
+          '/api/members?page=' + context.currentPage + '&perPage=' + context.perPage + '&filter=' + context.filter + '&sortBy=' + context.sortBy + '&sortDesc=' + context.sortDesc,
           { withCredentials: true }
       );
 
